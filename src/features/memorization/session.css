@@ -1,0 +1,307 @@
+/* Memorization session — strict black & white. No color accents.
+   Typography and whitespace carry the design; the Scripture is the hero. */
+
+.session {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  color: var(--way-ink);
+  padding: clamp(1rem, 4vw, 2.5rem);
+}
+
+/* — top bar — */
+.session__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.session__ref {
+  margin: 0;
+  font-family: var(--way-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--way-muted);
+}
+
+.session__spacer {
+  /* balances the Close button so the reference stays centered */
+  min-width: 3.5rem;
+}
+
+.session__count {
+  min-width: 3.5rem;
+  text-align: right;
+  font-family: var(--way-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--way-muted);
+}
+
+.session__actions {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+/* — stage markers — */
+.stages {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: clamp(1.5rem, 5vh, 3rem);
+}
+
+.stages__mark {
+  width: 2rem;
+  height: 1px;
+  background: var(--way-faint);
+  transition: background 0.5s ease, transform 0.5s ease;
+}
+
+.stages__mark[data-done='true'] {
+  background: var(--way-muted);
+}
+
+.stages__mark[data-active='true'] {
+  background: var(--way-ink);
+  transform: scaleY(2);
+}
+
+.stages__label {
+  margin: 1rem 0 0;
+  text-align: center;
+  font-family: var(--way-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--way-muted);
+}
+
+/* — the Scripture — */
+.session__stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.5rem, 6vh, 4rem) 0;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+}
+
+.session__stage[data-dim='true'] {
+  opacity: 0.35;
+  filter: blur(1px);
+}
+
+.scripture {
+  max-width: 32rem;
+  text-align: center;
+  font-family: var(--way-serif);
+  font-weight: 400;
+  font-size: clamp(1.6rem, 4.2vw, 2.6rem);
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  animation: scripture-rise 0.6s ease both;
+}
+
+@keyframes scripture-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.scripture__line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0 0.4em;
+  margin: 0.15em 0;
+}
+
+.scripture__word {
+  transition: opacity 0.5s ease;
+}
+
+.scripture__blank {
+  display: inline-block;
+  border-bottom: 1px solid var(--way-muted);
+  height: 0.9em;
+  min-width: 1.6ch;
+  transform: translateY(-0.12em);
+}
+
+/* — closing recitation — */
+.session__complete {
+  max-width: 32rem;
+  text-align: center;
+  animation: scripture-rise 0.8s ease both;
+}
+
+.session__complete-ref {
+  font-family: var(--way-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--way-muted);
+  margin: 0 0 1.5rem;
+}
+
+.session__complete-text {
+  font-family: var(--way-serif);
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* — Rhema + controls — */
+.session__foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  min-height: 12rem;
+  justify-content: flex-start;
+  /* lift the controls clear of the bottom edge */
+  padding-bottom: clamp(1.5rem, 6vh, 4rem);
+}
+
+.session__heard {
+  margin: 0;
+  max-width: 30rem;
+  text-align: center;
+  font-family: var(--way-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--way-muted);
+}
+
+.session__note {
+  margin: 0;
+  font-family: var(--way-sans);
+  font-size: 0.85rem;
+  color: var(--way-muted);
+}
+
+.session__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 3rem;
+}
+
+/* — Rhema indicator — */
+.rhema {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.rhema__orb {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+}
+
+.rhema__core {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--way-ink);
+  opacity: 0.85;
+}
+
+.rhema__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--way-faint);
+  opacity: 0;
+}
+
+/* idle — a still, faint point */
+.rhema[data-state='idle'] .rhema__core {
+  opacity: 0.35;
+}
+.rhema[data-state='idle'] .rhema__ring {
+  opacity: 0.5;
+}
+
+/* speaking — slow breathing pulse */
+.rhema[data-state='speaking'] .rhema__core {
+  animation: rhema-breathe 1.6s ease-in-out infinite;
+}
+.rhema[data-state='speaking'] .rhema__ring {
+  opacity: 0.5;
+  animation: rhema-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes rhema-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+/* listening — outward sonar rings */
+.rhema[data-state='listening'] .rhema__ring {
+  border-color: var(--way-ink);
+  animation: rhema-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.rhema[data-state='listening'] .rhema__ring--2 {
+  animation-delay: 0.9s;
+}
+
+@keyframes rhema-ping {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+/* processing — a quiet rotating arc (Rhema reflecting) */
+.rhema[data-state='processing'] .rhema__ring {
+  opacity: 1;
+  border-color: var(--way-faint);
+  border-top-color: var(--way-ink);
+  animation: rhema-spin 1.3s linear infinite;
+}
+.rhema[data-state='processing'] .rhema__core {
+  animation: rhema-breathe 1.3s ease-in-out infinite;
+}
+
+@keyframes rhema-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scripture,
+  .session__complete,
+  .rhema__core,
+  .rhema__ring {
+    animation: none !important;
+  }
+}

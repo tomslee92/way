@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel env *)",
+      "Bash(python3 *)",
+      "Bash(rm -f /tmp/tt_prod_env.txt /tmp/tt_prev_env.txt)",
+      "Bash(npm run *)",
+      "Bash(vercel deploy *)",
+      "Bash(vercel alias *)",
+      "Bash(awk '{print $2}')",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" https://thewayapp.vercel.app/)",
+      "Bash(curl -s https://thewayapp.vercel.app/)",
+      "Bash(curl -s -X POST https://thewayapp.vercel.app/api/tts -H \"Content-Type: application/json\" -d '{\"text\":\"From memory now.\",\"languageCode\":\"en\"}' -o /tmp/v.mp3 -w \"HTTP %{http_code}, type=%{content_type}\\\\n\")",
+      "Bash(rm -f /tmp/v.mp3)"
+    ]
+  }
+}
