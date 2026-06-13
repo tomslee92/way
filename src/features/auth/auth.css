@@ -53,6 +53,87 @@
   color: var(--secondary);
 }
 
+/* — OAuth providers — a DELIBERATE, scoped exception to DESIGN §0: brand color
+   lives ONLY on these buttons; the rest of the app stays strict B&W. Shape stays
+   in-system (radius 0). — */
+.oauth {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s3);
+  margin-bottom: var(--s5);
+}
+
+.oauth__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s2);
+  width: 100%;
+  min-height: 46px;
+  padding: var(--s3) var(--s4);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter var(--hover) var(--ease);
+}
+
+.oauth__btn:hover {
+  filter: brightness(0.97);
+}
+
+.oauth__btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.oauth__icon {
+  flex-shrink: 0;
+}
+
+.oauth__btn--google {
+  background: #fff;
+  color: #1f1f1f;
+  border-color: #747775;
+}
+
+.oauth__btn--apple {
+  background: #000;
+  color: #fff;
+}
+
+.oauth__btn--kakao {
+  background: #fee500;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+/* "or" divider between OAuth and the magic link */
+.auth__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-bottom: var(--s5);
+}
+
+.auth__divider::before,
+.auth__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--hair);
+}
+
+.auth__divider span {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .auth__input {
   width: 100%;
   font-family: var(--sans);

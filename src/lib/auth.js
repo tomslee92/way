@@ -25,6 +25,16 @@ export async function sendMagicLink(email) {
   if (error) throw error;
 }
 
+// OAuth sign-in (Google / Apple / Kakao). Redirects the browser to the provider
+// and back to this origin, where the client detects the session — same post-auth
+// path as the magic link. NOTE: each provider must be configured in the Supabase
+// dashboard (client id/secret + the origin allowlisted) before it works.
+export async function signInWithProvider(provider) {
+  const redirectTo = typeof window !== 'undefined' ? window.location.origin : undefined;
+  const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } });
+  if (error) throw error;
+}
+
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
