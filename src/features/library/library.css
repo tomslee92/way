@@ -391,6 +391,107 @@
   max-width: var(--measure);
 }
 
+/* — Read it in context (§4): a quiet reading detour. Context only — never
+   connections. The paragraph is the focus; the questions sit quieter beneath. */
+.context {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-pad);
+  max-width: var(--page);
+  margin: 0 auto;
+}
+
+.context__intro {
+  /* mirrors .t-body (§2) */
+  margin: var(--s7) 0 var(--s6);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--secondary);
+  max-width: var(--measure);
+}
+
+.context__ref {
+  /* mirrors .t-ref (§2) — not uppercased (§9) */
+  margin: 0 0 var(--s3);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.context__text {
+  /* mirrors .t-verse (§2): the surrounding paragraph, left-aligned reading measure */
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+  max-width: var(--measure);
+}
+
+[lang='ko'] .context__text {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+/* method questions — the user does the connecting; quieter than the Scripture */
+.context__method {
+  margin-top: var(--s8);
+  max-width: var(--measure);
+}
+
+.context__ask {
+  /* mirrors .t-eyebrow (§2) */
+  margin: 0 0 var(--s3);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+[lang='ko'] .context__ask {
+  letter-spacing: 0;
+}
+
+.context__questions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context__question {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--secondary);
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--hair-soft);
+}
+
+.context__questions li:last-child {
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+[lang='ko'] .context__question {
+  font-size: 17px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.context__note {
+  margin: var(--s7) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lib-row,
   .lib-item__open {

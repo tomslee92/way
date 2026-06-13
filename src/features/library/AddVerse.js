@@ -6,6 +6,7 @@ import {
   listChapters,
   listVerses,
 } from '../../lib/bible.js';
+import ContextDoor from './ContextDoor.js';
 import './library.css';
 
 // Add a verse (library-spec §6). Two entry paths into the same memorization
@@ -23,6 +24,7 @@ const T = {
     invite: 'Find a verse to carry. Search a reference like John 8:58, or browse the books.',
     memorize: 'Memorize',
     save: 'Save',
+    context: 'Read it in context',
     back: 'Back',
     looking: 'Looking…',
     empty: 'No matches yet. Try a reference like John 8:58.',
@@ -36,6 +38,7 @@ const T = {
     invite: '간직할 구절을 찾아보세요. 요한복음 8:58처럼 검색하거나, 성경을 펴서 찾아보세요.',
     memorize: '암송',
     save: '저장',
+    context: '맥락 속에서 읽기',
     back: '뒤로',
     looking: '찾는 중…',
     empty: '아직 결과가 없어요. 요한복음 8:58처럼 검색해 보세요.',
@@ -79,6 +82,7 @@ export default function AddVerse({ language = 'en', onMemorize, onSave, onExit }
   const [browseLoading, setBrowseLoading] = useState(false);
 
   const [selected, setSelected] = useState(null);
+  const [showContext, setShowContext] = useState(false);
   const [verseLoading, setVerseLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -88,6 +92,7 @@ export default function AddVerse({ language = 'en', onMemorize, onSave, onExit }
     setSearched(false);
     setQuery('');
     setSelected(null);
+    setShowContext(false);
     setBooks([]);
     setBookSel(null);
     setChapters([]);
@@ -177,6 +182,7 @@ export default function AddVerse({ language = 'en', onMemorize, onSave, onExit }
     try {
       const v = await lookupScripture(SCRIPTURE_LANG, passageId);
       setSelected(v);
+      setShowContext(false);
     } catch (e) {
       setError(e.code || 'lookup_failed');
     } finally {
@@ -203,6 +209,15 @@ export default function AddVerse({ language = 'en', onMemorize, onSave, onExit }
     return h('p', { className: 'addverse__note' }, text);
   }
 
+  // — the §4 context door (a detour off the preview, returns to the verse) —
+  if (selected && showContext) {
+    return h(ContextDoor, {
+      language,
+      verse: selected,
+      onBack: () => setShowContext(false),
+    });
+  }
+
   // — the verse preview (landed) —
   if (selected) {
     return h(
@@ -213,7 +228,14 @@ export default function AddVerse({ language = 'en', onMemorize, onSave, onExit }
         { className: 'addverse__bar' },
         h(
           'button',
-          { className: 'btn btn--quiet', type: 'button', onClick: () => setSelected(null) },
+          {
+            className: 'btn btn--quiet',
+            type: 'button',
+            onClick: () => {
+              setSelected(null);
+              setShowContext(false);
+            },
+          },
           t.back
         ),
         h('p', { className: 'addverse__kicker' }, t.add.toUpperCase()),
@@ -231,6 +253,11 @@ export default function AddVerse({ language = 'en', onMemorize, onSave, onExit }
             'button',
             { className: 'btn btn--primary', type: 'button', onClick: () => onMemorize(selected) },
             t.memorize
+          ),
+          h(
+            'button',
+            { className: 'btn btn--quiet', type: 'button', onClick: () => setShowContext(true) },
+            t.context
           ),
           h(
             'button',

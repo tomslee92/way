@@ -138,11 +138,41 @@ async function esvVerses(chapter) {
   return { verses };
 }
 
+// "Read it in context" (§4): the verse's surrounding paragraph — never other
+// verses or connections. A ±3-verse window approximates the paragraph (the ESV
+// API has no paragraph-of-verse endpoint); ESV clamps the upper bound to the
+// chapter, we clamp the lower to verse 1.
+function parseRef(id) {
+  if (id.includes(':')) {
+    const m = id.match(/^(.+?)\s+(\d+):(\d+)$/);
+    if (!m) throw httpError(400, 'bad_ref');
+    return { book: m[1], chapter: Number(m[2]), verse: Number(m[3]), single: false };
+  }
+  const m = id.match(/^(.+?)\s+(\d+)$/); // single-chapter book, e.g. "Jude 5"
+  if (!m) throw httpError(400, 'bad_ref');
+  return { book: m[1], verse: Number(m[2]), single: true };
+}
+
+async function esvContext(id) {
+  const p = parseRef(id);
+  const lo = Math.max(1, p.verse - 3);
+  const hi = p.verse + 3;
+  const span = lo === hi ? `${lo}` : `${lo}-${hi}`;
+  const range = p.single ? `${p.book} ${span}` : `${p.book} ${p.chapter}:${span}`;
+  const d = await esvText(range, { 'include-verse-numbers': 'true' });
+  const text = ((d.passages && d.passages[0]) || '').trim();
+  if (!d.canonical || !text) throw httpError(404, 'not_found');
+  return { reference: d.canonical, text, passageId: id };
+}
+
 async function dispatchEn(kind, { q, id, book, chapter }) {
   switch (kind) {
     case 'lookup':
       if (!id) throw httpError(400, 'missing_id');
       return { out: await esvLookup(id), text: true };
+    case 'context':
+      if (!id) throw httpError(400, 'missing_id');
+      return { out: await esvContext(id), text: true };
     case 'search':
       if (!q) throw httpError(400, 'missing_q');
       return { out: await esvSearch(q), text: true };

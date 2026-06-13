@@ -44,6 +44,12 @@ export function lookupScripture(language, passageId) {
   return call({ lang: language, kind: 'lookup', id: passageId });
 }
 
+// "Read it in context" (§4): the verse's surrounding paragraph (verse numbers
+// included) → { reference, text, passageId }. Context only — never connections.
+export function fetchContext(language, passageId) {
+  return call({ lang: language, kind: 'context', id: passageId });
+}
+
 // Browse: books → chapters → verses. Each returns ids to pass to the next call.
 export function listBooks(language) {
   return call({ lang: language, kind: 'books' });
