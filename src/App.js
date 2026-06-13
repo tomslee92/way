@@ -1,11 +1,13 @@
-import { createElement as h, useState } from 'react';
+import { createElement as h, useState, useEffect } from 'react';
 import MemorizationSession from './features/memorization/MemorizationSession.js';
 import TopicPicker from './features/curriculum/TopicPicker.js';
 import AddVerse from './features/library/AddVerse.js';
 import LibraryView from './features/library/LibraryView.js';
+import SignIn from './features/auth/SignIn.js';
 import { buildPassage, buildPassageFromText } from './data/personalLibrary.js';
 import { addVerse, setMemorizing, markRecalled } from './lib/library.js';
 import { lookupScripture, languageFor } from './lib/bible.js';
+import { getSession, onAuthChange, signOut } from './lib/auth.js';
 
 // Views: landing → picker (curated topics) | add (find a verse) | library
 // (verses you carry) → session. The session returns to wherever it was opened.
@@ -16,10 +18,49 @@ export default function App() {
   const [startIndex, setStartIndex] = useState(0);
   const [returnTo, setReturnTo] = useState('picker');
   const [reviewId, setReviewId] = useState(null); // set when a session is a §3 review
+  const [session, setSession] = useState(undefined); // undefined = still loading
 
-  // Persist a freshly-found personal verse. Best-effort: the library is
-  // auth-gated (RLS) and sign-in isn't wired yet, so a failure here must never
-  // block memorizing — the data layer lights up once auth lands.
+  // Track the auth session. A magic-link return establishes it on load.
+  useEffect(() => {
+    let alive = true;
+    getSession().then((s) => alive && setSession(s));
+    const unsub = onAuthChange(setSession);
+    return () => {
+      alive = false;
+      unsub();
+    };
+  }, []);
+
+  // After signing in, go where the user was headed (remembered across the
+  // magic-link round-trip via sessionStorage).
+  useEffect(() => {
+    if (!session) return;
+    const pending = sessionStorage.getItem('way:pending');
+    if (pending) {
+      sessionStorage.removeItem('way:pending');
+      setView(pending);
+    }
+  }, [session]);
+
+  // The personal library is gated; the curated experience stays open.
+  function requireAuth(target) {
+    if (session) {
+      setView(target);
+      return;
+    }
+    sessionStorage.setItem('way:pending', target);
+    setView('signin');
+  }
+
+  function handleSignOut() {
+    signOut().catch(() => {});
+    sessionStorage.removeItem('way:pending');
+    setView('landing');
+  }
+
+  // Persist a freshly-found personal verse. Best-effort: writes are RLS-gated
+  // and also need the migration applied, so a failure here must never block
+  // memorizing — the verse is still memorizable in the moment.
   async function persist(verse, memorizing) {
     try {
       const row = await addVerse({
@@ -87,7 +128,18 @@ export default function App() {
       onAdd: () => setView('add'),
       onMemorize: (item) => openLibraryItem(item, false),
       onReview: (item) => openLibraryItem(item, true),
+      onSignOut: handleSignOut,
       onExit: () => setView('landing'),
+    });
+  }
+
+  if (view === 'signin') {
+    return h(SignIn, {
+      language,
+      onCancel: () => {
+        sessionStorage.removeItem('way:pending');
+        setView('landing');
+      },
     });
   }
 
@@ -128,12 +180,12 @@ export default function App() {
       ),
       h(
         'button',
-        { className: 'btn btn--quiet way-add', type: 'button', onClick: () => setView('add') },
+        { className: 'btn btn--quiet way-add', type: 'button', onClick: () => requireAuth('add') },
         'Add a verse'
       ),
       h(
         'button',
-        { className: 'btn btn--quiet way-add', type: 'button', onClick: () => setView('library') },
+        { className: 'btn btn--quiet way-add', type: 'button', onClick: () => requireAuth('library') },
         'Library'
       ),
       h('p', { className: 'way-rhema' }, 'Coached by Rhema (ῥῆμα) — the spoken Word.')

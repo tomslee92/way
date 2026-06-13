@@ -1,0 +1,96 @@
+/* auth.css — sign in. Strict tonal B&W, typography-led. Consumes tokens.css +
+   type.css. Quiet and centered, like the landing. */
+
+.auth {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: var(--s9) var(--page-pad);
+}
+
+.auth__box {
+  width: 100%;
+  max-width: var(--measure);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.auth__kicker {
+  /* mirrors .t-eyebrow (§2) */
+  margin: 0 0 var(--s7);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.auth__title {
+  /* mirrors .t-section (§2) */
+  margin: 0 0 var(--s4);
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+[lang='ko'] .auth__title {
+  font-size: 28px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.auth__invite {
+  /* mirrors .t-body (§2) */
+  margin: 0 0 var(--s6);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--secondary);
+}
+
+.auth__input {
+  width: 100%;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--raise);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  padding: var(--s3) var(--s4);
+  min-height: 44px;
+  text-align: center;
+  margin-bottom: var(--s4);
+}
+
+.auth__input::placeholder {
+  color: var(--faint);
+}
+
+.auth__input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.auth__error {
+  /* mirrors .t-coach (§2) — plain, says what to do (§9) */
+  margin: 0 0 var(--s4);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* the one primary, centered */
+.auth__send {
+  align-self: center;
+}
+
+.auth__cancel {
+  align-self: center;
+  margin-top: var(--s4);
+}

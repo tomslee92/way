@@ -19,6 +19,7 @@ const T = {
   en: {
     title: 'Your library',
     add: 'Add a verse',
+    signout: 'Sign out',
     declare: 'Memorized',
     moveback: 'Move to memorizing',
     back: 'Back',
@@ -33,6 +34,7 @@ const T = {
   ko: {
     title: '내 서재',
     add: '구절 추가',
+    signout: '로그아웃',
     declare: '암송 완료',
     moveback: '암송 중으로 옮기기',
     back: '뒤로',
@@ -46,7 +48,14 @@ const T = {
   },
 };
 
-export default function LibraryView({ language = 'en', onMemorize, onReview, onAdd, onExit }) {
+export default function LibraryView({
+  language = 'en',
+  onMemorize,
+  onReview,
+  onAdd,
+  onSignOut,
+  onExit,
+}) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
 
@@ -222,7 +231,9 @@ export default function LibraryView({ language = 'en', onMemorize, onReview, onA
       { className: 'library__bar' },
       h('button', { className: 'btn btn--quiet', type: 'button', onClick: onExit }, t.back),
       h('p', { className: 'library__kicker' }, 'Way'),
-      h('span', { className: 'library__spacer' })
+      onSignOut
+        ? h('button', { className: 'btn btn--quiet', type: 'button', onClick: onSignOut }, t.signout)
+        : h('span', { className: 'library__spacer' })
     ),
     h('h1', { className: 'library__title' }, t.title),
     invite
