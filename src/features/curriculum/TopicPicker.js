@@ -9,7 +9,7 @@ export default function TopicPicker({ language = 'en', onLanguage, onSelect, onE
 
   return h(
     'section',
-    { className: 'picker' },
+    { className: 'picker', lang },
     h(
       'header',
       { className: 'picker__bar' },

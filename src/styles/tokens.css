@@ -1,0 +1,45 @@
+/* tokens.css — Way design tokens (source of truth: DESIGN.md §1–3, §7).
+   Strict tonal black & white. No chroma, anywhere. Every later screen
+   inherits this one system; do not introduce raw hex/px outside here. */
+
+:root {
+  /* — Color (§1) — strict tonal, no accent ever — */
+  --paper: #f6f5f2; /* cool bone — app background */
+  --raise: #fcfcfb; /* lifted card surface */
+  --ink: #16181d; /* blue-black — primary text, fills, buttons */
+  --secondary: #4a4d53; /* body text on paper that must stay legible */
+  --muted: #6e7178; /* labels, refs, captions, secondary UI */
+  --faint: #9a9ca1; /* inactive UI, blank-rule strokes, placeholders */
+  --fill: #e7e6e2; /* ruled-blank background tint */
+  --hair: rgba(22, 24, 29, 0.14); /* standard hairline */
+  --hair-soft: rgba(22, 24, 29, 0.08); /* whisper divider */
+
+  /* — Type families (§2) — two families do all the work — */
+  --serif: 'EB Garamond', 'Noto Serif KR', Georgia, serif; /* Scripture + display */
+  --serif-kr: 'Noto Serif KR', 'EB Garamond', serif; /* KO scripture */
+  --sans: 'Inter', system-ui, -apple-system, sans-serif; /* all UI chrome */
+
+  /* — Spacing (§3) — 8px rhythm with editorial half-steps — */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 22px;
+  --s6: 30px;
+  --s7: 44px;
+  --s8: 64px;
+  --s9: 76px;
+
+  /* — Layout (§3) — */
+  --page: 680px; /* centered column max */
+  --page-pad: 28px; /* → 20px below 480 (set per screen) */
+  --measure: 540px; /* Scripture reading measure cap */
+  --radius: 0; /* letterpress, not soft UI — radius 0 everywhere */
+
+  /* — Motion (§7) — animate only fade/view-in/hover/orb — */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --fade-word: 550ms; /* dissolve — reads as recollection */
+  --view-in: 500ms; /* per-view fade+rise */
+  --hover: 200ms; /* lifts, color shifts */
+  --orb: 4600ms; /* breathe/ring loop */
+}

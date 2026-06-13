@@ -190,7 +190,7 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit }
 
   return h(
     'section',
-    { className: 'session' },
+    { className: 'session', lang },
     h(
       'header',
       { className: 'session__bar' },

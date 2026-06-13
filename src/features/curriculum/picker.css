@@ -1,11 +1,13 @@
-/* Topic / verse picker — strict black & white, typography-led. */
+/* picker.css — topic / verse picker. Strict tonal B&W, typography-led.
+   Consumes tokens.css + type.css. Quiet everywhere — the verse list is a
+   table of contents, not a set of cards. */
 
 .picker {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  padding: clamp(1rem, 4vw, 2.5rem);
-  max-width: 44rem;
+  padding: var(--page-pad);
+  max-width: var(--page);
   margin: 0 auto;
 }
 
@@ -13,69 +15,84 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--s4);
 }
 
 .picker__kicker {
+  /* mirrors .t-eyebrow (§2) */
   margin: 0;
-  font-family: var(--way-sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.4em;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--way-muted);
+  color: var(--muted);
 }
 
 .picker__spacer {
-  min-width: 3.5rem;
+  min-width: 56px;
 }
 
-/* language toggle */
+/* — language toggle — hairline, radius 0 — */
 .langtoggle {
   display: inline-flex;
-  border: 1px solid var(--way-line, #1c1c1c);
-  border-radius: 999px;
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
 .langtoggle__opt {
-  font-family: var(--way-sans);
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   background: transparent;
-  color: var(--way-muted);
+  color: var(--muted);
   border: none;
-  padding: 0.4rem 0.85rem;
+  padding: 10px 14px;
+  min-height: 44px;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition: background var(--hover) var(--ease), color var(--hover) var(--ease);
 }
 
 .langtoggle__opt[data-on='true'] {
-  background: var(--way-ink);
-  color: #000;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 .picker__title {
-  font-family: var(--way-serif);
-  font-weight: 400;
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  /* mirrors .t-section (§2), centered display moment */
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 30px;
   line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--ink);
   text-align: center;
-  margin: clamp(2rem, 7vh, 4rem) 0 clamp(2rem, 6vh, 3.5rem);
+  margin: var(--s8) 0 var(--s7);
+}
+
+[lang='ko'] .picker__title {
+  font-size: 28px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
 }
 
 .picker__topics {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: var(--s8);
 }
 
 .topic__name {
-  font-family: var(--way-sans);
-  font-size: 0.78rem;
+  /* mirrors .t-eyebrow (§2) */
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--way-muted);
-  margin: 0 0 0.9rem;
+  color: var(--muted);
+  margin: 0 0 var(--s3);
 }
 
 .topic__verses {
@@ -91,32 +108,56 @@
   text-align: left;
   background: transparent;
   border: none;
-  border-top: 1px solid var(--way-line, #1c1c1c);
-  color: var(--way-ink);
-  padding: 1.1rem 0.25rem;
+  border-top: 1px solid var(--hair-soft);
+  color: var(--ink);
+  padding: var(--s4) var(--s1);
+  min-height: 44px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  transition: padding-left 0.2s ease, background 0.2s ease;
+  gap: var(--s1);
+  transition: padding-left var(--hover) var(--ease);
 }
 
 .topic__verses li:last-child .verse {
-  border-bottom: 1px solid var(--way-line, #1c1c1c);
+  border-bottom: 1px solid var(--hair-soft);
 }
 
+/* quiet hover — an editorial indent, no fill */
 .verse:hover {
-  padding-left: 1rem;
-  background: var(--way-surface);
+  padding-left: var(--s3);
 }
 
 .verse__ref {
-  font-family: var(--way-serif);
-  font-size: 1.25rem;
+  /* mirrors .t-verse (§2) */
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+[lang='ko'] .verse__ref {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
 }
 
 .verse__peek {
-  font-family: var(--way-sans);
-  font-size: 0.85rem;
-  color: var(--way-muted);
+  /* mirrors .t-coach (§2) */
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .verse {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .picker {
+    padding: 20px;
+  }
 }
