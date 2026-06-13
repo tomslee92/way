@@ -135,7 +135,16 @@ Run locally: `npm install` → `cp .env.example .env.local` (fill keys) →
 `npm run dev` (http://localhost:5173). `npm run dev` serves `/api/tts` via Vite
 middleware; for `/api/bible` locally use `vercel dev`.
 
-Deployed on Vercel (project `way`): production at https://thewayapp.vercel.app.
-Server-only keys are set in Vercel for the Production environment; add them to
-Preview too (with a git branch) before relying on preview deploys. Redeploy with
+Deployed on Vercel (project `way`): **production at https://wayverse.vercel.app**.
+
+**Backend wired (2026-06-14):** Supabase project configured (`VITE_SUPABASE_URL`
++ publishable key in Vercel Production), migrations `0001`+`0002` applied, auth
+redirect URLs allowlisted (magic link works); `ESV_API_KEY` set in Vercel
+(English Scripture live). Magic-link sign-in + personal library + reviews +
+profile/onboarding work in production. Still pending: OAuth providers
+(Google/Apple/Kakao — optional) and hand-verification of the curated 개역개정
+Korean seed text. See `SETUP.md` for the full state.
+
+Server-only keys live in the Vercel Production environment; add them to Preview
+too (with a git branch) before relying on preview deploys. Redeploy with
 `vercel deploy --prod`.
