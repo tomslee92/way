@@ -186,14 +186,207 @@
   margin-top: var(--s7);
 }
 
+/* — Library view (§2) — three states, the dot is the whole indicator (§6) — */
+.library {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-pad);
+  max-width: var(--page);
+  margin: 0 auto;
+}
+
+.library__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.library__kicker {
+  /* mirrors .t-eyebrow (§2) — brand mark, consistent with picker/landing */
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.library__title {
+  /* mirrors .t-section (§2), centered */
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-align: center;
+  margin: var(--s8) 0 var(--s6);
+}
+
+[lang='ko'] .library__title {
+  font-size: 28px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+/* the single primary action, centered */
+.library__add {
+  display: block;
+  margin: 0 auto var(--s7);
+}
+
+/* segment filter — quiet; current gains ink + a hairline underline */
+.lib-filter {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--s4);
+  margin-bottom: var(--s5);
+}
+
+.lib-filter .btn--quiet[data-on='true'] {
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+/* — rows — */
+.lib-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.lib-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  border-top: 1px solid var(--hair-soft);
+}
+
+.lib-items .lib-item:last-child {
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+.lib-item__open {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  padding: var(--s4) var(--s1);
+  min-height: 44px;
+  transition: padding-left var(--hover) var(--ease);
+}
+
+.lib-item__open:hover {
+  padding-left: var(--s3);
+}
+
+.lib-item__open:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.lib-item__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+.lib-item__ref {
+  /* mirrors .t-verse (§2) */
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+[lang='ko'] .lib-item__ref {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.lib-item__status {
+  /* mirrors .t-eyebrow (§2) — the tiny label paired with the dot (§6) */
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+[lang='ko'] .lib-item__status {
+  letter-spacing: 0;
+}
+
+.lib-item__actions {
+  display: flex;
+  gap: var(--s3);
+  flex-shrink: 0;
+}
+
+/* — status dots (§6): the entire status indicator (circular by nature) — */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.status-dot[data-status='saved'] {
+  border: 1px solid var(--faint);
+  background: transparent;
+}
+
+.status-dot[data-status='memorizing'] {
+  border: 1px solid var(--ink);
+  background: transparent;
+}
+
+.status-dot[data-status='memorized'] {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+}
+
+/* — the no-demotion line (§2): always present beneath the list — */
+.library__footer {
+  margin: var(--s8) 0 0;
+  padding-top: var(--s5);
+  border-top: 1px solid var(--hair-soft);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+.library__note {
+  margin: var(--s7) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .lib-row {
+  .lib-row,
+  .lib-item__open {
     transition: none;
   }
 }
 
 @media (max-width: 480px) {
-  .addverse {
+  .addverse,
+  .library {
     padding: 20px;
   }
 }

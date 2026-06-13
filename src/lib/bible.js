@@ -10,6 +10,13 @@ export function translationFor(language) {
   return TRANSLATIONS[language === 'ko' ? 'ko' : 'en'];
 }
 
+// Reverse of translationFor — a stored library item knows its translation but
+// not its language; this routes its re-fetch to the right provider.
+const LANGUAGE_BY_TRANSLATION = { ESV: 'en', 개역개정: 'ko' };
+export function languageFor(translation) {
+  return LANGUAGE_BY_TRANSLATION[translation] || 'en';
+}
+
 async function call(params) {
   const res = await fetch(`/api/bible?${new URLSearchParams(params)}`);
   let data = {};
