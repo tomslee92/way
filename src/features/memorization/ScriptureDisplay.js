@@ -8,7 +8,9 @@ import { tokenizeStage, tokenizeRung } from './fading.js';
 // matches the visual state (Rhema's voice carries the words).
 //
 // Pass `rung` (method-spec cue ladder) or `stage` (legacy 4-stage fade).
-export default function ScriptureDisplay({ text, stage, rung }) {
+// `revealed` (rung path) overrides every word to full — the same elements
+// transition cue→full in place (a gentle reveal, not a remount).
+export default function ScriptureDisplay({ text, stage, rung, revealed }) {
   // — cue ladder: each word renders its initial + the rest separately so the
   //   first-letter rung can show just the initial while keeping full width —
   if (rung != null) {
@@ -20,19 +22,20 @@ export default function ScriptureDisplay({ text, stage, rung }) {
         h(
           'p',
           { className: 'scripture__line', key: lineIndex },
-          tokens.map((tok, tokenIndex) =>
-            h(
+          tokens.map((tok, tokenIndex) => {
+            const mode = revealed ? 'full' : tok.mode;
+            return h(
               'span',
               {
                 className: 'scripture__word',
                 key: tokenIndex,
-                'data-mode': tok.mode,
-                'aria-hidden': tok.mode === 'shape' || tok.mode === 'gone' ? 'true' : undefined,
+                'data-mode': mode,
+                'aria-hidden': mode === 'shape' || mode === 'gone' ? 'true' : undefined,
               },
               h('span', { className: 'w-ini' }, tok.initial),
               tok.rest ? h('span', { className: 'w-rest' }, tok.rest) : null
-            )
-          )
+            );
+          })
         )
       )
     );

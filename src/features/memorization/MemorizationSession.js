@@ -1,203 +1,151 @@
-import { createElement as h, useEffect, useRef, useState } from 'react';
-import { FadingStage, STAGES } from './fading.js';
-import { assessRecall } from './coaching.js';
-import { rhemaScript, statusLabels, pick } from './rhemaScript.js';
+import { createElement as h, useState, useEffect } from 'react';
+import { Rung, RUNGS } from './fading.js';
 import { useRhema } from './useRhema.js';
-import { useSpeechRecognition } from './useSpeechRecognition.js';
 import RhemaIndicator from './RhemaIndicator.js';
 import ScriptureDisplay from './ScriptureDisplay.js';
 import './session.css';
 
-// Hands-free, adaptive, continuous flow:
-//   per stage: speak → listen → (mastered ? advance : re-read + loop)
-//   per verse: stages 1→4, then flow straight into the next verse in the queue.
-// Progress is coaching, not grading — a stage loops with help until recall is
-// solid, with a cap so the user is never trapped, and a Skip if they choose.
-const PHASE = {
-  intro: 'intro',
-  speaking: 'speaking',
-  ready: 'ready', // manual fallback when speech is unsupported
-  listening: 'listening',
-  processing: 'processing',
-  feedback: 'feedback',
-  complete: 'complete',
+// The memorization session (method-spec). Self-paced silent recall against a
+// six-rung cue ladder: cue → attempt (silent, never captured) → reveal → self-
+// check (Not yet / Almost / Yes). The self-check drives the rung — Yes climbs,
+// Almost repeats, Not yet drops — and (Phase 3) feeds scheduling, never a score.
+// No ASR; voice is offered ("Hear it"), never imposed. Encoding rungs (Absorb,
+// Trace) just read through; retrieval rungs (3–6) run the cue→reveal→check loop.
+//
+// Props unchanged from the old flow: passages, startIndex, onExit, review,
+// onComplete. `review` enters straight at Free recall (a recall test).
+
+const T = {
+  en: {
+    encode: 'Read it through.',
+    attempt: 'Bring it to mind — then reveal.',
+    selfcheck: 'Did it come to mind?',
+    continue: 'Continue',
+    hear: 'Hear it',
+    reveal: 'Reveal',
+    showMore: 'Show more',
+    notYet: 'Not yet',
+    almost: 'Almost',
+    yes: 'Yes',
+    end: 'End',
+    done: 'Done',
+  },
+  ko: {
+    encode: '한 번 읽어 보세요.',
+    attempt: '마음에 떠올린 뒤, 확인해 보세요.',
+    selfcheck: '마음에 떠올랐나요?',
+    continue: '계속',
+    hear: '들어보기',
+    reveal: '확인',
+    showMore: '한 단계 쉽게',
+    notYet: '아직',
+    almost: '거의',
+    yes: '네',
+    end: '종료',
+    done: '완료',
+  },
 };
 
-const MAX_STAGE_ATTEMPTS = 4;
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-export default function MemorizationSession({
-  passages,
-  startIndex = 0,
-  onExit,
-  review = false, // a §3 review: start at Stage 4 (recite from memory) only
-  onComplete, // fired once when the flow reaches PHASE.complete (review → markRecalled)
-}) {
-  // A review enters at the final stage; a fresh session walks all four.
-  const firstStage = review ? FadingStage.BLANK : FadingStage.FULL;
-  const [index, setIndex] = useState(startIndex);
-  const [stage, setStage] = useState(firstStage);
-  const [phase, setPhase] = useState(PHASE.intro);
-
-  const passage = passages[index];
-  // A queue is built in one language, so these are constant across it.
+export default function MemorizationSession({ passages, startIndex = 0, onExit, review = false, onComplete }) {
   const lang = passages[0].language === 'ko' ? 'ko' : 'en';
-  const script = rhemaScript[lang];
-  const labels = statusLabels[lang];
-  const recLang = lang === 'ko' ? 'ko-KR' : 'en-US';
-  const reference = lang === 'ko' ? passage.referenceKo : passage.reference;
+  const t = T[lang];
+  const startRung = review ? Rung.FREE_RECALL : Rung.ABSORB;
+
+  const [index, setIndex] = useState(startIndex);
+  const [rung, setRung] = useState(startRung);
+  const [phase, setPhase] = useState('cue'); // cue | reveal | complete
 
   const rhema = useRhema();
-  const speech = useSpeechRecognition();
-  const startedRef = useRef(false);
-  const skipRef = useRef(false);
-  const aliveRef = useRef(true); // false once the session ends/unmounts
 
-  // Stop audio + halt the in-flight async flow when the session unmounts.
-  useEffect(() => {
-    return () => {
-      aliveRef.current = false;
-      rhema.stop();
-      speech.stop();
-    };
-    // stop fns are stable (useCallback); run cleanup only on unmount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Stop the voice when the session unmounts.
+  useEffect(() => () => rhema.stop(), [rhema]);
 
-  // Truly end: stop the voice, halt the loop, leave.
-  const endSession = () => {
-    aliveRef.current = false;
+  const passage = passages[index];
+  const reference = lang === 'ko' ? passage.referenceKo : passage.reference;
+  const isEncoding = rung <= Rung.TRACE;
+  const rungMeta = RUNGS.find((r) => r.rung === rung);
+
+  function hearIt() {
+    rhema.unlock();
+    rhema.speak(passage.text.replace(/\n/g, ' '), lang);
+  }
+
+  function nextRung() {
     rhema.stop();
-    speech.stop();
-    onExit();
-  };
+    setRung((r) => Math.min(Rung.FREE_RECALL, r + 1));
+    setPhase('cue');
+  }
 
-  const read = (p) => rhema.speak(p.text.replace(/\n/g, ' '), lang);
+  function dropRung() {
+    rhema.stop();
+    setRung((r) => Math.max(Rung.ABSORB, r - 1));
+    setPhase('cue');
+  }
 
-  // Move past the current stage: next stage, next verse, or finish.
-  const afterStage = async (p, i, n) => {
-    if (!aliveRef.current) return;
-    if (n < FadingStage.BLANK) {
-      await runStage(p, i, n + 1, false);
+  // Self-check: Yes climbs (or completes), Almost repeats this rung, Not yet drops.
+  function onYes() {
+    rhema.stop();
+    if (rung < Rung.FREE_RECALL) {
+      setRung((r) => r + 1);
+      setPhase('cue');
       return;
     }
-    if (i + 1 < passages.length) {
-      await rhema.speak(pick(script.continue), lang); // bridge to next verse
-      if (!aliveRef.current) return;
-      await runVerse(i + 1, false);
+    // Free recall held — this verse is carried.
+    if (index + 1 < passages.length) {
+      setIndex(index + 1);
+      setRung(startRung);
+      setPhase('cue');
     } else {
-      await rhema.speak(script.complete, lang);
-      if (!aliveRef.current) return;
-      setPhase(PHASE.complete);
-      // Records that a review happened (time signal only — never status). No-op
-      // for fresh sessions, which don't pass onComplete.
+      setPhase('complete');
       if (onComplete) onComplete();
     }
-  };
+  }
 
-  // Listen, then either advance (held it) or loop this stage with a re-read.
-  const reciteStage = async (p, i, n, attempt) => {
-    if (!aliveRef.current) return;
-    skipRef.current = false;
-    setPhase(PHASE.listening);
-    const transcript = await speech.listen(recLang, { silenceMs: 2500 });
-    if (!aliveRef.current) return;
+  function endSession() {
+    rhema.stop();
+    onExit();
+  }
 
-    setPhase(PHASE.processing);
-    await delay(600); // a brief, deliberate beat — Rhema reflecting
-    if (!aliveRef.current) return;
-    const { mastered } = assessRecall(transcript, p.text);
+  const prompt =
+    phase === 'complete'
+      ? null
+      : phase === 'reveal'
+      ? t.selfcheck
+      : isEncoding
+      ? t.encode
+      : t.attempt;
 
-    setPhase(PHASE.feedback);
-    if (mastered || skipRef.current) {
-      await rhema.speak(
-        pick(skipRef.current ? script.coach.moveOn : script.coach.mastered),
-        lang
+  function renderControls() {
+    if (phase === 'complete') {
+      return h('button', { className: 'btn btn--primary', type: 'button', onClick: endSession }, t.done);
+    }
+    if (phase === 'reveal') {
+      // Equal-weight, strictly B&W — no red/green, no scoring affect (§9).
+      return h(
+        'div',
+        { className: 'selfcheck' },
+        h('button', { className: 'btn btn--quiet', type: 'button', onClick: dropRung }, t.notYet),
+        h('button', { className: 'btn btn--quiet', type: 'button', onClick: () => setPhase('cue') }, t.almost),
+        h('button', { className: 'btn btn--quiet', type: 'button', onClick: onYes }, t.yes)
       );
-      if (!aliveRef.current) return;
-      await afterStage(p, i, n);
-      return;
     }
-    if (attempt >= MAX_STAGE_ATTEMPTS) {
-      await rhema.speak(pick(script.coach.moveOn), lang);
-      if (!aliveRef.current) return;
-      await afterStage(p, i, n);
-      return;
+    if (isEncoding) {
+      return h(
+        'div',
+        { className: 'session__actions' },
+        h('button', { className: 'btn btn--primary', type: 'button', onClick: nextRung }, t.continue),
+        rung === Rung.ABSORB
+          ? h('button', { className: 'btn btn--quiet', type: 'button', onClick: hearIt }, t.hear)
+          : null
+      );
     }
-    // Not yet — encourage, read it again to help, then retry the SAME stage.
-    await rhema.speak(pick(script.coach.again), lang);
-    if (!aliveRef.current) return;
-    await read(p);
-    if (!aliveRef.current) return;
-    await reciteStage(p, i, n, attempt + 1);
-  };
-
-  const runStage = async (p, i, n, withIntro) => {
-    if (!aliveRef.current) return;
-    setStage(n);
-    setPhase(PHASE.speaking);
-    if (withIntro) {
-      await rhema.speak(review ? script.reviewIntro : script.intro, lang);
-      if (!aliveRef.current) return;
-    }
-    await rhema.speak(script.stagePrompt[n], lang);
-    if (!aliveRef.current) return;
-    if (n === FadingStage.FULL) {
-      await read(p);
-      if (!aliveRef.current) return;
-    }
-    if (!speech.supported) {
-      setPhase(PHASE.ready); // manual fallback
-      return;
-    }
-    await reciteStage(p, i, n, 1);
-  };
-
-  const runVerse = async (i, withIntro, fromStage = FadingStage.FULL) => {
-    if (!aliveRef.current) return;
-    setIndex(i);
-    await runStage(passages[i], i, fromStage, withIntro);
-  };
-
-  // First gesture: unlock audio + prime the mic, then run hands-free.
-  const begin = () => {
-    if (startedRef.current) return;
-    startedRef.current = true;
-    rhema.unlock();
-    if (speech.supported) speech.requestPermission();
-    runVerse(startIndex, true, firstStage);
-  };
-
-  // Manual progression when speech recognition is unavailable.
-  const advanceManually = () => afterStage(passage, index, stage);
-
-  // Skip the current stage (advance without it being held).
-  const skipStage = () => {
-    skipRef.current = true;
-    speech.stop();
-  };
-
-  const indicatorState =
-    phase === PHASE.speaking
-      ? 'speaking'
-      : phase === PHASE.listening
-        ? 'listening'
-        : phase === PHASE.processing
-          ? 'processing'
-          : 'idle';
-
-  const statusLabel =
-    phase === PHASE.speaking
-      ? labels.speaking
-      : phase === PHASE.ready
-        ? labels.ready
-        : phase === PHASE.listening
-          ? labels.listening
-          : phase === PHASE.processing
-            ? labels.processing
-            : '';
-
-  const stageMeta = STAGES.find((s) => s.stage === stage);
+    return h(
+      'div',
+      { className: 'session__actions' },
+      h('button', { className: 'btn btn--primary', type: 'button', onClick: () => setPhase('reveal') }, t.reveal),
+      h('button', { className: 'btn btn--quiet', type: 'button', onClick: dropRung }, t.showMore)
+    );
+  }
 
   return h(
     'section',
@@ -205,11 +153,7 @@ export default function MemorizationSession({
     h(
       'header',
       { className: 'session__bar' },
-      h(
-        'button',
-        { className: 'btn btn--quiet', type: 'button', onClick: endSession },
-        lang === 'ko' ? '종료' : 'End'
-      ),
+      h('button', { className: 'btn btn--quiet', type: 'button', onClick: endSession }, t.end),
       h('p', { className: 'session__ref' }, reference),
       h(
         'span',
@@ -218,106 +162,46 @@ export default function MemorizationSession({
       )
     ),
 
+    // rung indicator — replaces the I–IV stage rail (same restrained treatment)
     h(
       'div',
-      { className: 'stages', role: 'progressbar', 'aria-valuenow': stage, 'aria-valuemax': 4 },
-      STAGES.map((s) =>
+      { className: 'stages', role: 'progressbar', 'aria-valuenow': rung, 'aria-valuemax': 6 },
+      RUNGS.map((r) =>
         h('span', {
-          key: s.stage,
+          key: r.rung,
           className: 'stages__mark',
-          'data-active': s.stage === stage ? 'true' : undefined,
-          'data-done': s.stage < stage ? 'true' : undefined,
+          'data-active': r.rung === rung ? 'true' : undefined,
+          'data-done': r.rung < rung ? 'true' : undefined,
         })
       )
     ),
-    stageMeta ? h('p', { className: 'stages__label' }, stageMeta.label[lang]) : null,
+    phase !== 'complete' && rungMeta
+      ? h('p', { className: 'stages__label' }, rungMeta.label[lang])
+      : null,
 
     h(
       'div',
-      {
-        className: 'session__stage',
-        'data-dim': phase === PHASE.processing ? 'true' : undefined,
-      },
-      phase === PHASE.complete
+      { className: 'session__stage' },
+      phase === 'complete'
         ? h(
             'div',
             { className: 'session__complete' },
             h('p', { className: 'session__complete-ref' }, reference),
             h('p', { className: 'session__complete-text' }, passage.text.replace(/\n/g, ' '))
           )
-        : h(ScriptureDisplay, { text: passage.text, stage, key: `${index}-${stage}` })
+        : h(ScriptureDisplay, { text: passage.text, rung, revealed: phase === 'reveal' })
     ),
 
     h(
       'footer',
       { className: 'session__foot' },
-      phase === PHASE.complete
+      phase === 'complete'
         ? null
-        : h(RhemaIndicator, { state: indicatorState, label: statusLabel }),
-
-      speech.listening && speech.interim
-        ? h('p', { className: 'session__heard' }, speech.interim)
+        : rhema.speaking
+        ? h(RhemaIndicator, { state: 'speaking', label: '' })
         : null,
-
+      prompt ? h('p', { className: 'session__note' }, prompt) : null,
       h('div', { className: 'session__controls' }, renderControls())
     )
   );
-
-  function renderControls() {
-    switch (phase) {
-      case PHASE.intro:
-        return h(
-          'button',
-          { className: 'btn btn--primary', type: 'button', onClick: begin },
-          lang === 'ko' ? '시작하기' : 'Begin'
-        );
-
-      case PHASE.listening:
-        return h(
-          'div',
-          { className: 'session__actions' },
-          h(
-            'button',
-            { className: 'btn btn--quiet', type: 'button', onClick: speech.stop },
-            lang === 'ko' ? '암송 완료' : 'Done reciting'
-          ),
-          h(
-            'button',
-            { className: 'btn btn--quiet', type: 'button', onClick: skipStage },
-            lang === 'ko' ? '건너뛰기' : 'Skip'
-          )
-        );
-
-      case PHASE.ready: // speech unsupported
-        return [
-          h(
-            'p',
-            { className: 'session__note', key: 'note' },
-            lang === 'ko'
-              ? '이 브라우저는 음성 입력을 지원하지 않아요.'
-              : "This browser doesn't support voice input."
-          ),
-          h(
-            'button',
-            {
-              className: 'btn btn--primary',
-              type: 'button',
-              key: 'advance',
-              onClick: advanceManually,
-            },
-            lang === 'ko' ? '다음 단계' : 'Continue'
-          ),
-        ];
-
-      case PHASE.complete:
-        return h(
-          'button',
-          { className: 'btn btn--primary', type: 'button', onClick: endSession },
-          lang === 'ko' ? '다른 구절 선택' : 'Choose another'
-        );
-
-      default:
-        return null;
-    }
-  }
 }

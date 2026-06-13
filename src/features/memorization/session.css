@@ -52,6 +52,14 @@
   align-items: center;
 }
 
+/* self-check — three equal-weight, strictly B&W choices (§9): no red/green */
+.selfcheck {
+  display: flex;
+  gap: var(--s6);
+  align-items: center;
+  justify-content: center;
+}
+
 /* — stage markers — */
 .stages {
   display: flex;
