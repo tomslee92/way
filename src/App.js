@@ -1,13 +1,15 @@
-import { createElement as h, useState, useEffect } from 'react';
+import { createElement as h, useState, useEffect, useRef } from 'react';
 import MemorizationSession from './features/memorization/MemorizationSession.js';
 import TopicPicker from './features/curriculum/TopicPicker.js';
 import AddVerse from './features/library/AddVerse.js';
 import LibraryView from './features/library/LibraryView.js';
 import SignIn from './features/auth/SignIn.js';
+import Onboarding from './features/auth/Onboarding.js';
 import { buildPassage, buildPassageFromText } from './data/personalLibrary.js';
 import { addVerse, setMemorizing, markRecalled, listLibrary } from './lib/library.js';
 import { lookupScripture, languageFor } from './lib/bible.js';
 import { getSession, onAuthChange, signOut } from './lib/auth.js';
+import { getProfile, saveLanguage } from './lib/profile.js';
 import { dueReviews } from './features/library/review.js';
 import ReviewInvitation from './features/library/ReviewInvitation.js';
 
@@ -15,7 +17,15 @@ import ReviewInvitation from './features/library/ReviewInvitation.js';
 // (verses you carry) → session. The session returns to wherever it was opened.
 export default function App() {
   const [view, setView] = useState('landing');
-  const [language, setLanguage] = useState('en');
+  // Language is remembered in localStorage for everyone (the open curated
+  // experience needs no login); the profile syncs it for signed-in users.
+  const [language, setLanguage] = useState(() => {
+    try {
+      return localStorage.getItem('way:language') === 'ko' ? 'ko' : 'en';
+    } catch {
+      return 'en';
+    }
+  });
   const [queue, setQueue] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
   const [returnTo, setReturnTo] = useState('picker');
@@ -23,6 +33,7 @@ export default function App() {
   const [session, setSession] = useState(undefined); // undefined = still loading
   const [dueInvites, setDueInvites] = useState([]);
   const [dismissedInvites, setDismissedInvites] = useState(() => new Set());
+  const profileLoadedRef = useRef(false);
 
   // Track the auth session. A magic-link return establishes it on load.
   useEffect(() => {
@@ -35,15 +46,58 @@ export default function App() {
     };
   }, []);
 
+  // Persist the chosen language: state + localStorage (everyone), and the
+  // profile when signed in. Applying a language *from* the profile uses
+  // setStoredLanguage so we don't write it straight back.
+  function setStoredLanguage(lang) {
+    setLanguage(lang);
+    try {
+      localStorage.setItem('way:language', lang);
+    } catch {
+      /* ignore */
+    }
+  }
+  function applyLanguage(lang) {
+    setStoredLanguage(lang);
+    if (session) saveLanguage(lang).catch(() => {});
+  }
+
   // After signing in, go where the user was headed (remembered across the
-  // magic-link round-trip via sessionStorage).
-  useEffect(() => {
-    if (!session) return;
+  // magic-link round-trip via sessionStorage). No pending → stay put.
+  function consumePending() {
     const pending = sessionStorage.getItem('way:pending');
     if (pending) {
       sessionStorage.removeItem('way:pending');
       setView(pending);
     }
+  }
+
+  // On first sign-in, load the profile once: apply its language and continue,
+  // or (no profile yet) send the user through onboarding. A missing table or
+  // error never traps — proceed on the localStorage language.
+  useEffect(() => {
+    if (!session || profileLoadedRef.current) return undefined;
+    profileLoadedRef.current = true;
+    let alive = true;
+    getProfile()
+      .then((p) => {
+        if (!alive) return;
+        if (p && p.language) {
+          setStoredLanguage(p.language);
+          consumePending();
+        } else {
+          setView('onboarding');
+        }
+      })
+      .catch(() => alive && consumePending());
+    return () => {
+      alive = false;
+    };
+  }, [session]);
+
+  // Reset the once-guard on sign-out.
+  useEffect(() => {
+    if (!session) profileLoadedRef.current = false;
   }, [session]);
 
   // Surface §3 review invitations on the landing for signed-in users. Refetch
@@ -116,7 +170,7 @@ export default function App() {
   if (view === 'picker') {
     return h(TopicPicker, {
       language,
-      onLanguage: setLanguage,
+      onLanguage: applyLanguage,
       onSelect: (verses, idx) =>
         startSession(verses.map((v) => buildPassage(v, language)), 'picker', idx),
       onExit: () => setView('landing'),
@@ -157,6 +211,18 @@ export default function App() {
       onCancel: () => {
         sessionStorage.removeItem('way:pending');
         setView('landing');
+      },
+    });
+  }
+
+  if (view === 'onboarding') {
+    return h(Onboarding, {
+      language,
+      onChoose: (lang) => {
+        applyLanguage(lang);
+        const pending = sessionStorage.getItem('way:pending');
+        sessionStorage.removeItem('way:pending');
+        setView(pending || 'landing');
       },
     });
   }
