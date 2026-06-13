@@ -252,6 +252,72 @@
   margin: 0 auto var(--s7);
 }
 
+/* — §3 review invitation — a quiet card; the page's one primary stays "Add a
+   verse", so the invitation's actions are quiet (optional, declining is free). */
+.review {
+  max-width: var(--measure);
+  margin: 0 auto var(--s7);
+  padding: var(--s5);
+  background: var(--raise);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+}
+
+.review__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.review__eyebrow {
+  /* mirrors .t-eyebrow (§2) */
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+[lang='ko'] .review__eyebrow {
+  letter-spacing: 0;
+}
+
+/* the tap-to-hear orb (live TTS) */
+.review__hear {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.review__line {
+  /* Rhema's voice — serif, warm; slightly under Scripture size (it's UI copy) */
+  margin: var(--s3) 0 var(--s5);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+[lang='ko'] .review__line {
+  font-size: 18px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.review__actions {
+  display: flex;
+  gap: var(--s5);
+  align-items: center;
+}
+
 /* segment filter — quiet; current gains ink + a hairline underline */
 .lib-filter {
   display: flex;

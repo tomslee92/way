@@ -4,7 +4,7 @@ import TopicPicker from './features/curriculum/TopicPicker.js';
 import AddVerse from './features/library/AddVerse.js';
 import LibraryView from './features/library/LibraryView.js';
 import { buildPassage, buildPassageFromText } from './data/personalLibrary.js';
-import { addVerse, setMemorizing } from './lib/library.js';
+import { addVerse, setMemorizing, markRecalled } from './lib/library.js';
 import { lookupScripture, languageFor } from './lib/bible.js';
 
 // Views: landing → picker (curated topics) | add (find a verse) | library
@@ -15,6 +15,7 @@ export default function App() {
   const [queue, setQueue] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
   const [returnTo, setReturnTo] = useState('picker');
+  const [reviewId, setReviewId] = useState(null); // set when a session is a §3 review
 
   // Persist a freshly-found personal verse. Best-effort: the library is
   // auth-gated (RLS) and sign-in isn't wired yet, so a failure here must never
@@ -32,10 +33,11 @@ export default function App() {
     }
   }
 
-  function startSession(passages, from, idx = 0) {
+  function startSession(passages, from, idx = 0, reviewItemId = null) {
     setQueue(passages);
     setStartIndex(idx);
     setReturnTo(from);
+    setReviewId(reviewItemId);
     setView('session');
   }
 
@@ -67,20 +69,24 @@ export default function App() {
   }
 
   if (view === 'library') {
+    // Open a stored verse: re-fetch its verified text live (never stored), then
+    // reuse the session. A review starts at Stage 4 and records markRecalled on
+    // completion (time signal only — never status). Status changes are owned by
+    // LibraryView; the app never demotes.
+    const openLibraryItem = async (item, review) => {
+      try {
+        const lang = languageFor(item.translation);
+        const v = await lookupScripture(lang, item.passage_id);
+        startSession([buildPassageFromText(v)], 'library', 0, review ? item.id : null);
+      } catch (e) {
+        console.warn('[Way] could not open verse:', e?.message || e);
+      }
+    };
     return h(LibraryView, {
       language,
       onAdd: () => setView('add'),
-      // Memorize a stored verse: re-fetch its verified text live (never stored),
-      // then reuse the session. Status changes are owned by LibraryView.
-      onMemorize: async (item) => {
-        try {
-          const lang = languageFor(item.translation);
-          const v = await lookupScripture(lang, item.passage_id);
-          startSession([buildPassageFromText(v)], 'library');
-        } catch (e) {
-          console.warn('[Way] could not open verse:', e?.message || e);
-        }
-      },
+      onMemorize: (item) => openLibraryItem(item, false),
+      onReview: (item) => openLibraryItem(item, true),
       onExit: () => setView('landing'),
     });
   }
@@ -89,6 +95,9 @@ export default function App() {
     return h(MemorizationSession, {
       passages: queue,
       startIndex,
+      review: Boolean(reviewId),
+      // A finished review records that it happened (never a status, never a grade).
+      onComplete: reviewId ? () => markRecalled(reviewId).catch(() => {}) : undefined,
       onExit: () => setView(returnTo),
     });
   }

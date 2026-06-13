@@ -1,5 +1,7 @@
 import { createElement as h, useState, useEffect, useCallback } from 'react';
 import { listLibrary, setMemorizing, declareMemorized } from '../../lib/library.js';
+import { dueReviews } from './review.js';
+import ReviewInvitation from './ReviewInvitation.js';
 import './library.css';
 
 // Library view (library-spec §2). Three honest states — Saved, Memorizing,
@@ -44,7 +46,7 @@ const T = {
   },
 };
 
-export default function LibraryView({ language = 'en', onMemorize, onAdd, onExit }) {
+export default function LibraryView({ language = 'en', onMemorize, onReview, onAdd, onExit }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
 
@@ -53,6 +55,8 @@ export default function LibraryView({ language = 'en', onMemorize, onAdd, onExit
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
   const [busyId, setBusyId] = useState(null);
+  // Dismissed invitations — session-only; declining a review changes nothing (§3).
+  const [dismissed, setDismissed] = useState(() => new Set());
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -206,6 +210,10 @@ export default function LibraryView({ language = 'en', onMemorize, onAdd, onExit
     );
   }
 
+  // Show the most-overdue review invitation that hasn't been dismissed this visit.
+  const dueList = items.length ? dueReviews(items).filter((it) => !dismissed.has(it.id)) : [];
+  const invite = dueList[0];
+
   return h(
     'section',
     { className: 'library view-in', lang },
@@ -217,6 +225,19 @@ export default function LibraryView({ language = 'en', onMemorize, onAdd, onExit
       h('span', { className: 'library__spacer' })
     ),
     h('h1', { className: 'library__title' }, t.title),
+    invite
+      ? h(ReviewInvitation, {
+          item: invite,
+          language,
+          onRevisit: onReview,
+          onDismiss: () =>
+            setDismissed((prev) => {
+              const next = new Set(prev);
+              next.add(invite.id);
+              return next;
+            }),
+        })
+      : null,
     h('button', { className: 'btn btn--primary library__add', type: 'button', onClick: onAdd }, t.add),
     body
   );

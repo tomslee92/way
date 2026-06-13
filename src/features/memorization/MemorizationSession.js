@@ -26,9 +26,17 @@ const PHASE = {
 const MAX_STAGE_ATTEMPTS = 4;
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export default function MemorizationSession({ passages, startIndex = 0, onExit }) {
+export default function MemorizationSession({
+  passages,
+  startIndex = 0,
+  onExit,
+  review = false, // a §3 review: start at Stage 4 (recite from memory) only
+  onComplete, // fired once when the flow reaches PHASE.complete (review → markRecalled)
+}) {
+  // A review enters at the final stage; a fresh session walks all four.
+  const firstStage = review ? FadingStage.BLANK : FadingStage.FULL;
   const [index, setIndex] = useState(startIndex);
-  const [stage, setStage] = useState(FadingStage.FULL);
+  const [stage, setStage] = useState(firstStage);
   const [phase, setPhase] = useState(PHASE.intro);
 
   const passage = passages[index];
@@ -81,6 +89,9 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit }
       await rhema.speak(script.complete, lang);
       if (!aliveRef.current) return;
       setPhase(PHASE.complete);
+      // Records that a review happened (time signal only — never status). No-op
+      // for fresh sessions, which don't pass onComplete.
+      if (onComplete) onComplete();
     }
   };
 
@@ -126,7 +137,7 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit }
     setStage(n);
     setPhase(PHASE.speaking);
     if (withIntro) {
-      await rhema.speak(script.intro, lang);
+      await rhema.speak(review ? script.reviewIntro : script.intro, lang);
       if (!aliveRef.current) return;
     }
     await rhema.speak(script.stagePrompt[n], lang);
@@ -142,10 +153,10 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit }
     await reciteStage(p, i, n, 1);
   };
 
-  const runVerse = async (i, withIntro) => {
+  const runVerse = async (i, withIntro, fromStage = FadingStage.FULL) => {
     if (!aliveRef.current) return;
     setIndex(i);
-    await runStage(passages[i], i, FadingStage.FULL, withIntro);
+    await runStage(passages[i], i, fromStage, withIntro);
   };
 
   // First gesture: unlock audio + prime the mic, then run hands-free.
@@ -154,7 +165,7 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit }
     startedRef.current = true;
     rhema.unlock();
     if (speech.supported) speech.requestPermission();
-    runVerse(startIndex, true);
+    runVerse(startIndex, true, firstStage);
   };
 
   // Manual progression when speech recognition is unavailable.
