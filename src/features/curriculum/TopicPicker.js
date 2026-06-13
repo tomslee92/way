@@ -1,11 +1,14 @@
 import { createElement as h } from 'react';
-import { curriculum } from '../../data/personalLibrary.js';
+import { getTopics } from '../../data/curriculum/curriculum.js';
 import './picker.css';
 
-// Choose a language and what to memorize. The selected language drives both the
-// verse text and Rhema's spoken instructions in the session.
+// Choose a language and a curated topic. Each topic is an anchor-and-orbit
+// grouping (see ../../data/curriculum); selecting one opens its landing, where
+// the anchor is memorized and the orbit is walked. The selected language drives
+// the verse text and Rhema's spoken instructions.
 export default function TopicPicker({ language = 'en', onLanguage, onSelect, onExit }) {
   const lang = language === 'ko' ? 'ko' : 'en';
+  const topics = getTopics(lang);
 
   return h(
     'section',
@@ -54,51 +57,23 @@ export default function TopicPicker({ language = 'en', onLanguage, onSelect, onE
     ),
 
     h(
-      'div',
-      { className: 'picker__topics' },
-      curriculum.map((topic, ti) =>
+      'ul',
+      { className: 'topic-list' },
+      topics.map((topic) =>
         h(
-          'section',
-          { className: 'topic', key: ti },
-          h('h2', { className: 'topic__name' }, lang === 'ko' ? topic.topicKo : topic.topic),
+          'li',
+          { key: topic.id },
           h(
-            'ul',
-            { className: 'topic__verses' },
-            topic.verses.map((verse, vi) =>
-              h(
-                'li',
-                { key: vi },
-                h(
-                  'button',
-                  {
-                    className: 'verse',
-                    type: 'button',
-                    // Hand the whole topic as a queue, starting at this verse,
-                    // so the session flows continuously through the topic.
-                    onClick: () => onSelect(topic.verses, vi),
-                  },
-                  h(
-                    'span',
-                    { className: 'verse__ref' },
-                    lang === 'ko' ? verse.referenceKo : verse.reference
-                  ),
-                  h(
-                    'span',
-                    { className: 'verse__peek' },
-                    peek(lang === 'ko' ? verse.textKo : verse.text)
-                  )
-                )
-              )
-            )
+            'button',
+            { className: 'topic-card', type: 'button', onClick: () => onSelect(topic.id) },
+            h('span', { className: 'topic-card__title' }, topic.title),
+            topic.subtitle
+              ? h('span', { className: 'topic-card__subtitle' }, topic.subtitle)
+              : null,
+            h('span', { className: 'topic-card__anchor' }, topic.anchor.ref)
           )
         )
       )
     )
   );
-}
-
-// First few words of a verse, as a quiet preview.
-function peek(text) {
-  const words = text.replace(/\n/g, ' ').replace(/^[^\p{L}"']+/u, '').split(/\s+/);
-  return words.slice(0, 6).join(' ') + (words.length > 6 ? '…' : '');
 }

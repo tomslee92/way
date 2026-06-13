@@ -1,11 +1,12 @@
 import { createElement as h, useState, useEffect, useRef } from 'react';
 import MemorizationSession from './features/memorization/MemorizationSession.js';
 import TopicPicker from './features/curriculum/TopicPicker.js';
+import CuratedTopic from './features/curriculum/CuratedTopic.js';
 import AddVerse from './features/library/AddVerse.js';
 import LibraryView from './features/library/LibraryView.js';
 import SignIn from './features/auth/SignIn.js';
 import Onboarding from './features/auth/Onboarding.js';
-import { buildPassage, buildPassageFromText } from './data/personalLibrary.js';
+import { buildPassageFromText } from './data/personalLibrary.js';
 import { addVerse, setMemorizing, markRecalled, listLibrary } from './lib/library.js';
 import { lookupScripture, languageFor } from './lib/bible.js';
 import { getSession, onAuthChange, signOut } from './lib/auth.js';
@@ -30,6 +31,7 @@ export default function App() {
   const [startIndex, setStartIndex] = useState(0);
   const [returnTo, setReturnTo] = useState('picker');
   const [reviewId, setReviewId] = useState(null); // set when a session is a §3 review
+  const [topicId, setTopicId] = useState(null); // selected curated topic
   const [session, setSession] = useState(undefined); // undefined = still loading
   const [dueInvites, setDueInvites] = useState([]);
   const [dismissedInvites, setDismissedInvites] = useState(() => new Set());
@@ -171,9 +173,21 @@ export default function App() {
     return h(TopicPicker, {
       language,
       onLanguage: applyLanguage,
-      onSelect: (verses, idx) =>
-        startSession(verses.map((v) => buildPassage(v, language)), 'picker', idx),
+      onSelect: (id) => {
+        setTopicId(id);
+        setView('topic');
+      },
       onExit: () => setView('landing'),
+    });
+  }
+
+  if (view === 'topic' && topicId) {
+    return h(CuratedTopic, {
+      topicId,
+      language,
+      // Memorize the anchor: its text was fetched live (ESV) on the landing.
+      onMemorize: (anchor) => startSession([buildPassageFromText(anchor)], 'topic'),
+      onExit: () => setView('picker'),
     });
   }
 
