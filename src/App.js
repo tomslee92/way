@@ -5,9 +5,11 @@ import AddVerse from './features/library/AddVerse.js';
 import LibraryView from './features/library/LibraryView.js';
 import SignIn from './features/auth/SignIn.js';
 import { buildPassage, buildPassageFromText } from './data/personalLibrary.js';
-import { addVerse, setMemorizing, markRecalled } from './lib/library.js';
+import { addVerse, setMemorizing, markRecalled, listLibrary } from './lib/library.js';
 import { lookupScripture, languageFor } from './lib/bible.js';
 import { getSession, onAuthChange, signOut } from './lib/auth.js';
+import { dueReviews } from './features/library/review.js';
+import ReviewInvitation from './features/library/ReviewInvitation.js';
 
 // Views: landing → picker (curated topics) | add (find a verse) | library
 // (verses you carry) → session. The session returns to wherever it was opened.
@@ -19,6 +21,8 @@ export default function App() {
   const [returnTo, setReturnTo] = useState('picker');
   const [reviewId, setReviewId] = useState(null); // set when a session is a §3 review
   const [session, setSession] = useState(undefined); // undefined = still loading
+  const [dueInvites, setDueInvites] = useState([]);
+  const [dismissedInvites, setDismissedInvites] = useState(() => new Set());
 
   // Track the auth session. A magic-link return establishes it on load.
   useEffect(() => {
@@ -41,6 +45,19 @@ export default function App() {
       setView(pending);
     }
   }, [session]);
+
+  // Surface §3 review invitations on the landing for signed-in users. Refetch
+  // each time we land here so a just-reviewed verse drops off.
+  useEffect(() => {
+    if (!session || view !== 'landing') return undefined;
+    let alive = true;
+    listLibrary({ status: 'memorized' })
+      .then((rows) => alive && setDueInvites(dueReviews(rows)))
+      .catch(() => alive && setDueInvites([]));
+    return () => {
+      alive = false;
+    };
+  }, [session, view]);
 
   // The personal library is gated; the curated experience stays open.
   function requireAuth(target) {
@@ -82,6 +99,20 @@ export default function App() {
     setView('session');
   }
 
+  // Open a stored verse: re-fetch its verified text live (never stored), then
+  // reuse the session. A review starts at Stage 4 and records markRecalled on
+  // completion (time signal only — never status; the app never demotes). It
+  // returns to wherever it was opened (`from`).
+  async function openLibraryItem(item, review, from = 'library') {
+    try {
+      const lang = languageFor(item.translation);
+      const v = await lookupScripture(lang, item.passage_id);
+      startSession([buildPassageFromText(v)], from, 0, review ? item.id : null);
+    } catch (e) {
+      console.warn('[Way] could not open verse:', e?.message || e);
+    }
+  }
+
   if (view === 'picker') {
     return h(TopicPicker, {
       language,
@@ -110,19 +141,6 @@ export default function App() {
   }
 
   if (view === 'library') {
-    // Open a stored verse: re-fetch its verified text live (never stored), then
-    // reuse the session. A review starts at Stage 4 and records markRecalled on
-    // completion (time signal only — never status). Status changes are owned by
-    // LibraryView; the app never demotes.
-    const openLibraryItem = async (item, review) => {
-      try {
-        const lang = languageFor(item.translation);
-        const v = await lookupScripture(lang, item.passage_id);
-        startSession([buildPassageFromText(v)], 'library', 0, review ? item.id : null);
-      } catch (e) {
-        console.warn('[Way] could not open verse:', e?.message || e);
-      }
-    };
     return h(LibraryView, {
       language,
       onAdd: () => setView('add'),
@@ -154,6 +172,9 @@ export default function App() {
     });
   }
 
+  // The most-overdue, not-yet-dismissed review (signed-in users only).
+  const landingInvite = dueInvites.find((it) => !dismissedInvites.has(it.id));
+
   return h(
     'main',
     { className: 'way-app' },
@@ -169,6 +190,20 @@ export default function App() {
         'A premium, voice-coached Scripture memorization companion — ',
         'one verse at a time, in English and 한국어.'
       ),
+      // §3 invitation — Rhema reaches out before you begin (signed-in + due).
+      landingInvite
+        ? h(ReviewInvitation, {
+            item: landingInvite,
+            language,
+            onRevisit: (item) => openLibraryItem(item, true, 'landing'),
+            onDismiss: () =>
+              setDismissedInvites((prev) => {
+                const next = new Set(prev);
+                next.add(landingInvite.id);
+                return next;
+              }),
+          })
+        : null,
       h(
         'button',
         {

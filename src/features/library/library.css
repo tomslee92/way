@@ -256,11 +256,13 @@
    verse", so the invitation's actions are quiet (optional, declining is free). */
 .review {
   max-width: var(--measure);
-  margin: 0 auto var(--s7);
+  margin: var(--s6) auto;
   padding: var(--s5);
   background: var(--raise);
   border: 1px solid var(--hair);
   border-radius: var(--radius);
+  /* left-aligned content, robust inside the centered landing hero too */
+  text-align: left;
 }
 
 .review__head {
