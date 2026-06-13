@@ -1,0 +1,199 @@
+/* library.css — Add a verse (and, later, the Library view). Strict tonal B&W,
+   typography-led. Consumes tokens.css + type.css. Quiet everywhere; the verse
+   preview is the only moment with weight. */
+
+.addverse {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-pad);
+  max-width: var(--page);
+  margin: 0 auto;
+}
+
+.addverse__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.addverse__kicker {
+  /* mirrors .t-eyebrow (§2) */
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.addverse__spacer {
+  min-width: 56px;
+}
+
+/* — tabs (Search / Browse) — quiet, current gains ink + a hairline underline — */
+.addverse__tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--s5);
+  margin: var(--s7) 0 var(--s6);
+}
+
+.addverse__tabs .btn--quiet[data-on='true'] {
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.addverse__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+/* — search bar — */
+.addverse__search {
+  display: flex;
+  gap: var(--s3);
+  align-items: stretch;
+}
+
+.addverse__input {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--raise);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  padding: var(--s3) var(--s4);
+  min-height: 44px;
+}
+
+.addverse__input::placeholder {
+  color: var(--faint);
+}
+
+.addverse__input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* — result / book / chapter / verse rows (shared list idiom) — */
+.lib-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.lib-row {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--hair-soft);
+  color: var(--ink);
+  padding: var(--s4) var(--s1);
+  min-height: 44px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  transition: padding-left var(--hover) var(--ease);
+}
+
+.lib-list li:last-child .lib-row {
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+.lib-row:hover {
+  padding-left: var(--s3);
+}
+
+.lib-row__ref {
+  /* mirrors .t-verse (§2) */
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+[lang='ko'] .lib-row__ref {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.lib-row__peek {
+  /* mirrors .t-coach (§2) */
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  /* search previews can be long — keep rows to a single quiet line */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* — states: loading / empty / error — quiet coaching line (§9) — */
+.addverse__note {
+  margin: var(--s5) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+/* — the landed verse (the one moment with weight) — */
+.preview {
+  margin-top: var(--s7);
+  max-width: var(--measure);
+}
+
+.preview__ref {
+  /* mirrors .t-ref (§2) — not uppercased (§9) */
+  margin: 0 0 var(--s4);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.preview__text {
+  /* mirrors .t-verse (§2), left-aligned reading measure */
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+[lang='ko'] .preview__text {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.preview__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s5);
+  margin-top: var(--s7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lib-row {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .addverse {
+    padding: 20px;
+  }
+}

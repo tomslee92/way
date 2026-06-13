@@ -33,32 +33,7 @@
   min-width: 56px;
 }
 
-/* — language toggle — hairline, radius 0 — */
-.langtoggle {
-  display: inline-flex;
-  border: 1px solid var(--hair);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.langtoggle__opt {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  background: transparent;
-  color: var(--muted);
-  border: none;
-  padding: 10px 14px;
-  min-height: 44px;
-  cursor: pointer;
-  transition: background var(--hover) var(--ease), color var(--hover) var(--ease);
-}
-
-.langtoggle__opt[data-on='true'] {
-  background: var(--ink);
-  color: var(--paper);
-}
+/* language toggle (.langtoggle) is shared chrome — see styles/type.css */
 
 .picker__title {
   /* mirrors .t-section (§2), centered display moment */

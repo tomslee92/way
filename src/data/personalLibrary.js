@@ -178,3 +178,27 @@ export function buildPassage(verse, language) {
     text: lang === 'ko' ? verse.textKo : verse.text,
   };
 }
+
+// Build a session-ready passage from verified /api/bible text (a personal-
+// library verse). A personal verse has a single reference (not an EN/KO pair),
+// so both reference fields hold the same localized display string. Text is
+// split into fading "lines" at sentence boundaries; clause-level splitting
+// (commas/semicolons/colons, DESIGN.md §5.1) is part of the dedicated fade pass.
+export function buildPassageFromText({ refDisplay, passageId, language, text }) {
+  const lang = language === 'ko' ? 'ko' : 'en';
+  return {
+    reference: refDisplay,
+    referenceKo: refDisplay,
+    passageId,
+    language: lang,
+    text: splitSentences(text).join('\n'),
+  };
+}
+
+function splitSentences(text) {
+  const clean = String(text).replace(/\s+/g, ' ').trim();
+  // Keep each sentence's terminator; handles EN . ? ! and KO 。 ！ ？
+  const parts = clean.match(/[^.!?。！？]+[.!?。！？]*\s*/g);
+  const lines = (parts || [clean]).map((s) => s.trim()).filter(Boolean);
+  return lines.length ? lines : [clean];
+}

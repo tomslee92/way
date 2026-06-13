@@ -75,6 +75,12 @@ body {
   margin: 0 0 var(--s7);
 }
 
+/* quiet secondary entry — sits under the one primary action */
+.way-add {
+  display: block;
+  margin: var(--s4) auto 0;
+}
+
 .way-rhema {
   /* mirrors .t-coach (§2) */
   font-family: var(--sans);

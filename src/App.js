@@ -1,16 +1,34 @@
 import { createElement as h, useState } from 'react';
 import MemorizationSession from './features/memorization/MemorizationSession.js';
 import TopicPicker from './features/curriculum/TopicPicker.js';
-import { buildPassage } from './data/personalLibrary.js';
+import AddVerse from './features/library/AddVerse.js';
+import { buildPassage, buildPassageFromText } from './data/personalLibrary.js';
+import { addVerse, setMemorizing } from './lib/library.js';
 
-// Views: landing → picker (pick language + passage) → session → back to picker.
-// Selecting a verse hands the session the whole topic as a queue (starting at
-// that verse) so it flows continuously from one verse to the next.
+// Views: landing → picker (curated topics) or add (personal verse) → session.
+// Selecting a curated verse hands the session the whole topic as a queue;
+// a personal verse is a single-passage session.
 export default function App() {
   const [view, setView] = useState('landing');
   const [language, setLanguage] = useState('en');
   const [queue, setQueue] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
+
+  // Persist the personal verse if a session is available. This is best-effort:
+  // the library is auth-gated (RLS) and sign-in isn't wired yet, so a failure
+  // here must never block memorizing — the data layer lights up once auth lands.
+  async function persist(verse, memorizing) {
+    try {
+      const row = await addVerse({
+        passageId: verse.passageId,
+        refDisplay: verse.reference,
+        translation: verse.translation,
+      });
+      if (memorizing && row) await setMemorizing(row.id);
+    } catch (e) {
+      console.warn('[Way] library save skipped:', e?.message || e);
+    }
+  }
 
   if (view === 'picker') {
     return h(TopicPicker, {
@@ -20,6 +38,26 @@ export default function App() {
         setQueue(verses.map((v) => buildPassage(v, language)));
         setStartIndex(idx);
         setView('session');
+      },
+      onExit: () => setView('landing'),
+    });
+  }
+
+  if (view === 'add') {
+    return h(AddVerse, {
+      language,
+      onLanguage: setLanguage,
+      // save → memorize: the default path (library-spec §1).
+      onMemorize: (verse) => {
+        persist(verse, true);
+        setQueue([buildPassageFromText(verse)]);
+        setStartIndex(0);
+        setView('session');
+      },
+      // carry it now, memorize later (status 'saved').
+      onSave: (verse) => {
+        persist(verse, false);
+        setView('landing');
       },
       onExit: () => setView('landing'),
     });
@@ -56,6 +94,15 @@ export default function App() {
           onClick: () => setView('picker'),
         },
         'Begin memorizing'
+      ),
+      h(
+        'button',
+        {
+          className: 'btn btn--quiet way-add',
+          type: 'button',
+          onClick: () => setView('add'),
+        },
+        'Add a verse'
       ),
       h(
         'p',
