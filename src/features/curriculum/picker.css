@@ -299,3 +299,176 @@
     font-size: 30px;
   }
 }
+
+/* — the revelation walk (§5.2): the orbit as a literal vertical thread — */
+.walk {
+  max-width: var(--measure);
+  margin: var(--s8) auto 0;
+  text-align: left;
+}
+
+.walk__divider {
+  height: 1px;
+  background: var(--hair);
+}
+
+/* "optional" toggle — quiet; reset the btn--quiet uppercase for the label */
+.walk__toggle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s1);
+  width: 100%;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: var(--s4) var(--s1);
+}
+
+.walk__eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.walk__label {
+  font-family: var(--serif);
+  font-size: 18px;
+  letter-spacing: 0;
+  color: inherit; /* btn--quiet: muted → ink on hover */
+}
+
+[lang='ko'] .walk__label {
+  font-family: var(--serif-kr);
+}
+
+.walk__note {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  margin: 0 0 var(--s4);
+}
+
+.thread {
+  margin-top: var(--s2);
+}
+
+.thread__orb {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--s4);
+}
+
+/* the 1px thread line runs through the station dots */
+.thread__list {
+  position: relative;
+}
+
+.thread__list::before {
+  content: '';
+  position: absolute;
+  left: 10px;
+  top: var(--s5);
+  bottom: var(--s5);
+  width: 1px;
+  background: var(--hair);
+}
+
+.station {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--s5) 1fr;
+  gap: var(--s2);
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--s4) 0;
+}
+
+/* 6px ink dot on the line (circular-mark exception to radius 0, §6) */
+.station__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--faint);
+  margin: 7px auto 0;
+  position: relative;
+  z-index: 1;
+  transition: background var(--hover) var(--ease), transform var(--hover) var(--ease);
+}
+
+.station:hover .station__dot,
+.station[data-active='true'] .station__dot {
+  background: var(--ink);
+}
+
+.station[data-active='true'] .station__dot {
+  transform: scale(1.3);
+}
+
+.station__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+.station__eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+[lang='ko'] .station__eyebrow {
+  letter-spacing: 0;
+}
+
+.station__ref {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.station__verse {
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-top: var(--s1);
+}
+
+[lang='ko'] .station__verse {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+/* footed by Luke 24:27 in italic serif — the Emmaus shape */
+.thread__foot {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--muted);
+  margin: var(--s5) 0 0;
+  padding-left: var(--s5);
+}
+
+[lang='ko'] .thread__foot {
+  font-family: var(--serif-kr);
+  font-style: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .station__dot {
+    transition: none;
+  }
+}

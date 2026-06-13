@@ -1,6 +1,7 @@
 import { createElement as h, useState, useEffect } from 'react';
 import { getTopic } from '../../data/curriculum/curriculum.js';
 import { lookupScripture } from '../../lib/bible.js';
+import RevelationWalk from './RevelationWalk.js';
 import './picker.css';
 
 // Curated topic landing: the anchor verse (the one memorized) with "Begin
@@ -92,6 +93,10 @@ export default function CuratedTopic({ topicId, language = 'en', onMemorize, onE
         onClick: begin,
       },
       t.begin
-    )
+    ),
+    // §5.2 revelation walk — the orbit, optional, off to the side.
+    topic.orbit && topic.orbit.length
+      ? h(RevelationWalk, { topic, language: lang })
+      : null
   );
 }
