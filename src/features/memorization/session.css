@@ -106,7 +106,7 @@
 .scripture {
   /* mirrors .t-session-verse (§2), capped to the reading measure (§3) */
   max-width: var(--measure);
-  text-align: center;
+  text-align: left; /* Scripture is left-aligned in sessions (§3) */
   font-family: var(--serif);
   font-weight: 400;
   font-size: 34px;
@@ -136,28 +136,31 @@
 .scripture__line {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start; /* openings line up on a stable left margin (§3, §5.1) */
   align-items: baseline;
   gap: 0 0.4em;
   margin: 0.15em 0;
 }
 
+/* The fade (§5.1): light receding, not text deleting. A word always renders its
+   real text — so its width never changes — and "hides" by going transparent over
+   a faint 1.5px rule. Visible words carry a transparent rule of the same weight,
+   so nothing shifts between states (§8). */
 .scripture__word {
-  transition: opacity var(--fade-word) var(--ease);
+  color: var(--ink);
+  border-bottom: 1.5px solid transparent;
+  transition: color var(--fade-word) var(--ease), border-color var(--fade-word) var(--ease);
 }
 
-.scripture__blank {
-  display: inline-block;
-  border-bottom: 1.5px solid var(--faint);
-  height: 0.9em;
-  min-width: 1.6ch;
-  transform: translateY(-0.12em);
+.scripture__word[data-hidden='true'] {
+  color: transparent;
+  border-bottom-color: var(--faint);
 }
 
 /* — closing recitation — */
 .session__complete {
   max-width: var(--measure);
-  text-align: center;
+  text-align: left; /* the full recitation, left-aligned like the stages (§3) */
   animation: scripture-rise 0.8s var(--ease) both;
 }
 
@@ -341,6 +344,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .scripture,
+  .scripture__word,
   .session__complete,
   .stages__mark,
   .session__stage,

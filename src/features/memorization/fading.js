@@ -17,18 +17,19 @@ export const STAGES = [
   { stage: FadingStage.BLANK, label: { en: 'From memory', ko: '암송' } },
 ];
 
-// Whether the word at `index` of a line of `length` words is hidden at a stage.
-// TODO: Stage 2 selection is naive (every other word). Replace with a smarter
-// pass that prefers content words over particles/articles, tuned separately
-// for Korean and English.
-function isHidden(index, length, stage) {
+// Whether a word is hidden at a given stage. `clauseStart` marks a clause
+// opening — the first word of a line, or the first word after a comma /
+// semicolon / colon. Stage III ("openings only") keeps exactly those (§5.1).
+function isHidden(index, clauseStart, stage) {
   switch (stage) {
     case FadingStage.FULL:
       return false;
     case FadingStage.GAPS:
+      // Key words quiet. TODO (unchanged): replace this naive every-other pass
+      // with content-word selection, tuned separately for Korean and English.
       return index % 2 === 1;
     case FadingStage.FIRST_WORD:
-      return index !== 0;
+      return !clauseStart;
     case FadingStage.BLANK:
       return true;
     default:
@@ -40,15 +41,17 @@ function isHidden(index, length, stage) {
  * Tokenize a passage for display at a given fading stage.
  * @param {string} text - the passage (lines separated by '\n').
  * @param {number} stage - a FadingStage value.
- * @returns {Array<Array<{ text: string, hidden: boolean }>>} lines of tokens.
+ * @returns {Array<Array<{ text: string, hidden: boolean, clauseStart: boolean }>>} lines of tokens.
  */
 export function tokenizeStage(text, stage) {
   return text.split('\n').map((line) => {
     const words = line.split(/\s+/).filter(Boolean);
-    return words.map((word, i) => ({
-      text: word,
-      hidden: isHidden(i, words.length, stage),
-    }));
+    return words.map((word, i) => {
+      // A clause opening: first word of the line, or the first word after a
+      // clause boundary (comma / semicolon / colon) on the previous word.
+      const clauseStart = i === 0 || /[,;:]$/.test(words[i - 1]);
+      return { text: word, clauseStart, hidden: isHidden(i, clauseStart, stage) };
+    });
   });
 }
 
