@@ -197,8 +197,9 @@ export function buildPassageFromText({ refDisplay, passageId, language, text }) 
 
 function splitSentences(text) {
   const clean = String(text).replace(/\s+/g, ' ').trim();
-  // Keep each sentence's terminator; handles EN . ? ! and KO 。 ！ ？
-  const parts = clean.match(/[^.!?。！？]+[.!?。！？]*\s*/g);
+  // Keep each sentence's terminator (EN . ? ! / KO 。 ！ ？) AND any trailing
+  // closing quote or bracket, so a closing ” never lands on its own line.
+  const parts = clean.match(/[^.!?。！？]+[.!?。！？]*["'”’)\]]*\s*/g);
   const lines = (parts || [clean]).map((s) => s.trim()).filter(Boolean);
   return lines.length ? lines : [clean];
 }

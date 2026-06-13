@@ -83,7 +83,9 @@ async function esvText(q, extra = {}) {
 
 async function esvLookup(id) {
   const d = await esvText(id);
-  const text = ((d.passages && d.passages[0]) || '').trim();
+  // Collapse ESV's poetic line breaks / indentation to single spaces — these
+  // verses are read and memorized as flowing text, not laid out as poetry.
+  const text = ((d.passages && d.passages[0]) || '').replace(/\s+/g, ' ').trim();
   if (!d.canonical || !text) throw httpError(404, 'not_found');
   return {
     reference: d.canonical,
@@ -102,7 +104,7 @@ async function esvSearch(q) {
   const results = (d.results || []).map((x) => ({
     reference: x.reference,
     passageId: x.reference,
-    preview: (x.content || '').trim(),
+    preview: (x.content || '').replace(/\s+/g, ' ').trim(),
   }));
   return { results };
 }
@@ -210,7 +212,7 @@ async function dispatchKo(kind, { q, id, book, chapter }) {
       const d = await abGet(
         `/passages/${encodeURIComponent(id)}?content-type=text&include-verse-numbers=false`
       );
-      const text = String(d.content || '').trim();
+      const text = String(d.content || '').replace(/\s+/g, ' ').trim();
       if (!text) throw httpError(404, 'not_found');
       return {
         out: { reference: d.reference, text, passageId: id, translation: '개역개정', language: 'ko' },
@@ -223,7 +225,7 @@ async function dispatchKo(kind, { q, id, book, chapter }) {
       const results = (d.verses || []).map((v) => ({
         reference: v.reference,
         passageId: v.id,
-        preview: String(v.text || '').trim(),
+        preview: String(v.text || '').replace(/\s+/g, ' ').trim(),
       }));
       return { out: { results }, text: true };
     }

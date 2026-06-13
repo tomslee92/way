@@ -27,9 +27,12 @@ export async function synthesizeSpeech({ text, languageCode, apiKey, voiceId }) 
       },
       body: JSON.stringify({
         text,
-        model_id: 'eleven_multilingual_v2',
+        // turbo_v2_5 (unlike multilingual_v2) honors language_code, so forcing
+        // 'en'/'ko' actually sticks — otherwise the Korean-native voice leaks
+        // Korean pronunciations into English text.
+        model_id: 'eleven_turbo_v2_5',
         voice_settings: RHEMA_VOICE_SETTINGS,
-        // Force the language per segment when known; null = auto-detect.
+        // Force the language when known; null = auto-detect (mixed segments).
         ...(languageCode ? { language_code: languageCode } : {}),
       }),
     }
