@@ -157,6 +157,37 @@
   border-bottom-color: var(--faint);
 }
 
+/* — cue-ladder word modes (method-spec §3). The word keeps its full width in
+   the DOM (initial + rest both present); only color/rule change, so nothing
+   shifts (§8). full = defaults (ink, transparent rule). — */
+.scripture__word .w-ini,
+.scripture__word .w-rest {
+  transition: color var(--fade-word) var(--ease);
+}
+
+/* initial — first character shown, the rest transparent, on a faint baseline */
+.scripture__word[data-mode='initial'] {
+  border-bottom-color: var(--faint);
+}
+.scripture__word[data-mode='initial'] .w-rest {
+  color: transparent;
+}
+
+/* shape — blank over a faint ruled baseline */
+.scripture__word[data-mode='shape'] {
+  border-bottom-color: var(--faint);
+}
+.scripture__word[data-mode='shape'] .w-ini,
+.scripture__word[data-mode='shape'] .w-rest {
+  color: transparent;
+}
+
+/* gone — free recall: transparent, no rule */
+.scripture__word[data-mode='gone'] .w-ini,
+.scripture__word[data-mode='gone'] .w-rest {
+  color: transparent;
+}
+
 /* — closing recitation — */
 .session__complete {
   max-width: var(--measure);
