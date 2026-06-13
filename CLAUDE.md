@@ -48,9 +48,14 @@ The core mechanic. Progressive removal of text until the user is reciting from m
 - **Personal library** — user-added passages via Bible API integration
 
 ### Bible API
-- **Provider**: API.Bible (api.bible)
-- **Default translations**: ESV (English), NKRV 개역개정 (Korean)
-- **User-selectable**: yes — user picks preferred translation during onboarding, stored in profile
+- **Personal library is English-only**: live lookups use the **Crossway ESV API**
+  (api.esv.org), proxied by `/api/bible`. 개역개정 has **no licensed API source**
+  (Korean Bible Society copyright), so personal Korean lookups are not offered.
+- **Korean Scripture** is served from the **curated curriculum** as verified
+  **개역개정** seed text (hand-entered, not fetched). 개역개정 stays the Korean
+  translation for curated content — most-used and readable for Korean users.
+- The ESV API license **forbids storing verse text**, which matches our rule:
+  never persist Scripture, always re-fetch live.
 
 ## What comes after MVP (do not build yet)
 - Devotionals and insights tied to memorized passages
@@ -77,7 +82,7 @@ Way/
 ├── .env.example                # env template + security notes
 ├── api/                        # serverless functions (Vercel) — keep keys server-side
 │   ├── tts.js                  # POST /api/tts  — ElevenLabs proxy (Rhema voice)
-│   ├── bible.js                # GET  /api/bible — API.Bible proxy
+│   ├── bible.js                # GET  /api/bible — Crossway ESV API proxy (English-only)
 │   └── _elevenlabs.js          # shared TTS helper (also used by dev middleware)
 └── src/
     ├── main.js                 # entry — createRoot + <App>
@@ -115,12 +120,14 @@ speechSynthesis; no Web Speech → manual advance. Palette is strict black &
 white — typography led.
 
 Curriculum verse text (EN ~ESV, KO ~개역개정) is hand-entered seed data and must
-be verified / replaced via /api/bible before real use — people memorize exactly
-what's shown.
+be verified before real use — people memorize exactly what's shown. English
+curated text can be checked against /api/bible (ESV); Korean 개역개정 has no API,
+so it must be verified by hand against an authoritative printed/KBS source.
 
 Secrets are SERVER-ONLY (no `VITE_` prefix): `ELEVENLABS_API_KEY`,
-`ELEVENLABS_VOICE_ID`, and `API_BIBLE_KEY` are read by the `/api` functions (and
-the Vite dev middleware), never inlined into the client bundle. Only
+`ELEVENLABS_VOICE_ID`, and `ESV_API_KEY` are read by the `/api` functions (and
+the Vite dev middleware), never inlined into the client bundle. (`API_BIBLE_KEY`
+is reserved/unused — no licensed Korean API.) Only
 `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` are client-exposed (safe by
 design). The TTS key currently reused from Wayve — see [[elevenlabs-setup]].
 

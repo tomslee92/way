@@ -2,7 +2,11 @@
 // client never holds an API key or knows which provider served a verse.
 //
 //   en → Crossway ESV API (api.esv.org)         — ESV_API_KEY,   header "Authorization: Token <key>"
-//   ko → API.Bible        (scripture.api.bible) — API_BIBLE_KEY,  header "api-key: <key>"   [pending]
+//   ko → not offered. The personal library is English-only: there is no licensed
+//        API source for 개역개정 (Korean Bible Society copyright). Korean Scripture
+//        lives in the CURATED curriculum as verified seed text, which never goes
+//        through this proxy. The ko branch below is kept (returns a clear error)
+//        and re-enableable if 개역개정 is ever licensed via API.Bible.
 //
 // Every response is normalized to one shape, regardless of provider:
 //   kind=lookup   &id=<passageId>      -> { reference, text, passageId, translation, language }
@@ -18,8 +22,9 @@
 
 const TRANSLATIONS = { en: 'ESV', ko: '개역개정' };
 
-// Korean (API.Bible) bible id — fill once confirmed against the account's
-// catalog (GET /v1/bibles). Empty => Korean lookups return korean_unconfigured.
+// Korean (API.Bible) bible id — intentionally empty: 개역개정 has no licensed API
+// source, so Korean personal lookups are not offered (they return a clear
+// error). Set this only if a licensed Korean bible is ever wired up.
 const KO_BIBLE_ID = '';
 
 // English canonical books + chapter counts. The ESV API has no book/chapter

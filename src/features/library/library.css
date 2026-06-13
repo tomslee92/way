@@ -139,6 +139,16 @@
   white-space: nowrap;
 }
 
+/* — English-only notice for Korean users (§9: plain, says where to go) — */
+.addverse__policy {
+  margin: var(--s5) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
 /* — states: loading / empty / error — quiet coaching line (§9) — */
 .addverse__note {
   margin: var(--s5) 0 0;
@@ -212,6 +222,10 @@
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.library__spacer {
+  min-width: 56px;
 }
 
 .library__title {

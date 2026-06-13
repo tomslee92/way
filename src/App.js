@@ -52,7 +52,6 @@ export default function App() {
   if (view === 'add') {
     return h(AddVerse, {
       language,
-      onLanguage: setLanguage,
       // save → memorize: the default path (library-spec §1).
       onMemorize: (verse) => {
         persist(verse, true);
@@ -70,7 +69,6 @@ export default function App() {
   if (view === 'library') {
     return h(LibraryView, {
       language,
-      onLanguage: setLanguage,
       onAdd: () => setView('add'),
       // Memorize a stored verse: re-fetch its verified text live (never stored),
       // then reuse the session. Status changes are owned by LibraryView.

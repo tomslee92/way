@@ -26,6 +26,7 @@ const T = {
     back: 'Back',
     looking: 'Looking…',
     empty: 'No matches yet. Try a reference like John 8:58.',
+    policy: '',
   },
   ko: {
     add: '구절 추가',
@@ -38,6 +39,7 @@ const T = {
     back: '뒤로',
     looking: '찾는 중…',
     empty: '아직 결과가 없어요. 요한복음 8:58처럼 검색해 보세요.',
+    policy: '개인 구절은 영어(ESV)로 제공돼요. 한국어 구절은 추천 주제에서 만나보세요.',
   },
 };
 
@@ -55,9 +57,13 @@ function errMsg(code, ko) {
   return ko ? '성경을 불러오지 못했어요. 다시 시도해 주세요.' : 'Couldn’t reach Scripture. Try again.';
 }
 
-export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSave, onExit }) {
+export default function AddVerse({ language = 'en', onMemorize, onSave, onExit }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
+  // The personal library is English-only: there is no licensed 개역개정 source
+  // to serve arbitrary verses. Korean Scripture lives in the curated topics, so
+  // every lookup here is English (ESV) regardless of the app's UI language.
+  const SCRIPTURE_LANG = 'en';
 
   const [tab, setTab] = useState('search');
   const [query, setQuery] = useState('');
@@ -96,14 +102,14 @@ export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSa
     let alive = true;
     setBrowseLoading(true);
     setError(null);
-    listBooks(language)
+    listBooks(SCRIPTURE_LANG)
       .then((d) => alive && setBooks(d.books || []))
       .catch((e) => alive && setError(e.code || 'lookup_failed'))
       .finally(() => alive && setBrowseLoading(false));
     return () => {
       alive = false;
     };
-  }, [tab, language]);
+  }, [tab]);
 
   async function doSearch(e) {
     if (e) e.preventDefault();
@@ -114,7 +120,7 @@ export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSa
     setError(null);
     setResults([]);
     try {
-      const d = await searchScripture(language, q);
+      const d = await searchScripture(SCRIPTURE_LANG, q);
       setResults(d.results || []);
     } catch (er) {
       setError(er.code || 'lookup_failed');
@@ -131,7 +137,7 @@ export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSa
     setBrowseLoading(true);
     setError(null);
     try {
-      const d = await listChapters(language, b.id);
+      const d = await listChapters(SCRIPTURE_LANG, b.id);
       setChapters(d.chapters || []);
     } catch (e) {
       setError(e.code || 'lookup_failed');
@@ -146,7 +152,7 @@ export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSa
     setBrowseLoading(true);
     setError(null);
     try {
-      const d = await listVerses(language, c.id);
+      const d = await listVerses(SCRIPTURE_LANG, c.id);
       setVerses(d.verses || []);
     } catch (e) {
       setError(e.code || 'lookup_failed');
@@ -169,7 +175,7 @@ export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSa
     setVerseLoading(true);
     setError(null);
     try {
-      const v = await lookupScripture(language, passageId);
+      const v = await lookupScripture(SCRIPTURE_LANG, passageId);
       setSelected(v);
     } catch (e) {
       setError(e.code || 'lookup_failed');
@@ -179,31 +185,6 @@ export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSa
   }
 
   // — small render helpers —
-
-  const langToggle = h(
-    'div',
-    { className: 'langtoggle', role: 'group', 'aria-label': 'Language' },
-    h(
-      'button',
-      {
-        className: 'langtoggle__opt',
-        type: 'button',
-        'data-on': lang === 'en' ? 'true' : undefined,
-        onClick: () => onLanguage && onLanguage('en'),
-      },
-      'EN'
-    ),
-    h(
-      'button',
-      {
-        className: 'langtoggle__opt',
-        type: 'button',
-        'data-on': lang === 'ko' ? 'true' : undefined,
-        onClick: () => onLanguage && onLanguage('ko'),
-      },
-      '한국어'
-    )
-  );
 
   function row(key, primary, secondary, onClick) {
     return h(
@@ -344,8 +325,10 @@ export default function AddVerse({ language = 'en', onLanguage, onMemorize, onSa
       { className: 'addverse__bar' },
       h('button', { className: 'btn btn--quiet', type: 'button', onClick: onExit }, t.back),
       h('p', { className: 'addverse__kicker' }, t.add.toUpperCase()),
-      langToggle
+      h('span', { className: 'addverse__spacer' })
     ),
+    // English-only personal library — tell Korean users where Korean lives.
+    lang === 'ko' ? h('p', { className: 'addverse__policy' }, t.policy) : null,
     h(
       'div',
       { className: 'addverse__tabs', role: 'tablist' },

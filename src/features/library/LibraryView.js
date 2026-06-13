@@ -44,7 +44,7 @@ const T = {
   },
 };
 
-export default function LibraryView({ language = 'en', onLanguage, onMemorize, onAdd, onExit }) {
+export default function LibraryView({ language = 'en', onMemorize, onAdd, onExit }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
 
@@ -214,30 +214,7 @@ export default function LibraryView({ language = 'en', onLanguage, onMemorize, o
       { className: 'library__bar' },
       h('button', { className: 'btn btn--quiet', type: 'button', onClick: onExit }, t.back),
       h('p', { className: 'library__kicker' }, 'Way'),
-      h(
-        'div',
-        { className: 'langtoggle', role: 'group', 'aria-label': 'Language' },
-        h(
-          'button',
-          {
-            className: 'langtoggle__opt',
-            type: 'button',
-            'data-on': lang === 'en' ? 'true' : undefined,
-            onClick: () => onLanguage && onLanguage('en'),
-          },
-          'EN'
-        ),
-        h(
-          'button',
-          {
-            className: 'langtoggle__opt',
-            type: 'button',
-            'data-on': lang === 'ko' ? 'true' : undefined,
-            onClick: () => onLanguage && onLanguage('ko'),
-          },
-          '한국어'
-        )
-      )
+      h('span', { className: 'library__spacer' })
     ),
     h('h1', { className: 'library__title' }, t.title),
     h('button', { className: 'btn btn--primary library__add', type: 'button', onClick: onAdd }, t.add),
