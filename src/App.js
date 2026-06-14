@@ -2,6 +2,7 @@ import { createElement as h, useState, useEffect, useRef } from 'react';
 import MemorizationSession from './features/memorization/MemorizationSession.js';
 import TopicPicker from './features/curriculum/TopicPicker.js';
 import CuratedTopic from './features/curriculum/CuratedTopic.js';
+import VerseLanding from './features/curriculum/VerseLanding.js';
 import AddVerse from './features/library/AddVerse.js';
 import LibraryView from './features/library/LibraryView.js';
 import SignIn from './features/auth/SignIn.js';
@@ -32,6 +33,7 @@ export default function App() {
   const [returnTo, setReturnTo] = useState('picker');
   const [reviewId, setReviewId] = useState(null); // set when a session is a §3 review
   const [topicId, setTopicId] = useState(null); // selected curated topic
+  const [verseId, setVerseId] = useState(null); // selected memory verse within it
   const [session, setSession] = useState(undefined); // undefined = still loading
   const [dueInvites, setDueInvites] = useState([]);
   const [dismissedInvites, setDismissedInvites] = useState(() => new Set());
@@ -185,9 +187,22 @@ export default function App() {
     return h(CuratedTopic, {
       topicId,
       language,
-      // Memorize the anchor: its text was fetched live (ESV) on the landing.
-      onMemorize: (anchor) => startSession([buildPassageFromText(anchor)], 'topic'),
+      onSelectVerse: (vid) => {
+        setVerseId(vid);
+        setView('verse');
+      },
       onExit: () => setView('picker'),
+    });
+  }
+
+  if (view === 'verse' && topicId && verseId) {
+    return h(VerseLanding, {
+      topicId,
+      verseId,
+      language,
+      // Memorize the verse: its text was fetched live (ESV) on the landing.
+      onMemorize: (verse) => startSession([buildPassageFromText(verse)], 'verse'),
+      onExit: () => setView('topic'),
     });
   }
 

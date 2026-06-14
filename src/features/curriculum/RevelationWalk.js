@@ -32,7 +32,7 @@ const T = {
   },
 };
 
-export default function RevelationWalk({ topic, language = 'en' }) {
+export default function RevelationWalk({ orbit, language = 'en' }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
   const rhema = useRhema();
@@ -46,12 +46,12 @@ export default function RevelationWalk({ topic, language = 'en' }) {
     setOpen(true);
     // Seed stored texts (Korean), fetch the rest live (English ESV).
     const seeded = {};
-    topic.orbit.forEach((o) => {
+    orbit.forEach((o) => {
       if (o.text) seeded[o.id] = o.text;
     });
     if (Object.keys(seeded).length) setTexts((m) => ({ ...m, ...seeded }));
 
-    const need = topic.orbit.filter((o) => !o.text && texts[o.id] === undefined);
+    const need = orbit.filter((o) => !o.text && texts[o.id] === undefined);
     if (!need.length) return;
     setLoading(true);
     try {
@@ -136,7 +136,7 @@ export default function RevelationWalk({ topic, language = 'en' }) {
             ? h('div', { className: 'thread__orb' }, h(RhemaIndicator, { state: 'speaking', label: '' }))
             : null,
           loading ? h('p', { className: 'walk__note' }, t.loading) : null,
-          h('div', { className: 'thread__list' }, topic.orbit.map(station)),
+          h('div', { className: 'thread__list' }, orbit.map(station)),
           h('p', { className: 'thread__foot' }, t.foot)
         )
       : null

@@ -1,25 +1,21 @@
-import { createElement as h, useState } from 'react';
+import { createElement as h } from 'react';
 import { getTopic } from '../../data/curriculum/curriculum.js';
-import { lookupScripture } from '../../lib/bible.js';
-import RevelationWalk from './RevelationWalk.js';
 import './picker.css';
 
-// Curated topic landing: a CLUSTER of red-letter memory verses (Jesus's words on
-// the theme) — pick any to memorize via the cue ladder — and one thread (the
-// OT→NT arc) below, walked for context (the §5.2 revelation walk). English text
-// is fetched live (ESV) on tap; Korean uses the stored 개역개정 text when present.
+// Curated topic landing: the CLUSTER of red-letter memory verses (Jesus's words
+// on the theme). Tapping a verse opens its own landing — the verse + its thread
+// + the cue ladder. (A typological cluster like I AM gives each verse its own
+// image-thread; a thematic cluster shares the topic thread.)
 
 const T = {
-  en: { eyebrow: 'Memory verses', back: 'Back', loading: 'Opening…', error: 'Couldn’t load this verse. Try again.' },
-  ko: { eyebrow: '암송 구절', back: '뒤로', loading: '여는 중…', error: '구절을 불러오지 못했어요. 다시 시도해 주세요.' },
+  en: { eyebrow: 'Memory verses', back: 'Back', missing: 'This topic isn’t available yet.' },
+  ko: { eyebrow: '암송 구절', back: '뒤로', missing: '이 주제는 아직 준비되지 않았어요.' },
 };
 
-export default function CuratedTopic({ topicId, language = 'en', onMemorize, onExit }) {
+export default function CuratedTopic({ topicId, language = 'en', onSelectVerse, onExit }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
   const topic = getTopic(topicId, lang);
-  const [busyId, setBusyId] = useState(null);
-  const [error, setError] = useState(false);
 
   const bar = h(
     'header',
@@ -30,21 +26,7 @@ export default function CuratedTopic({ topicId, language = 'en', onMemorize, onE
   );
 
   if (!topic) {
-    return h('section', { className: 'curated view-in', lang }, bar, h('p', { className: 'curated__note' }, t.error));
-  }
-
-  async function memorize(verse) {
-    setBusyId(verse.id);
-    setError(false);
-    try {
-      // English: fetch the verse's verified ESV text live; Korean: stored text.
-      const text = verse.text || (await lookupScripture(lang, verse.ref)).text;
-      onMemorize({ refDisplay: verse.ref, passageId: verse.passageId, language: lang, text });
-    } catch (e) {
-      setError(true);
-    } finally {
-      setBusyId(null);
-    }
+    return h('section', { className: 'curated view-in', lang }, bar, h('p', { className: 'curated__note' }, t.missing));
   }
 
   return h(
@@ -63,19 +45,12 @@ export default function CuratedTopic({ topicId, language = 'en', onMemorize, onE
           { key: verse.id },
           h(
             'button',
-            {
-              className: 'mv',
-              type: 'button',
-              disabled: busyId === verse.id,
-              onClick: () => memorize(verse),
-            },
+            { className: 'mv', type: 'button', onClick: () => onSelectVerse(verse.id) },
             h('span', { className: 'mv__label' }, verse.label || verse.ref),
-            h('span', { className: 'mv__ref' }, busyId === verse.id ? t.loading : verse.ref)
+            h('span', { className: 'mv__ref' }, verse.ref)
           )
         )
       )
-    ),
-    error ? h('p', { className: 'curated__note' }, t.error) : null,
-    topic.orbit && topic.orbit.length ? h(RevelationWalk, { topic, language: lang }) : null
+    )
   );
 }
