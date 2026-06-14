@@ -10,7 +10,11 @@ export default {
   subtitle: 'The ground of it all.',
 
   memoryVerses: [
-    { id: 'faith-believe', ref: 'John 6:29', passageId: 'John 6:29', label: 'Believe in him whom he sent' },
+    { id: 'faith-work-of-god', ref: 'John 6:29', passageId: 'John 6:29', label: 'The work of God: believe' },
+    { id: 'faith-in-god', ref: 'Mark 11:22', passageId: 'Mark 11:22', label: 'Have faith in God' },
+    { id: 'faith-mustard-seed', ref: 'Matthew 17:20', passageId: 'Matthew 17:20', label: 'Faith like a mustard seed' },
+    { id: 'faith-whoever-believes', ref: 'John 11:25-26', passageId: 'John 11:25-26', label: 'Whoever believes in me' },
+    { id: 'faith-not-seen', ref: 'John 20:29', passageId: 'John 20:29', label: 'Blessed who have not seen' },
   ],
 
   orbit: [

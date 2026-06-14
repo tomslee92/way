@@ -10,7 +10,11 @@ export default {
   subtitle: 'Love proven.',
 
   memoryVerses: [
-    { id: 'obedience-keep', ref: 'John 14:15', passageId: 'John 14:15', label: 'Keep my commandments' },
+    { id: 'obedience-keep', ref: 'John 14:15', passageId: 'John 14:15', label: 'If you love me, keep my commandments' },
+    { id: 'obedience-has-and-keeps', ref: 'John 14:21', passageId: 'John 14:21', label: 'Whoever keeps them loves me' },
+    { id: 'obedience-lord-lord', ref: 'Luke 6:46', passageId: 'Luke 6:46', label: 'Lord, Lord' },
+    { id: 'obedience-my-friends', ref: 'John 15:14', passageId: 'John 15:14', label: 'You are my friends' },
+    { id: 'obedience-hear-and-do', ref: 'Matthew 7:24', passageId: 'Matthew 7:24', label: 'Hear and do' },
   ],
 
   orbit: [

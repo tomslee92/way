@@ -13,6 +13,11 @@ export default {
 
   memoryVerses: [
     { id: 'kingdom-at-hand', ref: 'Mark 1:15', passageId: 'Mark 1:15', label: 'The kingdom is at hand' },
+    { id: 'kingdom-seek-first', ref: 'Matthew 6:33', passageId: 'Matthew 6:33', label: 'Seek first the kingdom' },
+    { id: 'kingdom-in-your-midst', ref: 'Luke 17:20-21', passageId: 'Luke 17:20-21', label: 'In your midst' },
+    { id: 'kingdom-like-a-child', ref: 'Mark 10:15', passageId: 'Mark 10:15', label: 'Receive it like a child' },
+    { id: 'kingdom-poor-in-spirit', ref: 'Matthew 5:3', passageId: 'Matthew 5:3', label: 'The poor in spirit' },
+    { id: 'kingdom-not-of-this-world', ref: 'John 18:36', passageId: 'John 18:36', label: 'Not of this world' },
   ],
 
   orbit: [

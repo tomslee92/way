@@ -10,6 +10,10 @@ export default {
 
   memoryVerses: [
     { id: 'love-one-another', ref: 'John 13:34', passageId: 'John 13:34', label: 'Love one another' },
+    { id: 'love-great-commandment', ref: 'Matthew 22:37-39', passageId: 'Matthew 22:37-39', label: 'The great commandment' },
+    { id: 'love-greater-love', ref: 'John 15:12-13', passageId: 'John 15:12-13', label: 'Greater love' },
+    { id: 'love-your-enemies', ref: 'Matthew 5:44', passageId: 'Matthew 5:44', label: 'Love your enemies' },
+    { id: 'love-abide', ref: 'John 15:9', passageId: 'John 15:9', label: 'Abide in my love' },
   ],
 
   orbit: [
