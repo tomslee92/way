@@ -20,6 +20,7 @@ const T = {
     encode: 'Read it through.',
     attempt: 'Bring it to mind — then reveal.',
     selfcheck: 'Did it come to mind?',
+    revealLabel: 'The verse',
     continue: 'Continue',
     hear: 'Hear it',
     reveal: 'Reveal',
@@ -34,6 +35,7 @@ const T = {
     encode: '한 번 읽어 보세요.',
     attempt: '마음에 떠올린 뒤, 확인해 보세요.',
     selfcheck: '마음에 떠올랐나요?',
+    revealLabel: '본문',
     continue: '계속',
     hear: '들어보기',
     reveal: '확인',
@@ -175,9 +177,15 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
         })
       )
     ),
-    phase !== 'complete' && rungMeta
-      ? h('p', { className: 'stages__label' }, rungMeta.label[lang])
-      : null,
+    phase === 'complete'
+      ? null
+      : h(
+          'p',
+          { className: 'stages__label' },
+          // During the reveal the full verse is up — name it "the verse", not
+          // the rung being tested, so the indicator never contradicts the text.
+          phase === 'reveal' ? t.revealLabel : rungMeta.label[lang]
+        ),
 
     h(
       'div',
@@ -189,7 +197,15 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
             h('p', { className: 'session__complete-ref' }, reference),
             h('p', { className: 'session__complete-text' }, passage.text.replace(/\n/g, ' '))
           )
-        : h(ScriptureDisplay, { text: passage.text, rung, revealed: phase === 'reveal' })
+        : h(ScriptureDisplay, {
+            // Key on the element forces a clean remount when the rung or verse
+            // changes (instant new cue, in step with the indicator); the reveal
+            // keeps the same key so it dissolves cue→full in place.
+            key: `v${index}-r${rung}`,
+            text: passage.text,
+            rung,
+            revealed: phase === 'reveal',
+          })
     ),
 
     h(
