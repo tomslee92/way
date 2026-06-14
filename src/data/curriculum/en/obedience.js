@@ -9,12 +9,9 @@ export default {
   title: 'Obedience',
   subtitle: 'Love proven.',
 
-  anchor: {
-    ref: 'John 14:15',
-    passageId: 'John 14:15',
-    speaker: 'Jesus',
-    opening: '', // TODO: Rhema opening script
-  },
+  memoryVerses: [
+    { id: 'obedience-keep', ref: 'John 14:15', passageId: 'John 14:15', label: 'Keep my commandments' },
+  ],
 
   orbit: [
     { id: 'obedience-origin', ref: 'Exodus 19:5', passageId: 'Exodus 19:5', position: 'origin', connection: '' },

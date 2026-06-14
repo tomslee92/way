@@ -9,12 +9,9 @@ export default {
   title: 'Faith',
   subtitle: 'The ground of it all.',
 
-  anchor: {
-    ref: 'John 6:29',
-    passageId: 'John 6:29',
-    speaker: 'Jesus',
-    opening: '', // TODO: Rhema opening script
-  },
+  memoryVerses: [
+    { id: 'faith-believe', ref: 'John 6:29', passageId: 'John 6:29', label: 'Believe in him whom he sent' },
+  ],
 
   orbit: [
     { id: 'faith-origin', ref: 'Genesis 15:6', passageId: 'Genesis 15:6', position: 'origin', connection: '' },

@@ -11,12 +11,9 @@ export default {
   title: 'The Kingdom of God',
   subtitle: 'His unmistakable center.',
 
-  anchor: {
-    ref: 'Mark 1:15',
-    passageId: 'Mark 1:15',
-    speaker: 'Jesus',
-    opening: '', // TODO: Rhema opening script
-  },
+  memoryVerses: [
+    { id: 'kingdom-at-hand', ref: 'Mark 1:15', passageId: 'Mark 1:15', label: 'The kingdom is at hand' },
+  ],
 
   orbit: [
     { id: 'kingdom-origin', ref: '2 Samuel 7:16', passageId: '2 Samuel 7:16', position: 'origin', connection: '' },

@@ -8,12 +8,9 @@ export default {
   title: 'Love',
   subtitle: 'The heart of the Law.',
 
-  anchor: {
-    ref: 'John 13:34',
-    passageId: 'John 13:34',
-    speaker: 'Jesus',
-    opening: '', // TODO: Rhema opening script
-  },
+  memoryVerses: [
+    { id: 'love-one-another', ref: 'John 13:34', passageId: 'John 13:34', label: 'Love one another' },
+  ],
 
   orbit: [
     { id: 'love-origin', ref: 'Deuteronomy 6:5', passageId: 'Deuteronomy 6:5', position: 'origin', connection: '' },

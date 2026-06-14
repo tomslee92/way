@@ -7,12 +7,9 @@ export default {
   title: 'Prayer',
   subtitle: 'The believer’s breath.',
 
-  anchor: {
-    ref: 'Matthew 7:7',
-    passageId: 'Matthew 7:7',
-    speaker: 'Jesus',
-    opening: '', // TODO: Rhema opening script
-  },
+  memoryVerses: [
+    { id: 'prayer-ask', ref: 'Matthew 7:7', passageId: 'Matthew 7:7', label: 'Ask, seek, knock' },
+  ],
 
   orbit: [
     { id: 'prayer-origin', ref: 'Genesis 4:26', passageId: 'Genesis 4:26', position: 'origin', connection: '' },

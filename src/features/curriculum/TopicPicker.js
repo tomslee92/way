@@ -70,7 +70,13 @@ export default function TopicPicker({ language = 'en', onLanguage, onSelect, onE
             topic.subtitle
               ? h('span', { className: 'topic-card__subtitle' }, topic.subtitle)
               : null,
-            h('span', { className: 'topic-card__anchor' }, topic.anchor.ref)
+            h(
+              'span',
+              { className: 'topic-card__anchor' },
+              lang === 'ko'
+                ? `${topic.memoryVerses.length}구절`
+                : `${topic.memoryVerses.length} ${topic.memoryVerses.length === 1 ? 'verse' : 'verses'}`
+            )
           )
         )
       )
