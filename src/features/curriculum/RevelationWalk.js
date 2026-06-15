@@ -108,7 +108,8 @@ export default function RevelationWalk({ orbit, language = 'en' }) {
         { className: 'station__body' },
         h('span', { className: 'station__eyebrow' }, (t.pos[s.position] || s.position).toUpperCase()),
         h('span', { className: 'station__ref' }, s.ref),
-        h('span', { className: 'station__verse' }, s.text || texts[s.id] || '…')
+        h('span', { className: 'station__verse' }, s.text || texts[s.id] || '…'),
+        s.connection ? h('span', { className: 'station__connection' }, s.connection) : null
       )
     );
   }

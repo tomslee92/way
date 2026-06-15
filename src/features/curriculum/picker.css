@@ -512,6 +512,21 @@
   font-family: var(--serif-kr);
 }
 
+/* the connection — the quiet "why this is here" line, a step below the verse */
+.station__connection {
+  font-family: var(--serif);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: var(--s2);
+  max-width: 38ch;
+}
+
+[lang='ko'] .station__connection {
+  font-family: var(--serif-kr);
+  letter-spacing: 0;
+}
+
 /* footed by Luke 24:27 in italic serif — the Emmaus shape */
 .thread__foot {
   font-family: var(--serif);
