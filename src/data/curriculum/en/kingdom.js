@@ -41,7 +41,20 @@ export default {
       ],
     },
     { id: 'kingdom-leaven', ref: 'Matthew 13:33', passageId: 'Matthew 13:33', label: 'Like leaven' },
-    { id: 'kingdom-treasure', ref: 'Matthew 13:44', passageId: 'Matthew 13:44', label: 'A treasure hidden' },
+    {
+      id: 'kingdom-treasure',
+      ref: 'Matthew 13:44',
+      passageId: 'Matthew 13:44',
+      label: 'A treasure hidden',
+      // The "we are God's treasure" reading — the segullah thread.
+      orbit: [
+        station('treasure-origin', 'Exodus 19:5', 'origin'),
+        station('treasure-unfolding', 'Psalm 135:4', 'unfolding'),
+        station('treasure-moment', 'Matthew 13:44', 'moment'),
+        station('treasure-aftermath', '1 Peter 2:9', 'aftermath'),
+        station('treasure-consummation', 'Revelation 21:3', 'consummation'),
+      ],
+    },
     { id: 'kingdom-pearl', ref: 'Matthew 13:45-46', passageId: 'Matthew 13:45-46', label: 'A pearl of great price' },
     { id: 'kingdom-seek-first', ref: 'Matthew 6:33', passageId: 'Matthew 6:33', label: 'Seek first the kingdom' },
     { id: 'kingdom-in-your-midst', ref: 'Luke 17:20-21', passageId: 'Luke 17:20-21', label: 'In your midst' },
