@@ -89,7 +89,12 @@ export default function RevelationWalk({ orbit, language = 'en' }) {
     if (!text) return;
     setActiveId(station.id);
     rhema.unlock();
-    rhema.speak(text, lang).then(() => setActiveId((cur) => (cur === station.id ? null : cur)));
+    // Read the Scripture, then speak the connecting remark that ties this
+    // station to the memory verse — the verse, then the why.
+    rhema
+      .speak(text, lang)
+      .then(() => (station.connection ? rhema.speak(station.connection, lang) : null))
+      .then(() => setActiveId((cur) => (cur === station.id ? null : cur)));
   }
 
   function station(s) {
