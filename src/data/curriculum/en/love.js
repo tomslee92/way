@@ -17,11 +17,16 @@ export default {
   ],
 
   orbit: [
-    { id: 'love-origin', ref: 'Deuteronomy 6:5', passageId: 'Deuteronomy 6:5', position: 'origin', connection: '' },
-    { id: 'love-unfolding', ref: 'Leviticus 19:18', passageId: 'Leviticus 19:18', position: 'unfolding', connection: '' },
-    { id: 'love-moment', ref: 'Matthew 22:37-40', passageId: 'Matthew 22:37-40', position: 'moment', connection: '' },
-    { id: 'love-aftermath', ref: '1 John 4:10', passageId: '1 John 4:10', position: 'aftermath', connection: '' },
-    { id: 'love-consummation', ref: 'Revelation 21:3', passageId: 'Revelation 21:3', position: 'consummation', connection: '' },
+    { id: 'love-origin', ref: 'Deuteronomy 6:5', passageId: 'Deuteronomy 6:5', position: 'origin',
+      connection: 'Love begins as a command at Sinai: love the LORD your God with all your heart and soul and might. Before it is a feeling, it is owed to the God who saved you.' },
+    { id: 'love-unfolding', ref: 'Leviticus 19:18', passageId: 'Leviticus 19:18', position: 'unfolding',
+      connection: 'And the same Law turns it outward — love your neighbor as yourself. From the very start, the two belong together.' },
+    { id: 'love-moment', ref: 'Matthew 22:37-40', passageId: 'Matthew 22:37-40', position: 'moment',
+      connection: 'Asked for the greatest commandment, Jesus binds the two into one and says all the Law and the Prophets hang here — love God, love neighbor.' },
+    { id: 'love-aftermath', ref: '1 John 4:10', passageId: '1 John 4:10', position: 'aftermath',
+      connection: 'But John finds the source beneath the command: this is love — not that we loved God, but that He loved us and gave His Son for our sins.' },
+    { id: 'love-consummation', ref: 'Revelation 21:3', passageId: 'Revelation 21:3', position: 'consummation',
+      connection: 'And love arrives where it was always headed: God dwelling with His people, His own at last, every distance closed.' },
   ],
 
   thread: 'The love commanded in the Law is the love embodied at the cross.',

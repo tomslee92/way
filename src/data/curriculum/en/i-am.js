@@ -5,10 +5,11 @@
 // `orbit` (the divine-Name spine). Thread selections grounded in standard
 // typology (Beale & Carson, NT Use of the OT) — verified/vouched by Toms.
 //
-// English text fetched LIVE via /api/bible (ESV); passageId === ref. Rhema's
-// per-station narration (connection) is authored by Toms — TODO.
+// English text fetched LIVE via /api/bible (ESV); passageId === ref. Per-station
+// `connection` (the quiet "why this is here" line, shown on the walk and read
+// aloud after the verse) is DRAFT — Toms vouches and edits before launch.
 
-const station = (id, ref, position) => ({ id, ref, passageId: ref, position });
+const station = (id, ref, position, connection) => ({ id, ref, passageId: ref, position, connection });
 
 export default {
   id: 'i-am',
@@ -23,11 +24,16 @@ export default {
       passageId: 'John 6:35',
       label: 'The bread of life',
       orbit: [
-        station('bread-origin', 'Exodus 16:4', 'origin'),
-        station('bread-unfolding', 'Deuteronomy 8:3', 'unfolding'),
-        station('bread-moment', 'John 6:51', 'moment'),
-        station('bread-aftermath', 'Luke 22:19', 'aftermath'),
-        station('bread-consummation', 'Revelation 19:9', 'consummation'),
+        station('bread-origin', 'Exodus 16:4', 'origin',
+          'In the wilderness, God rains bread from heaven — manna, enough for each day. Israel lives on a gift they can’t store or make.'),
+        station('bread-unfolding', 'Deuteronomy 8:3', 'unfolding',
+          'Moses reads the lesson of the manna: man does not live by bread alone, but by every word from the mouth of God. The hunger was always for Him.'),
+        station('bread-moment', 'John 6:51', 'moment',
+          'So Jesus says the thing the manna was pointing to: I am the living bread that came down from heaven; the bread I give is my flesh, for the life of the world.'),
+        station('bread-aftermath', 'Luke 22:19', 'aftermath',
+          'At the table He puts it in their hands — this is my body, given for you. The bread from heaven is broken to be shared.'),
+        station('bread-consummation', 'Revelation 19:9', 'consummation',
+          'And the story ends at a feast: blessed are those invited to the marriage supper of the Lamb. The wilderness hunger is finally filled.'),
       ],
     },
     {
@@ -36,11 +42,16 @@ export default {
       passageId: 'John 8:12',
       label: 'The light of the world',
       orbit: [
-        station('light-origin', 'Genesis 1:3', 'origin'),
-        station('light-unfolding', 'Isaiah 9:2', 'unfolding'),
-        station('light-moment', 'John 9:5', 'moment'),
-        station('light-aftermath', '2 Corinthians 4:6', 'aftermath'),
-        station('light-consummation', 'Revelation 21:23', 'consummation'),
+        station('light-origin', 'Genesis 1:3', 'origin',
+          'Before anything else, God speaks light into the dark: let there be light. Creation’s very first word is His.'),
+        station('light-unfolding', 'Isaiah 9:2', 'unfolding',
+          'Isaiah promises that light to a people in the dark: those who walked in darkness have seen a great light — a child to be born.'),
+        station('light-moment', 'John 9:5', 'moment',
+          'Then Jesus says it standing in the world He made: as long as I am in the world, I am the light of the world — and He opens a blind man’s eyes to prove it.'),
+        station('light-aftermath', '2 Corinthians 4:6', 'aftermath',
+          'Paul says that same light has dawned inside us: the God who said “let light shine out of darkness” has shone in our hearts, in the face of Christ.'),
+        station('light-consummation', 'Revelation 21:23', 'consummation',
+          'And the city needs no sun: the glory of God gives it light, and its lamp is the Lamb. The first light becomes the only light.'),
       ],
     },
     {
@@ -49,11 +60,16 @@ export default {
       passageId: 'John 10:9',
       label: 'The door',
       orbit: [
-        station('door-origin', 'Genesis 7:16', 'origin'),
-        station('door-unfolding', 'Psalm 118:19-20', 'unfolding'),
-        station('door-moment', 'John 10:7', 'moment'),
-        station('door-aftermath', 'Acts 14:27', 'aftermath'),
-        station('door-consummation', 'Revelation 21:25', 'consummation'),
+        station('door-origin', 'Genesis 7:16', 'origin',
+          'As the flood comes, God Himself shuts the door of the ark — one door between death and life, and the LORD closes it behind His people.'),
+        station('door-unfolding', 'Psalm 118:19-20', 'unfolding',
+          'The psalmist sings of another door: open to me the gates of righteousness — this is the gate of the LORD; the righteous enter through it.'),
+        station('door-moment', 'John 10:7', 'moment',
+          'Then Jesus says He is that door: I am the door of the sheep. Whoever enters by me will be saved, and go in and out and find pasture.'),
+        station('door-aftermath', 'Acts 14:27', 'aftermath',
+          'And the door swings wide: the church reports how God had opened a door of faith to the Gentiles. The way in is for everyone now.'),
+        station('door-consummation', 'Revelation 21:25', 'consummation',
+          'And in the end the gates are never shut — no flood, no night, no threat. The door God once closed to save now stands open forever.'),
       ],
     },
     {
@@ -62,11 +78,16 @@ export default {
       passageId: 'John 10:11',
       label: 'The good shepherd',
       orbit: [
-        station('shepherd-origin', 'Psalm 23:1', 'origin'),
-        station('shepherd-unfolding', 'Ezekiel 34:11-12', 'unfolding'),
-        station('shepherd-moment', 'John 10:14', 'moment'),
-        station('shepherd-aftermath', 'Hebrews 13:20', 'aftermath'),
-        station('shepherd-consummation', 'Revelation 7:17', 'consummation'),
+        station('shepherd-origin', 'Psalm 23:1', 'origin',
+          'David sings the line every heart knows: the LORD is my shepherd, I shall not want. God Himself is the one who leads and keeps.'),
+        station('shepherd-unfolding', 'Ezekiel 34:11-12', 'unfolding',
+          'When the shepherds of Israel fail the flock, God says He’ll come Himself: I will seek my sheep and rescue them, as a shepherd seeks his flock.'),
+        station('shepherd-moment', 'John 10:14', 'moment',
+          'Then Jesus says the promise has arrived: I am the good shepherd; I know my own and my own know me — and I lay down my life for the sheep.'),
+        station('shepherd-aftermath', 'Hebrews 13:20', 'aftermath',
+          'And the shepherd who died is raised: God brought again from the dead our Lord Jesus, the great shepherd of the sheep, by the blood of the eternal covenant.'),
+        station('shepherd-consummation', 'Revelation 7:17', 'consummation',
+          'And at the end the Shepherd is on the throne — the Lamb will be their shepherd, leading them to springs of living water, and God will wipe away every tear.'),
       ],
     },
     {
@@ -75,11 +96,16 @@ export default {
       passageId: 'John 11:25',
       label: 'The resurrection and the life',
       orbit: [
-        station('life-origin', 'Job 19:25-26', 'origin'),
-        station('life-unfolding', 'Daniel 12:2', 'unfolding'),
-        station('life-moment', 'John 11:43-44', 'moment'),
-        station('life-aftermath', '1 Corinthians 15:20-22', 'aftermath'),
-        station('life-consummation', 'Revelation 21:4', 'consummation'),
+        station('life-origin', 'Job 19:25-26', 'origin',
+          'From the depth of his suffering Job reaches past death: I know that my Redeemer lives, and after my skin is destroyed, yet in my flesh I shall see God.'),
+        station('life-unfolding', 'Daniel 12:2', 'unfolding',
+          'Daniel is told it plainly: many who sleep in the dust of the earth shall awake — some to everlasting life. The grave is not the last word.'),
+        station('life-moment', 'John 11:43-44', 'moment',
+          'Then Jesus calls a dead man by name — Lazarus, come out — and he comes. The hope of the resurrection walks out of a tomb at His word.'),
+        station('life-aftermath', '1 Corinthians 15:20-22', 'aftermath',
+          'Paul says it has begun for good: Christ has been raised, the firstfruits of those who sleep. As in Adam all die, so in Christ all will be made alive.'),
+        station('life-consummation', 'Revelation 21:4', 'consummation',
+          'And death is undone at last: He will wipe away every tear, and death shall be no more, nor mourning nor crying nor pain — the former things are gone.'),
       ],
     },
     {
@@ -88,11 +114,16 @@ export default {
       passageId: 'John 14:6',
       label: 'The way, the truth, and the life',
       orbit: [
-        station('way-origin', 'Isaiah 35:8', 'origin'),
-        station('way-unfolding', 'Psalm 25:4-5', 'unfolding'),
-        station('way-moment', 'Hebrews 10:19-20', 'moment'),
-        station('way-aftermath', '1 Timothy 2:5', 'aftermath'),
-        station('way-consummation', 'Revelation 22:4', 'consummation'),
+        station('way-origin', 'Isaiah 35:8', 'origin',
+          'Isaiah sees a road through the wilderness: a highway shall be there, the Way of Holiness — the redeemed shall walk on it home.'),
+        station('way-unfolding', 'Psalm 25:4-5', 'unfolding',
+          'And the heart’s prayer is to be shown it: make me to know your ways, O LORD; lead me in your truth and teach me. We were always asking for the way.'),
+        station('way-moment', 'Hebrews 10:19-20', 'moment',
+          'Then Jesus opens it with His own body: we have confidence to enter the holy places by the new and living way He opened through the curtain, that is, His flesh.'),
+        station('way-aftermath', '1 Timothy 2:5', 'aftermath',
+          'Paul says why the way is one: there is one God, and one mediator between God and men, the man Christ Jesus. Only He stands in the gap.'),
+        station('way-consummation', 'Revelation 22:4', 'consummation',
+          'And the road arrives at a face: they shall see His face, and His name shall be on their foreheads. The Way leads all the way home, to God Himself.'),
       ],
     },
     {
@@ -101,11 +132,16 @@ export default {
       passageId: 'John 15:5',
       label: 'The true vine',
       orbit: [
-        station('vine-origin', 'Psalm 80:8-9', 'origin'),
-        station('vine-unfolding', 'Isaiah 5:1-7', 'unfolding'),
-        station('vine-moment', 'John 15:8', 'moment'),
-        station('vine-aftermath', 'Galatians 5:22-23', 'aftermath'),
-        station('vine-consummation', 'Revelation 22:2', 'consummation'),
+        station('vine-origin', 'Psalm 80:8-9', 'origin',
+          'Israel is God’s own vine: you brought a vine out of Egypt, cleared the ground, and it took root and filled the land. Planted and tended by His hand.'),
+        station('vine-unfolding', 'Isaiah 5:1-7', 'unfolding',
+          'But the vine yields wild grapes — Isaiah’s song of the vineyard ends in heartbreak: God looked for justice and found bloodshed. The vine of Israel failed.'),
+        station('vine-moment', 'John 15:8', 'moment',
+          'So Jesus becomes the vine Israel was meant to be: by this my Father is glorified, that you bear much fruit — and apart from me you can do nothing.'),
+        station('vine-aftermath', 'Galatians 5:22-23', 'aftermath',
+          'And the fruit finally comes — not by effort but by abiding: the fruit of the Spirit is love, joy, peace, patience, kindness… what the old vine never grew.'),
+        station('vine-consummation', 'Revelation 22:2', 'consummation',
+          'And the vine becomes a tree of life by the river, yielding fruit every month, its leaves for the healing of the nations. The fruit never fails again.'),
       ],
     },
     // The absolute "I am" — no own thread; falls back to the divine-Name spine.
