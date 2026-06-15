@@ -1,8 +1,10 @@
 // "The Kingdom of God" — curated topic (English). A cluster of red-letter
-// sayings and parables of the kingdom. Most share the topic thread (the Davidic
-// kingdom arc, below); a few parables that draw on a distinct OT image carry
-// their OWN thread (new birth → Ezekiel 36; the mustard seed → the great tree of
-// Ezekiel 17 / Daniel 4). English text fetched live (ESV). DRAFT — Toms vouches.
+// sayings and parables of the kingdom. Nearly every saying carries its OWN
+// OT→NT image-thread (the great tree, the new birth, the segullah treasure, the
+// pearl gates, the anawim, the stone not made with hands…); only "in your midst"
+// (Luke 17:20-21) stays on the topic thread below, because it IS that thread's
+// center station. Leaven (Matt 13:33) is left on the spine by choice — its image
+// is the most interpretive. English text fetched live (ESV). DRAFT — Toms vouches.
 
 const station = (id, ref, position) => ({ id, ref, passageId: ref, position });
 
@@ -13,7 +15,20 @@ export default {
   subtitle: 'His unmistakable center.',
 
   memoryVerses: [
-    { id: 'kingdom-at-hand', ref: 'Mark 1:15', passageId: 'Mark 1:15', label: 'The kingdom is at hand' },
+    {
+      id: 'kingdom-at-hand',
+      ref: 'Mark 1:15',
+      passageId: 'Mark 1:15',
+      label: 'The kingdom is at hand',
+      // The herald of the reign — "Your God reigns," announced.
+      orbit: [
+        station('athand-origin', 'Isaiah 52:7', 'origin'),
+        station('athand-unfolding', 'Malachi 3:1', 'unfolding'),
+        station('athand-moment', 'Mark 1:15', 'moment'),
+        station('athand-aftermath', 'Romans 10:15', 'aftermath'),
+        station('athand-consummation', 'Revelation 11:15', 'consummation'),
+      ],
+    },
     {
       id: 'kingdom-born-again',
       ref: 'John 3:3',
@@ -55,13 +70,91 @@ export default {
         station('treasure-consummation', 'Revelation 21:3', 'consummation'),
       ],
     },
-    { id: 'kingdom-pearl', ref: 'Matthew 13:45-46', passageId: 'Matthew 13:45-46', label: 'A pearl of great price' },
-    { id: 'kingdom-seek-first', ref: 'Matthew 6:33', passageId: 'Matthew 6:33', label: 'Seek first the kingdom' },
+    {
+      id: 'kingdom-pearl',
+      ref: 'Matthew 13:45-46',
+      passageId: 'Matthew 13:45-46',
+      label: 'A pearl of great price',
+      // Wisdom beyond pearls → the gates of pearl.
+      orbit: [
+        station('pearl-origin', 'Proverbs 3:13-15', 'origin'),
+        station('pearl-unfolding', 'Job 28:18', 'unfolding'),
+        station('pearl-moment', 'Matthew 13:45-46', 'moment'),
+        station('pearl-aftermath', 'Philippians 3:8', 'aftermath'),
+        station('pearl-consummation', 'Revelation 21:21', 'consummation'),
+      ],
+    },
+    {
+      id: 'kingdom-seek-first',
+      ref: 'Matthew 6:33',
+      passageId: 'Matthew 6:33',
+      label: 'Seek first the kingdom',
+      // The Solomon echo — seek the kingdom-gift first, all else added.
+      orbit: [
+        station('seek-origin', '1 Kings 3:11-13', 'origin'),
+        station('seek-unfolding', 'Psalm 37:4', 'unfolding'),
+        station('seek-moment', 'Matthew 6:33', 'moment'),
+        station('seek-aftermath', 'Philippians 4:19', 'aftermath'),
+        station('seek-consummation', 'Revelation 21:3-4', 'consummation'),
+      ],
+    },
     { id: 'kingdom-in-your-midst', ref: 'Luke 17:20-21', passageId: 'Luke 17:20-21', label: 'In your midst' },
-    { id: 'kingdom-like-a-child', ref: 'Mark 10:15', passageId: 'Mark 10:15', label: 'Receive it like a child' },
-    { id: 'kingdom-poor-in-spirit', ref: 'Matthew 5:3', passageId: 'Matthew 5:3', label: 'The poor in spirit' },
-    { id: 'kingdom-little-flock', ref: 'Luke 12:32', passageId: 'Luke 12:32', label: 'Your Father’s good pleasure' },
-    { id: 'kingdom-not-of-this-world', ref: 'John 18:36', passageId: 'John 18:36', label: 'Not of this world' },
+    {
+      id: 'kingdom-like-a-child',
+      ref: 'Mark 10:15',
+      passageId: 'Mark 10:15',
+      label: 'Receive it like a child',
+      // Childlike trust → sonship.
+      orbit: [
+        station('child-origin', 'Psalm 131:1-2', 'origin'),
+        station('child-unfolding', 'Isaiah 11:6', 'unfolding'),
+        station('child-moment', 'Mark 10:15', 'moment'),
+        station('child-aftermath', '1 Peter 2:2', 'aftermath'),
+        station('child-consummation', 'Revelation 21:7', 'consummation'),
+      ],
+    },
+    {
+      id: 'kingdom-poor-in-spirit',
+      ref: 'Matthew 5:3',
+      passageId: 'Matthew 5:3',
+      label: 'The poor in spirit',
+      // The anawim — the LORD's lowly and contrite ones.
+      orbit: [
+        station('poor-origin', 'Isaiah 57:15', 'origin'),
+        station('poor-unfolding', 'Isaiah 61:1', 'unfolding'),
+        station('poor-moment', 'Matthew 5:3', 'moment'),
+        station('poor-aftermath', 'James 2:5', 'aftermath'),
+        station('poor-consummation', 'Revelation 21:3', 'consummation'),
+      ],
+    },
+    {
+      id: 'kingdom-little-flock',
+      ref: 'Luke 12:32',
+      passageId: 'Luke 12:32',
+      label: 'Your Father’s good pleasure',
+      // The flock given the kingdom.
+      orbit: [
+        station('flock-origin', 'Daniel 7:27', 'origin'),
+        station('flock-unfolding', 'Isaiah 40:11', 'unfolding'),
+        station('flock-moment', 'Luke 12:32', 'moment'),
+        station('flock-aftermath', '1 Peter 5:2-4', 'aftermath'),
+        station('flock-consummation', 'Revelation 5:10', 'consummation'),
+      ],
+    },
+    {
+      id: 'kingdom-not-of-this-world',
+      ref: 'John 18:36',
+      passageId: 'John 18:36',
+      label: 'Not of this world',
+      // A kingdom no human hand builds — the stone cut without hands.
+      orbit: [
+        station('notworld-origin', 'Daniel 2:44', 'origin'),
+        station('notworld-unfolding', 'Psalm 2:6-8', 'unfolding'),
+        station('notworld-moment', 'John 18:36', 'moment'),
+        station('notworld-aftermath', 'Hebrews 12:28', 'aftermath'),
+        station('notworld-consummation', 'Revelation 11:15', 'consummation'),
+      ],
+    },
   ],
 
   // The topic thread — the Davidic throne to the throne of the Lamb. The default
