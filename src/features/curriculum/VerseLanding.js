@@ -85,6 +85,12 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
       },
       t.begin
     ),
-    orbit && orbit.length ? h(RevelationWalk, { orbit, language: lang }) : null
+    orbit && orbit.length
+      ? h(RevelationWalk, {
+          orbit,
+          language: lang,
+          memoryVerse: { ref: verse.ref, text: text || undefined },
+        })
+      : null
   );
 }

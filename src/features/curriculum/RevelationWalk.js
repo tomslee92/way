@@ -1,4 +1,4 @@
-import { createElement as h, useState } from 'react';
+import { createElement as h, useRef, useState } from 'react';
 import { lookupScripture } from '../../lib/bible.js';
 import { useRhema } from '../memorization/useRhema.js';
 import RhemaIndicator from '../memorization/RhemaIndicator.js';
@@ -8,8 +8,13 @@ import './picker.css';
 // The revelation walk (DESIGN §5.2) — the orbit as a true canonical sequence
 // (origin → unfolding → moment → aftermath → consummation), rendered as a
 // literal vertical thread. Collapsed by default ("optional"); a door, never a
-// hallway (library-spec §1). Tapping a station lets Rhema READ that verse aloud
-// (live TTS) — never a memorize action. Footed by Luke 24:27, the Emmaus shape.
+// hallway (library-spec §1).
+//
+// The memory verse heads the thread as its own playable station ("the verse").
+// Tapping any station lets Rhema read it aloud (live TTS) and then speak the
+// connecting remark that ties it to the memory verse — never a memorize action.
+// "Play the whole thread" walks every station in one unbroken flow. Footed by
+// Luke 24:27, the Emmaus shape.
 //
 // English verse text is fetched live (ESV) on expand; Korean uses stored text.
 
@@ -19,20 +24,24 @@ const T = {
     walk: 'Walk the thread',
     hide: 'Hide the thread',
     loading: 'Opening the thread…',
+    playAll: 'Play the whole thread',
+    stop: 'Stop',
     foot: 'Luke 24:27',
-    pos: { origin: 'Origin', unfolding: 'Unfolding', moment: 'Moment', aftermath: 'Aftermath', consummation: 'Consummation' },
+    pos: { verse: 'The verse', origin: 'Origin', unfolding: 'Unfolding', moment: 'Moment', aftermath: 'Aftermath', consummation: 'Consummation' },
   },
   ko: {
     optional: '선택',
     walk: '묵상의 길 걷기',
     hide: '접기',
     loading: '길을 여는 중…',
+    playAll: '전체 듣기',
+    stop: '멈춤',
     foot: '누가복음 24:27',
-    pos: { origin: '기원', unfolding: '전개', moment: '그 순간', aftermath: '그 후', consummation: '완성' },
+    pos: { verse: '본문', origin: '기원', unfolding: '전개', moment: '그 순간', aftermath: '그 후', consummation: '완성' },
   },
 };
 
-export default function RevelationWalk({ orbit, language = 'en' }) {
+export default function RevelationWalk({ orbit, language = 'en', memoryVerse = null }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
   const rhema = useRhema();
@@ -41,18 +50,20 @@ export default function RevelationWalk({ orbit, language = 'en' }) {
   const [texts, setTexts] = useState({}); // stationId -> verse text
   const [loading, setLoading] = useState(false);
   const [activeId, setActiveId] = useState(null);
+  const [playingAll, setPlayingAll] = useState(false);
+  const runRef = useRef(0); // bump to cancel an in-flight play-all
 
-  async function expand() {
-    setOpen(true);
-    // Seed stored texts (Korean), fetch the rest live (English ESV).
-    const seeded = {};
-    orbit.forEach((o) => {
-      if (o.text) seeded[o.id] = o.text;
-    });
-    if (Object.keys(seeded).length) setTexts((m) => ({ ...m, ...seeded }));
+  // The memory verse leads the thread as its own station, then the orbit.
+  const lead = memoryVerse
+    ? [{ id: '__memory', ref: memoryVerse.ref, text: memoryVerse.text || undefined, position: 'verse', isLead: true }]
+    : [];
+  const stations = [...lead, ...orbit];
 
-    const need = orbit.filter((o) => !o.text && texts[o.id] === undefined);
-    if (!need.length) return;
+  // Fetch any station texts we don't already have; returns the merged map so a
+  // caller (play-all) can use fresh text without waiting on a state flush.
+  async function loadTexts() {
+    const need = stations.filter((o) => !o.text && texts[o.id] === undefined);
+    if (!need.length) return texts;
     setLoading(true);
     try {
       const results = await Promise.all(
@@ -62,39 +73,80 @@ export default function RevelationWalk({ orbit, language = 'en' }) {
             .catch(() => [o.id, null])
         )
       );
-      setTexts((m) => {
-        const next = { ...m };
-        results.forEach(([id, txt]) => {
-          next[id] = txt;
-        });
-        return next;
+      const merged = { ...texts };
+      results.forEach(([id, txt]) => {
+        merged[id] = txt;
       });
+      setTexts(merged);
+      return merged;
     } finally {
       setLoading(false);
     }
   }
 
+  function expand() {
+    setOpen(true);
+    loadTexts();
+  }
+
+  function cancelPlayback() {
+    runRef.current += 1;
+    rhema.stop();
+    setPlayingAll(false);
+  }
+
   function toggle() {
     if (open) {
       setOpen(false);
-      rhema.stop();
+      cancelPlayback();
       setActiveId(null);
     } else {
       expand();
     }
   }
 
+  // Tap a single station: stop any running flow, then read it (verse → remark).
   function read(station) {
+    cancelPlayback();
     const text = station.text || texts[station.id];
     if (!text) return;
     setActiveId(station.id);
     rhema.unlock();
-    // Read the Scripture, then speak the connecting remark that ties this
-    // station to the memory verse — the verse, then the why.
     rhema
       .speak(text, lang)
       .then(() => (station.connection ? rhema.speak(station.connection, lang) : null))
       .then(() => setActiveId((cur) => (cur === station.id ? null : cur)));
+  }
+
+  // Walk every station in one flow: verse, then its remark, station by station.
+  async function playAll() {
+    const myRun = (runRef.current += 1);
+    setPlayingAll(true);
+    rhema.unlock();
+    const map = await loadTexts();
+    if (runRef.current !== myRun) return;
+    for (const s of stations) {
+      if (runRef.current !== myRun) break;
+      setActiveId(s.id);
+      const text = s.text || map[s.id];
+      if (text) {
+        await rhema.speak(text, lang);
+        if (runRef.current !== myRun) break;
+      }
+      if (s.connection) {
+        await rhema.speak(s.connection, lang);
+        if (runRef.current !== myRun) break;
+      }
+    }
+    if (runRef.current === myRun) {
+      setActiveId(null);
+      setPlayingAll(false);
+    }
+  }
+
+  function stopAll() {
+    cancelPlayback();
+    setActiveId(null);
   }
 
   function station(s) {
@@ -104,6 +156,7 @@ export default function RevelationWalk({ orbit, language = 'en' }) {
         key: s.id,
         className: 'station',
         type: 'button',
+        'data-lead': s.isLead ? 'true' : undefined,
         'data-active': activeId === s.id ? 'true' : undefined,
         onClick: () => read(s),
       },
@@ -138,11 +191,21 @@ export default function RevelationWalk({ orbit, language = 'en' }) {
       ? h(
           'div',
           { className: 'thread view-in' },
+          h(
+            'button',
+            {
+              className: 'btn btn--quiet walk__play',
+              type: 'button',
+              onClick: playingAll ? stopAll : playAll,
+            },
+            h('span', { className: 'walk__play-dot', 'data-playing': playingAll ? 'true' : undefined, 'aria-hidden': 'true' }),
+            h('span', null, playingAll ? t.stop : t.playAll)
+          ),
           rhema.speaking
             ? h('div', { className: 'thread__orb' }, h(RhemaIndicator, { state: 'speaking', label: '' }))
             : null,
           loading ? h('p', { className: 'walk__note' }, t.loading) : null,
-          h('div', { className: 'thread__list' }, orbit.map(station)),
+          h('div', { className: 'thread__list' }, stations.map(station)),
           h('p', { className: 'thread__foot' }, t.foot)
         )
       : null
