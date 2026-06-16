@@ -173,7 +173,7 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
     // rung indicator — replaces the I–IV stage rail (same restrained treatment)
     h(
       'div',
-      { className: 'stages', role: 'progressbar', 'aria-valuenow': rung, 'aria-valuemax': 6 },
+      { className: 'stages', role: 'progressbar', 'aria-valuenow': rung, 'aria-valuemax': RUNGS.length },
       RUNGS.map((r) =>
         h('span', {
           key: r.rung,
