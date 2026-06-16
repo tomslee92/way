@@ -41,6 +41,17 @@ const T = {
   },
 };
 
+// The footer verse — Luke 24:27, the Emmaus shape behind every thread. Tappable:
+// Rhema reads it aloud. English is fetched live (ESV, never stored); Korean is the
+// stored 개역개정 (no Korean API).
+const FOOT = {
+  en: { ref: 'Luke 24:27', text: null },
+  ko: {
+    ref: '누가복음 24:27',
+    text: '이에 모세와 모든 선지자의 글로 시작하여 모든 성경에 쓴 바 자기에 관한 것을 자세히 설명하시니라',
+  },
+};
+
 export default function RevelationWalk({ orbit, language = 'en', memoryVerse = null }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
@@ -131,6 +142,19 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
       .speak(text, lang)
       .then(() => (station.connection ? rhema.speak(station.connection, lang) : null))
       .then(() => setActiveId((cur) => (cur === station.id ? null : cur)));
+  }
+
+  // The Emmaus footer (Luke 24:27) — tap to hear it read. EN fetched live (ESV,
+  // never stored); KO uses the stored 개역개정 text.
+  function readFoot() {
+    cancelPlayback();
+    setActiveId('__foot');
+    rhema.unlock();
+    const done = () => setActiveId((cur) => (cur === '__foot' ? null : cur));
+    const speak = (txt) => (txt ? rhema.speak(txt, lang).then(done) : done());
+    const stored = FOOT[lang].text;
+    if (stored) speak(stored);
+    else lookupScripture(lang, FOOT[lang].ref).then((v) => speak(v.text)).catch(done);
   }
 
   // Walk every station in one flow: verse, then its remark, station by station.
@@ -225,7 +249,16 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
             : null,
           loading ? h('p', { className: 'walk__note' }, t.loading) : null,
           h('div', { className: 'thread__list' }, stations.map(station)),
-          h('p', { className: 'thread__foot' }, t.foot)
+          h(
+            'button',
+            {
+              className: 'thread__foot',
+              type: 'button',
+              'data-active': activeId === '__foot' ? 'true' : undefined,
+              onClick: readFoot,
+            },
+            t.foot
+          )
         )
       : null
   );
