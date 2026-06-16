@@ -21,8 +21,8 @@ import './picker.css';
 const T = {
   en: {
     optional: 'Optional',
-    walk: 'Walk the thread',
-    hide: 'Hide the thread',
+    walk: 'See how it connects',
+    hide: 'Hide',
     loading: 'Opening the thread…',
     playAll: 'Play the whole thread',
     stop: 'Stop',
@@ -31,7 +31,7 @@ const T = {
   },
   ko: {
     optional: '선택',
-    walk: '묵상의 길 걷기',
+    walk: '어떻게 이어지는지 보기',
     hide: '접기',
     loading: '길을 여는 중…',
     playAll: '전체 듣기',

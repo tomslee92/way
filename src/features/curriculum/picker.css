@@ -16,6 +16,24 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--s4);
+  /* Stay pinned so the Back button is always reachable while scrolling the
+     thread/verse list. Frosted (Apple-style) so content blurs softly beneath.
+     Bleeds over the page padding so the background spans the full column. */
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  margin: calc(-1 * var(--page-pad)) calc(-1 * var(--page-pad)) var(--s5);
+  padding: var(--page-pad) var(--page-pad) var(--s3);
+  background: var(--paper-blur);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  backdrop-filter: saturate(180%) blur(18px);
+}
+
+@media (max-width: 480px) {
+  .picker__bar {
+    margin: calc(-1 * var(--page-pad)) -20px var(--s5);
+    padding: var(--page-pad) 20px var(--s3);
+  }
 }
 
 .picker__kicker {

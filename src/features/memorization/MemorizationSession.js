@@ -19,6 +19,7 @@ const T = {
   en: {
     encode: 'Read it through.',
     attempt: 'Bring it to mind — then reveal.',
+    attemptFree: 'Every hint is gone now — even the spacing. Recite the whole verse from memory, then reveal.',
     selfcheck: 'Did it come to mind?',
     revealLabel: 'The verse',
     continue: 'Continue',
@@ -34,6 +35,7 @@ const T = {
   ko: {
     encode: '한 번 읽어 보세요.',
     attempt: '마음에 떠올린 뒤, 확인해 보세요.',
+    attemptFree: '이제 모든 단서가 사라졌어요. 띄어쓰기까지요. 처음부터 끝까지 외워서 암송한 뒤, 확인해 보세요.',
     selfcheck: '마음에 떠올랐나요?',
     revealLabel: '본문',
     continue: '계속',
@@ -115,6 +117,8 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
       ? t.selfcheck
       : isEncoding
       ? t.encode
+      : rung === Rung.FREE_RECALL
+      ? t.attemptFree
       : t.attempt;
 
   function renderControls() {
@@ -122,12 +126,14 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
       return h('button', { className: 'btn btn--primary', type: 'button', onClick: endSession }, t.done);
     }
     if (phase === 'reveal') {
-      // Equal-weight, strictly B&W — no red/green, no scoring affect (§9).
+      // Still B&W, no red/green grading (§9) — but the encouraging default
+      // ("Almost", which simply repeats THIS rung) is softly raised and focused,
+      // so the unsure path stays on the same step rather than dropping back.
       return h(
         'div',
         { className: 'selfcheck' },
         h('button', { className: 'btn btn--quiet', type: 'button', onClick: dropRung }, t.notYet),
-        h('button', { className: 'btn btn--quiet', type: 'button', onClick: () => setPhase('cue') }, t.almost),
+        h('button', { className: 'btn btn--soft', type: 'button', autoFocus: true, onClick: () => setPhase('cue') }, t.almost),
         h('button', { className: 'btn btn--quiet', type: 'button', onClick: onYes }, t.yes)
       );
     }

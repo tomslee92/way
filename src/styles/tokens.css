@@ -7,12 +7,20 @@
   --paper: #f6f5f2; /* cool bone — app background */
   --raise: #fcfcfb; /* lifted card surface */
   --ink: #16181d; /* blue-black — primary text, fills, buttons */
+  --ink-hover: #23262e; /* one step up from ink — primary button hover */
   --secondary: #4a4d53; /* body text on paper that must stay legible */
   --muted: #6e7178; /* labels, refs, captions, secondary UI */
   --faint: #9a9ca1; /* inactive UI, blank-rule strokes, placeholders */
   --fill: #e7e6e2; /* ruled-blank background tint */
   --hair: rgba(22, 24, 29, 0.14); /* standard hairline */
   --hair-soft: rgba(22, 24, 29, 0.08); /* whisper divider */
+  --paper-blur: rgba(246, 245, 242, 0.82); /* frosted sticky bar over paper */
+
+  /* — Elevation (§6) — used sparingly: the primary CTA + the soft default only.
+     The interface stays flat/letterpress; these give just those two a premium lift. */
+  --shadow-rest: 0 1px 2px rgba(22, 24, 29, 0.14), 0 6px 18px rgba(22, 24, 29, 0.1);
+  --shadow-hover: 0 2px 6px rgba(22, 24, 29, 0.18), 0 12px 30px rgba(22, 24, 29, 0.14);
+  --shadow-press: 0 1px 2px rgba(22, 24, 29, 0.16);
 
   /* — Type families (§2) — two families do all the work — */
   --serif: 'EB Garamond', 'Noto Serif KR', Georgia, serif; /* Scripture + display */
@@ -34,7 +42,8 @@
   --page: 680px; /* centered column max */
   --page-pad: 28px; /* → 20px below 480 (set per screen) */
   --measure: 540px; /* Scripture reading measure cap */
-  --radius: 0; /* letterpress, not soft UI — radius 0 everywhere */
+  --radius: 0; /* letterpress, not soft UI — radius 0 everywhere… */
+  --radius-pill: 980px; /* …except the primary CTA + soft default: an Apple-style capsule */
 
   /* — Motion (§7) — animate only fade/view-in/hover/orb — */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);

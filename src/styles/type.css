@@ -137,18 +137,57 @@
     border-color var(--hover) var(--ease);
 }
 
+/* Primary CTA — the one place we soften (Apple-style): a capsule in sentence
+   case with a quiet shadow and a smooth press, not a hard letterpress block. */
 .btn--primary {
   background: var(--ink);
   color: var(--paper);
   border-color: var(--ink);
-  padding: 16px 30px;
-  font-size: 13px;
+  padding: 15px 34px;
+  font-size: 15px;
   font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-rest);
 }
 .btn--primary:hover {
-  transform: translateY(-2px);
+  background: var(--ink-hover);
+  border-color: var(--ink-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+.btn--primary:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-press);
+  transition-duration: 90ms;
+}
+
+/* Soft default — a gentle raised capsule (not a grade): used for the encouraging
+   default in equal-choice rows like the self-check. Warm, inviting, B&W. */
+.btn--soft {
+  background: var(--raise);
+  color: var(--ink);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-pill);
+  padding: 13px 28px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  min-height: 44px;
+  cursor: pointer;
+  box-shadow: var(--shadow-rest);
+  transition: transform var(--hover) var(--ease), box-shadow var(--hover) var(--ease);
+}
+.btn--soft:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+.btn--soft:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-press);
+  transition-duration: 90ms;
 }
 
 .btn--quiet {
@@ -219,7 +258,10 @@
   .view-in {
     animation: none;
   }
-  .btn--primary:hover {
+  .btn--primary:hover,
+  .btn--primary:active,
+  .btn--soft:hover,
+  .btn--soft:active {
     transform: none;
   }
 }
