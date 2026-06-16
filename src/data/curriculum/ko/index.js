@@ -5,6 +5,8 @@ import kingdom from './kingdom.js';
 import love from './love.js';
 import obedience from './obedience.js';
 import prayer from './prayer.js';
+import cryingOut from './crying-out.js';
+import spiritPrayer from './spirit-prayer.js';
 import faith from './faith.js';
 
-export default [iAm, kingdom, love, obedience, prayer, faith];
+export default [iAm, kingdom, love, obedience, prayer, cryingOut, spiritPrayer, faith];
