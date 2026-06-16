@@ -1,4 +1,4 @@
-import { createElement as h, useRef, useState } from 'react';
+import { createElement as h, useEffect, useRef, useState } from 'react';
 import { lookupScripture } from '../../lib/bible.js';
 import { useRhema } from '../memorization/useRhema.js';
 import RhemaIndicator from '../memorization/RhemaIndicator.js';
@@ -52,6 +52,21 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
   const [activeId, setActiveId] = useState(null);
   const [playingAll, setPlayingAll] = useState(false);
   const runRef = useRef(0); // bump to cancel an in-flight play-all
+  const stationEls = useRef({}); // stationId -> DOM node, for auto-scroll
+
+  // Keep the station being read aloud centered in view — the page tracks along
+  // with Rhema (single taps and the full walk both set activeId). Honor reduced
+  // motion with an instant jump instead of a smooth scroll.
+  useEffect(() => {
+    if (!activeId) return;
+    const el = stationEls.current[activeId];
+    if (!el || !el.scrollIntoView) return;
+    const reduce =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  }, [activeId]);
 
   // The memory verse leads the thread as its own station, then the orbit.
   const lead = memoryVerse
@@ -156,6 +171,10 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
         key: s.id,
         className: 'station',
         type: 'button',
+        ref: (el) => {
+          if (el) stationEls.current[s.id] = el;
+          else delete stationEls.current[s.id];
+        },
         'data-lead': s.isLead ? 'true' : undefined,
         'data-active': activeId === s.id ? 'true' : undefined,
         onClick: () => read(s),
