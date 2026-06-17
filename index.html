@@ -8,11 +8,16 @@
       name="description"
       content="Way is a premium voice-coached Scripture memorization app for Korean and English speakers."
     />
-    <!-- Apply the saved theme before paint so a dark-mode user never flashes white. -->
+    <!-- Apply the theme before paint (no flash): a saved choice wins, otherwise
+         follow the device's system setting. -->
     <script>
       try {
-        if (localStorage.getItem('way:theme') === 'dark')
-          document.documentElement.dataset.theme = 'dark';
+        var s = localStorage.getItem('way:theme');
+        var dark =
+          s === 'dark' ||
+          (s == null && window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.dataset.theme = 'dark';
       } catch (e) {}
     </script>
     <!-- Scripture: EB Garamond + Noto Serif KR; UI: Inter (DESIGN.md §2).

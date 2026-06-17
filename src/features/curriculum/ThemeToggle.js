@@ -1,11 +1,14 @@
-import { createElement as h, useState } from 'react';
-import { getStoredTheme, toggleTheme } from '../../lib/theme.js';
+import { createElement as h, useState, useEffect } from 'react';
+import { getEffectiveTheme, toggleTheme, watchSystemTheme } from '../../lib/theme.js';
 
-// A single quiet control to invert the app (light ⇄ dark). The glyph is a
+// A single quiet control to invert the app (light ⇄ dark). Defaults to the
+// device's system setting; a tap stores an explicit override. The glyph is a
 // half-filled circle — the universal contrast mark — and it inverts with the
 // palette, so it always reads against the current background. Strict B&W, no emoji.
 export default function ThemeToggle({ language = 'en' }) {
-  const [theme, setTheme] = useState(getStoredTheme);
+  const [theme, setTheme] = useState(getEffectiveTheme);
+  // Follow the OS live until the user has made an explicit choice.
+  useEffect(() => watchSystemTheme(setTheme), []);
   const dark = theme === 'dark';
   const label =
     language === 'ko'
