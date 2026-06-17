@@ -27,7 +27,7 @@ const T = {
     playAll: 'Play the whole thread',
     stop: 'Stop',
     foot: 'Luke 24:27',
-    pos: { verse: 'The verse', origin: 'Origin', unfolding: 'Unfolding', moment: 'Moment', aftermath: 'Aftermath', consummation: 'Consummation' },
+    pos: { verse: 'The verse', origin: 'Origin', unfolding: 'Unfolding', moment: 'Moment', aftermath: 'Echo', consummation: 'Consummation' },
   },
   ko: {
     optional: '선택',
@@ -37,7 +37,7 @@ const T = {
     playAll: '전체 듣기',
     stop: '멈춤',
     foot: '누가복음 24:27',
-    pos: { verse: '본문', origin: '기원', unfolding: '전개', moment: '그 순간', aftermath: '그 후', consummation: '완성' },
+    pos: { verse: '본문', origin: '시작', unfolding: '전개', moment: '그 순간', aftermath: '울림', consummation: '완성' },
   },
 };
 
