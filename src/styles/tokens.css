@@ -52,3 +52,28 @@
   --hover: 200ms; /* lifts, color shifts */
   --orb: 4600ms; /* breathe/ring loop */
 }
+
+/* — Dark theme (invert) — set [data-theme="dark"] on <html>. The whole palette is
+   tokenized, so this one block flips the app: rich blue-black paper, warm off-white
+   ink. Still strictly tonal (no chroma). OAuth brand buttons keep their colors. */
+[data-theme='dark'] {
+  --paper: #14161b; /* near-black bg (the brand blue-black, deepened) */
+  --raise: #1c1e24; /* lifted card surface */
+  --ink: #f4f3ef; /* warm off-white — primary text, fills, buttons */
+  --ink-hover: #e6e5e0; /* one step down — primary button hover */
+  --secondary: #c4c5c9; /* body text that must stay legible */
+  --muted: #9a9ca1; /* labels, refs, captions, secondary UI */
+  --faint: #5a5d64; /* inactive UI, blank-rule strokes, placeholders */
+  --fill: #232529; /* ruled-blank background tint */
+  --hair: rgba(244, 243, 239, 0.15); /* standard hairline */
+  --hair-soft: rgba(244, 243, 239, 0.08); /* whisper divider */
+  --paper-blur: rgba(20, 22, 27, 0.82); /* frosted sticky bar over paper */
+
+  --shadow-rest: 0 1px 2px rgba(0, 0, 0, 0.55), 0 6px 18px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.6), 0 12px 30px rgba(0, 0, 0, 0.5);
+  --shadow-press: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
+html {
+  background: var(--paper); /* so the document base matches the theme (no white flash on overscroll) */
+}

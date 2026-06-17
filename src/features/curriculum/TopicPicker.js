@@ -1,5 +1,6 @@
 import { createElement as h } from 'react';
 import { getTopics } from '../../data/curriculum/curriculum.js';
+import ThemeToggle from './ThemeToggle.js';
 import './picker.css';
 
 // Choose a language and a curated topic. Each topic is an anchor-and-orbit
@@ -26,26 +27,31 @@ export default function TopicPicker({ language = 'en', onLanguage, onSelect, onE
       h('p', { className: 'picker__kicker' }, 'Way'),
       h(
         'div',
-        { className: 'langtoggle', role: 'group', 'aria-label': 'Language' },
+        { className: 'picker__tools' },
+        h(ThemeToggle, { language: lang }),
         h(
-          'button',
-          {
-            type: 'button',
-            className: 'langtoggle__opt',
-            'data-on': lang === 'en' ? 'true' : undefined,
-            onClick: () => onLanguage && onLanguage('en'),
-          },
-          'EN'
-        ),
-        h(
-          'button',
-          {
-            type: 'button',
-            className: 'langtoggle__opt',
-            'data-on': lang === 'ko' ? 'true' : undefined,
-            onClick: () => onLanguage && onLanguage('ko'),
-          },
-          '한국어'
+          'div',
+          { className: 'langtoggle', role: 'group', 'aria-label': 'Language' },
+          h(
+            'button',
+            {
+              type: 'button',
+              className: 'langtoggle__opt',
+              'data-on': lang === 'en' ? 'true' : undefined,
+              onClick: () => onLanguage && onLanguage('en'),
+            },
+            'EN'
+          ),
+          h(
+            'button',
+            {
+              type: 'button',
+              className: 'langtoggle__opt',
+              'data-on': lang === 'ko' ? 'true' : undefined,
+              onClick: () => onLanguage && onLanguage('ko'),
+            },
+            '한국어'
+          )
         )
       )
     ),

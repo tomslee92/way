@@ -8,6 +8,13 @@
       name="description"
       content="Way is a premium voice-coached Scripture memorization app for Korean and English speakers."
     />
+    <!-- Apply the saved theme before paint so a dark-mode user never flashes white. -->
+    <script>
+      try {
+        if (localStorage.getItem('way:theme') === 'dark')
+          document.documentElement.dataset.theme = 'dark';
+      } catch (e) {}
+    </script>
     <!-- Scripture: EB Garamond + Noto Serif KR; UI: Inter (DESIGN.md §2).
          Georgia/system fallbacks live in the --serif/--sans token stacks,
          so a CDN hiccup degrades gracefully. -->

@@ -51,6 +51,41 @@
   min-width: 56px;
 }
 
+/* right-side controls: theme invert + language toggle */
+.picker__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+}
+
+/* invert toggle — a half-filled circle (the contrast mark); inverts with the
+   palette, so it always reads against the current background. */
+.themetoggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.themetoggle__glyph {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background: linear-gradient(90deg, var(--ink) 0 50%, transparent 50% 100%);
+  transition: transform var(--hover) var(--ease), border-color var(--hover) var(--ease),
+    background var(--hover) var(--ease);
+}
+
+.themetoggle:hover .themetoggle__glyph {
+  transform: scale(1.1);
+}
+
 /* language toggle (.langtoggle) is shared chrome — see styles/type.css */
 
 .picker__title {
