@@ -616,16 +616,20 @@
   letter-spacing: 0;
 }
 
-/* footed by Luke 24:27 in italic serif — the Emmaus shape. Tappable: Rhema reads
-   it. Quiet by default, a faint underline on hover hints it can be heard. */
+/* footed by Luke 24:27 — the Emmaus shape. Tap the reference to reveal the verse
+   and hear Rhema read it (tap again to hide); a faint underline on hover hints it. */
 .thread__foot {
+  margin: var(--s5) 0 0;
+  padding-left: var(--s5);
+}
+
+.thread__foot-btn {
   display: inline-block;
   font-family: var(--serif);
   font-style: italic;
   font-size: 14px;
   color: var(--muted);
-  margin: var(--s5) 0 0;
-  padding: var(--s1) var(--s2) var(--s1) var(--s5);
+  padding: var(--s1) var(--s2) var(--s1) 0;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -635,15 +639,32 @@
   transition: color var(--hover) var(--ease), text-decoration-color var(--hover) var(--ease);
 }
 
-.thread__foot:hover,
-.thread__foot[data-active='true'] {
+.thread__foot-btn:hover,
+.thread__foot-btn[data-active='true'],
+.thread__foot-btn[aria-expanded='true'] {
   color: var(--ink);
   text-decoration-color: var(--faint);
 }
 
-[lang='ko'] .thread__foot {
+/* the revealed verse — quiet serif, a gentle fade-in */
+.thread__foot-text {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--secondary);
+  max-width: 38ch;
+  margin: var(--s2) 0 0;
+  animation: way-view-in var(--view-in) var(--ease) both;
+}
+
+[lang='ko'] .thread__foot-btn {
   font-family: var(--serif-kr);
   font-style: normal;
+}
+
+[lang='ko'] .thread__foot-text {
+  font-family: var(--serif-kr);
+  letter-spacing: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

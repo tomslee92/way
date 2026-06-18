@@ -64,6 +64,8 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
   const [playingAll, setPlayingAll] = useState(false);
   const runRef = useRef(0); // bump to cancel an in-flight play-all
   const stationEls = useRef({}); // stationId -> DOM node, for auto-scroll
+  const [footOpen, setFootOpen] = useState(false); // Luke 24:27 verse revealed
+  const [footText, setFootText] = useState(null); // EN fetch cache (KO uses stored)
 
   // Keep the station being read aloud centered in view — the page tracks along
   // with Rhema (single taps and the full walk both set activeId). Honor reduced
@@ -144,17 +146,33 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
       .then(() => setActiveId((cur) => (cur === station.id ? null : cur)));
   }
 
-  // The Emmaus footer (Luke 24:27) — tap to hear it read. EN fetched live (ESV,
-  // never stored); KO uses the stored 개역개정 text.
+  // The Emmaus footer (Luke 24:27) — tap to REVEAL the verse and hear it read;
+  // tap again to hide. EN fetched live (ESV, never stored); KO uses stored 개역개정.
   function readFoot() {
+    if (footOpen) {
+      setFootOpen(false);
+      cancelPlayback();
+      setActiveId((cur) => (cur === '__foot' ? null : cur));
+      return;
+    }
     cancelPlayback();
     setActiveId('__foot');
+    setFootOpen(true);
     rhema.unlock();
     const done = () => setActiveId((cur) => (cur === '__foot' ? null : cur));
-    const speak = (txt) => (txt ? rhema.speak(txt, lang).then(done) : done());
-    const stored = FOOT[lang].text;
-    if (stored) speak(stored);
-    else lookupScripture(lang, FOOT[lang].ref).then((v) => speak(v.text)).catch(done);
+    const play = (txt) => {
+      if (!FOOT[lang].text) setFootText(txt); // cache only the fetched (EN); KO uses stored
+      return txt ? rhema.speak(txt, lang).then(done) : done();
+    };
+    const resolved = FOOT[lang].text || footText;
+    if (resolved) play(resolved);
+    else
+      lookupScripture(lang, FOOT[lang].ref)
+        .then((v) => play(v.text))
+        .catch(() => {
+          setFootOpen(false);
+          done();
+        });
   }
 
   // Walk every station in one flow: verse, then its remark, station by station.
@@ -250,14 +268,22 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
           loading ? h('p', { className: 'walk__note' }, t.loading) : null,
           h('div', { className: 'thread__list' }, stations.map(station)),
           h(
-            'button',
-            {
-              className: 'thread__foot',
-              type: 'button',
-              'data-active': activeId === '__foot' ? 'true' : undefined,
-              onClick: readFoot,
-            },
-            t.foot
+            'div',
+            { className: 'thread__foot' },
+            h(
+              'button',
+              {
+                className: 'thread__foot-btn',
+                type: 'button',
+                'data-active': activeId === '__foot' ? 'true' : undefined,
+                'aria-expanded': footOpen ? 'true' : 'false',
+                onClick: readFoot,
+              },
+              t.foot
+            ),
+            footOpen
+              ? h('p', { className: 'thread__foot-text' }, FOOT[lang].text || footText || '…')
+              : null
           )
         )
       : null
