@@ -1,5 +1,6 @@
 import { createElement as h } from 'react';
 import { getTopics } from '../../data/curriculum/curriculum.js';
+import { memorizedVerseIds } from '../../lib/progress.js';
 import ThemeToggle from './ThemeToggle.js';
 import './picker.css';
 
@@ -65,27 +66,43 @@ export default function TopicPicker({ language = 'en', onLanguage, onSelect, onE
     h(
       'ul',
       { className: 'topic-list' },
-      topics.map((topic) =>
-        h(
+      topics.map((topic) => {
+        const total = topic.memoryVerses.length;
+        const done = memorizedVerseIds(topic.id).size;
+        const allDone = total > 0 && done === total;
+        const progressLabel =
+          lang === 'ko' ? `${total}구절 중 ${done}구절 암송함` : `${done} of ${total} memorized`;
+        return h(
           'li',
           { key: topic.id },
           h(
             'button',
-            { className: 'topic-card', type: 'button', onClick: () => onSelect(topic.id) },
-            h('span', { className: 'topic-card__title' }, topic.title),
-            topic.subtitle
-              ? h('span', { className: 'topic-card__subtitle' }, topic.subtitle)
-              : null,
+            { className: 'topic-card', type: 'button', 'data-complete': allDone ? 'true' : undefined, onClick: () => onSelect(topic.id) },
             h(
               'span',
-              { className: 'topic-card__anchor' },
-              lang === 'ko'
-                ? `${topic.memoryVerses.length}구절`
-                : `${topic.memoryVerses.length} ${topic.memoryVerses.length === 1 ? 'verse' : 'verses'}`
-            )
+              { className: 'topic-card__body' },
+              h('span', { className: 'topic-card__title' }, topic.title),
+              topic.subtitle
+                ? h('span', { className: 'topic-card__subtitle' }, topic.subtitle)
+                : null,
+              h(
+                'span',
+                { className: 'topic-card__anchor' },
+                lang === 'ko'
+                  ? `${total}구절`
+                  : `${total} ${total === 1 ? 'verse' : 'verses'}`
+              )
+            ),
+            done
+              ? h(
+                  'span',
+                  { className: 'topic-card__progress', role: 'img', 'aria-label': progressLabel },
+                  allDone ? '✓' : `${done}/${total}`
+                )
+              : null
           )
-        )
-      )
+        );
+      })
     )
   );
 }

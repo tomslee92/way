@@ -1,6 +1,7 @@
 import { createElement as h, useState, useEffect } from 'react';
 import { getTopic } from '../../data/curriculum/curriculum.js';
 import { lookupScripture } from '../../lib/bible.js';
+import { isMemorized } from '../../lib/progress.js';
 import RevelationWalk from './RevelationWalk.js';
 import './picker.css';
 
@@ -10,8 +11,8 @@ import './picker.css';
 // fetched live (ESV); Korean uses the stored 개역개정 text.
 
 const T = {
-  en: { begin: 'Begin memorizing', back: 'Back', loading: 'Opening…', error: 'Couldn’t load this verse. Go back and try again.' },
-  ko: { begin: '암송 시작', back: '뒤로', loading: '여는 중…', error: '구절을 불러오지 못했어요. 돌아가서 다시 시도해 주세요.' },
+  en: { begin: 'Begin memorizing', back: 'Back', loading: 'Opening…', error: 'Couldn’t load this verse. Go back and try again.', memorized: 'Memorized' },
+  ko: { begin: '암송 시작', back: '뒤로', loading: '여는 중…', error: '구절을 불러오지 못했어요. 돌아가서 다시 시도해 주세요.', memorized: '암송함' },
 };
 
 // A spine-riding verse (no thread of its own) borrows the topic spine, but with
@@ -96,6 +97,14 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
     bar,
     verse.label ? h('h1', { className: 'curated__title' }, verse.label) : null,
     h('p', { className: 'curated__ref' }, verse.ref),
+    isMemorized(topicId, verseId)
+      ? h(
+          'p',
+          { className: 'curated__memorized' },
+          h('span', { className: 'curated__memorized-mark', 'aria-hidden': 'true' }, '✓'),
+          t.memorized
+        )
+      : null,
     loading
       ? h('p', { className: 'curated__note' }, t.loading)
       : error

@@ -75,7 +75,8 @@
       "Bash(file *.mp3)",
       "Bash(open /Users/toms/way-ko-audition)",
       "WebSearch",
-      "Bash(awk '/\\\\.thread__foot/{f=1} f{print NR\": \"$0} f&&/\\\\}/{c++; if\\(c>=1\\)exit}' src/features/curriculum/picker.css)"
+      "Bash(awk '/\\\\.thread__foot/{f=1} f{print NR\": \"$0} f&&/\\\\}/{c++; if\\(c>=1\\)exit}' src/features/curriculum/picker.css)",
+      "Bash(tail -1)"
     ]
   }
 }

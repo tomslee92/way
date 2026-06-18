@@ -198,9 +198,41 @@
   min-height: 44px;
   cursor: pointer;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  transition: padding-left var(--hover) var(--ease);
+}
+
+.topic-card__body {
+  display: flex;
   flex-direction: column;
   gap: var(--s1);
-  transition: padding-left var(--hover) var(--ease);
+  min-width: 0;
+}
+
+/* topic progress — a quiet "3/8" while underway, a filled check once complete */
+.topic-card__progress {
+  flex: none;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.topic-card[data-complete='true'] .topic-card__progress {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  letter-spacing: 0;
 }
 
 .topic-list li:last-child .topic-card {
@@ -300,6 +332,37 @@
   letter-spacing: 0.06em;
   color: var(--muted);
   margin: 0 0 var(--s5);
+}
+
+/* "Memorized" — shown on a verse already carried from memory (quiet, not a badge) */
+.curated__memorized {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: calc(var(--s5) * -1 + var(--s1)) 0 var(--s5);
+}
+
+.curated__memorized-mark {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+[lang='ko'] .curated__memorized {
+  letter-spacing: 0;
 }
 
 .curated__anchor {
