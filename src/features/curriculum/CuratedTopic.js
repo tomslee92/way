@@ -1,6 +1,6 @@
-import { createElement as h } from 'react';
+import { createElement as h, useState, useEffect } from 'react';
 import { getTopic } from '../../data/curriculum/curriculum.js';
-import { memorizedVerseIds } from '../../lib/progress.js';
+import { memorizedVerseIds, subscribeProgress } from '../../lib/progress.js';
 import './picker.css';
 
 // Curated topic landing: the CLUSTER of red-letter memory verses (Jesus's words
@@ -17,6 +17,10 @@ export default function CuratedTopic({ topicId, language = 'en', onSelectVerse, 
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
   const topic = getTopic(topicId, lang);
+
+  // Re-render when a background sync lands.
+  const [, tick] = useState(0);
+  useEffect(() => subscribeProgress(() => tick((n) => n + 1)), []);
 
   const bar = h(
     'header',

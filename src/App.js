@@ -12,7 +12,7 @@ import { addVerse, setMemorizing, markRecalled, listLibrary } from './lib/librar
 import { lookupScripture, languageFor } from './lib/bible.js';
 import { getSession, onAuthChange, signOut } from './lib/auth.js';
 import { getProfile, saveLanguage } from './lib/profile.js';
-import { markMemorized } from './lib/progress.js';
+import { markMemorized, syncProgress } from './lib/progress.js';
 import { dueReviews } from './features/library/review.js';
 import ReviewInvitation from './features/library/ReviewInvitation.js';
 
@@ -106,6 +106,13 @@ export default function App() {
     if (!session) profileLoadedRef.current = false;
   }, [session]);
 
+  // On sign-in, merge curated progress: pull the account's verses and push any
+  // collected anonymously (union, never demoted). Best-effort — local stays the
+  // source of truth if it fails.
+  useEffect(() => {
+    if (session) syncProgress();
+  }, [session]);
+
   // Surface §3 review invitations on the landing for signed-in users. Refetch
   // each time we land here so a just-reviewed verse drops off.
   useEffect(() => {
@@ -178,6 +185,9 @@ export default function App() {
     return h(TopicPicker, {
       language,
       onLanguage: applyLanguage,
+      signedIn: Boolean(session),
+      // Save-across-devices nudge → sign in, then return to the picker.
+      onSignIn: () => requireAuth('picker'),
       onSelect: (id) => {
         setTopicId(id);
         setView('topic');

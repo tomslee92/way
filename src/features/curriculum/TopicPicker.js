@@ -1,16 +1,41 @@
-import { createElement as h } from 'react';
+import { createElement as h, useState, useEffect } from 'react';
 import { getTopics } from '../../data/curriculum/curriculum.js';
-import { memorizedVerseIds } from '../../lib/progress.js';
+import { memorizedVerseIds, hasAnyProgress, subscribeProgress } from '../../lib/progress.js';
 import ThemeToggle from './ThemeToggle.js';
 import './picker.css';
+
+const NUDGE_KEY = 'way:nudge-signin';
 
 // Choose a language and a curated topic. Each topic is an anchor-and-orbit
 // grouping (see ../../data/curriculum); selecting one opens its landing, where
 // the anchor is memorized and the orbit is walked. The selected language drives
 // the verse text and Rhema's spoken instructions.
-export default function TopicPicker({ language = 'en', onLanguage, onSelect, onExit }) {
+export default function TopicPicker({ language = 'en', onLanguage, onSelect, onExit, signedIn = false, onSignIn }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const topics = getTopics(lang);
+
+  // Re-render when a background sync lands (cross-device progress arriving).
+  const [, tick] = useState(0);
+  useEffect(() => subscribeProgress(() => tick((n) => n + 1)), []);
+
+  // The save-across-devices nudge: shown only to signed-out users who already
+  // have local progress to protect, and only until dismissed (remembered).
+  const [nudgeOff, setNudgeOff] = useState(() => {
+    try {
+      return localStorage.getItem(NUDGE_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const showNudge = !signedIn && !nudgeOff && hasAnyProgress();
+  function dismissNudge() {
+    setNudgeOff(true);
+    try {
+      localStorage.setItem(NUDGE_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+  }
 
   return h(
     'section',
@@ -62,6 +87,34 @@ export default function TopicPicker({ language = 'en', onLanguage, onSelect, onE
       { className: 'picker__title' },
       lang === 'ko' ? '무엇을 마음에 새길까요?' : 'What will you hide in your heart?'
     ),
+
+    showNudge
+      ? h(
+          'div',
+          { className: 'savebar', role: 'note' },
+          h(
+            'span',
+            { className: 'savebar__text' },
+            lang === 'ko'
+              ? '진척을 모든 기기에 저장하려면 로그인하세요.'
+              : 'Sign in to save your progress across devices.'
+          ),
+          h(
+            'span',
+            { className: 'savebar__actions' },
+            h(
+              'button',
+              { className: 'btn btn--quiet savebar__act', type: 'button', onClick: () => onSignIn && onSignIn() },
+              lang === 'ko' ? '로그인' : 'Sign in'
+            ),
+            h(
+              'button',
+              { className: 'btn btn--quiet savebar__dismiss', type: 'button', 'aria-label': lang === 'ko' ? '닫기' : 'Dismiss', onClick: dismissNudge },
+              '✕'
+            )
+          )
+        )
+      : null,
 
     h(
       'ul',

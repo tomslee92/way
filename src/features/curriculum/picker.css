@@ -179,6 +179,47 @@
 }
 
 /* — curated topic list (anchor-and-orbit topics) — */
+/* save-across-devices nudge — an invitation above the topics, not a wall (§9) */
+.savebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s3);
+  margin: 0 0 var(--s5);
+  padding: var(--s3) var(--s1) var(--s4);
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+.savebar__text {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.savebar__actions {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.savebar__act {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  padding: var(--s1) var(--s2);
+}
+
+.savebar__dismiss {
+  font-size: 12px;
+  color: var(--faint);
+  padding: var(--s1) var(--s2);
+  line-height: 1;
+}
+
 .topic-list {
   list-style: none;
   margin: 0;

@@ -1,7 +1,7 @@
 import { createElement as h, useState, useEffect } from 'react';
 import { getTopic } from '../../data/curriculum/curriculum.js';
 import { lookupScripture } from '../../lib/bible.js';
-import { isMemorized } from '../../lib/progress.js';
+import { isMemorized, subscribeProgress } from '../../lib/progress.js';
 import RevelationWalk from './RevelationWalk.js';
 import './picker.css';
 
@@ -43,6 +43,10 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
   const t = T[lang];
   const topic = getTopic(topicId, lang);
   const verse = topic && topic.memoryVerses.find((v) => v.id === verseId);
+
+  // Re-render when a background sync lands (so the Memorized marker appears).
+  const [, tick] = useState(0);
+  useEffect(() => subscribeProgress(() => tick((n) => n + 1)), []);
 
   const stored = verse && verse.text ? verse.text : null;
   const [text, setText] = useState(stored);
