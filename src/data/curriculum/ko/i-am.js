@@ -18,8 +18,8 @@ const s = (id, ref, passageId, position, text, connection) => ({ id, ref, passag
 export default {
   id: 'i-am',
   language: 'ko',
-  title: '나는 ~이다',
-  subtitle: '아브라함이 나기 전부터 내가 있느니라',
+  title: '내가 그니라',
+  subtitle: '예수님의 입술에 담긴 하나님의 이름',
 
   memoryVerses: [
     {
@@ -267,7 +267,7 @@ export default {
     },
   ],
 
-  thread: '불타는 떨기나무에서 하늘 보좌까지, 같은 음성입니다. 나는 ~이다.',
+  thread: '불타는 떨기나무에서 하늘 보좌까지, 같은 음성입니다. 내가 그니라.',
 
   opening:
     "예수님께서 자신을 어떻게 말씀하시는지 잘 들어보세요. 예수님은 '내가 있었다'고 하지 " +
