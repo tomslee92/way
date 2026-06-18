@@ -12,6 +12,7 @@ import { addVerse, setMemorizing, markRecalled, listLibrary } from './lib/librar
 import { lookupScripture, languageFor } from './lib/bible.js';
 import { getSession, onAuthChange, signOut } from './lib/auth.js';
 import { getProfile, saveLanguage } from './lib/profile.js';
+import { markMemorized } from './lib/progress.js';
 import { dueReviews } from './features/library/review.js';
 import ReviewInvitation from './features/library/ReviewInvitation.js';
 
@@ -32,6 +33,7 @@ export default function App() {
   const [startIndex, setStartIndex] = useState(0);
   const [returnTo, setReturnTo] = useState('picker');
   const [reviewId, setReviewId] = useState(null); // set when a session is a §3 review
+  const [memorizeTarget, setMemorizeTarget] = useState(null); // {topicId, verseId} for a curated verse
   const [topicId, setTopicId] = useState(null); // selected curated topic
   const [verseId, setVerseId] = useState(null); // selected memory verse within it
   const [session, setSession] = useState(undefined); // undefined = still loading
@@ -149,11 +151,12 @@ export default function App() {
     }
   }
 
-  function startSession(passages, from, idx = 0, reviewItemId = null) {
+  function startSession(passages, from, idx = 0, reviewItemId = null, target = null) {
     setQueue(passages);
     setStartIndex(idx);
     setReturnTo(from);
     setReviewId(reviewItemId);
+    setMemorizeTarget(target);
     setView('session');
   }
 
@@ -200,8 +203,9 @@ export default function App() {
       topicId,
       verseId,
       language,
-      // Memorize the verse: its text was fetched live (ESV) on the landing.
-      onMemorize: (verse) => startSession([buildPassageFromText(verse)], 'verse'),
+      // Memorize the verse: its text was fetched live (ESV) on the landing. Pass
+      // the curated identity so a from-memory completion marks it memorized.
+      onMemorize: (verse) => startSession([buildPassageFromText(verse)], 'verse', 0, null, { topicId, verseId }),
       onExit: () => setView('topic'),
     });
   }
@@ -261,8 +265,13 @@ export default function App() {
       passages: queue,
       startIndex,
       review: Boolean(reviewId),
-      // A finished review records that it happened (never a status, never a grade).
-      onComplete: reviewId ? () => markRecalled(reviewId).catch(() => {}) : undefined,
+      // On a from-memory finish: a review records that it happened (time signal,
+      // never a grade); a curated verse is marked memorized (local, never demoted).
+      onComplete: reviewId
+        ? () => markRecalled(reviewId).catch(() => {})
+        : memorizeTarget
+        ? () => markMemorized(memorizeTarget.topicId, memorizeTarget.verseId)
+        : undefined,
       onExit: () => setView(returnTo),
     });
   }
