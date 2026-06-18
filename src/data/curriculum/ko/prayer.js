@@ -4,9 +4,6 @@
 // confirmed against the reference. Korean is curated-only, so every verse stores
 // its text. Connections are a parallel script in spoken 존댓말. DRAFT — Toms
 // vouches/auditions. All memory verses ride the topic spine (orbit) below.
-//
-// NOTE: 누가복음 18:1 ends at "비유로 말씀하여" — that is 개역개정's own verse split
-// ("이르시되" opens v2), confirmed direct from KBS. Verbatim; flagged for Toms.
 
 export default {
   id: 'prayer',
@@ -25,8 +22,8 @@ export default {
       text: '너희가 내 안에 거하고 내 말이 너희 안에 거하면 무엇이든지 원하는 대로 구하라 그리하면 이루리라' },
     { id: 'prayer-believe-received', ref: '마가복음 11:24', passageId: 'MRK.11.24', label: '받은 줄로 믿으라',
       text: '그러므로 내가 너희에게 말하노니 무엇이든지 기도하고 구하는 것은 받은 줄로 믿으라 그리하면 너희에게 그대로 되리라' },
-    { id: 'prayer-always', ref: '누가복음 18:1', passageId: 'LUK.18.1', label: '항상 기도하라',
-      text: '예수께서 그들에게 항상 기도하고 낙심하지 말아야 할 것을 비유로 말씀하여' },
+    { id: 'prayer-always', ref: '누가복음 21:36', passageId: 'LUK.21.36', label: '항상 깨어 기도하라',
+      text: '이러므로 너희는 장차 올 이 모든 일을 능히 피하고 인자 앞에 서도록 항상 기도하며 깨어 있으라 하시니라' },
   ],
 
   orbit: [

@@ -13,7 +13,7 @@ export default {
     { id: 'prayer-lords-prayer', ref: 'Matthew 6:9-13', passageId: 'Matthew 6:9-13', label: 'The Lord’s Prayer' },
     { id: 'prayer-abide-ask', ref: 'John 15:7', passageId: 'John 15:7', label: 'Ask whatever you wish' },
     { id: 'prayer-believe-received', ref: 'Mark 11:24', passageId: 'Mark 11:24', label: 'Believe you have received' },
-    { id: 'prayer-always', ref: 'Luke 18:1', passageId: 'Luke 18:1', label: 'Always pray, don’t lose heart' },
+    { id: 'prayer-always', ref: 'Luke 21:36', passageId: 'Luke 21:36', label: 'Always watch and pray' },
   ],
 
   orbit: [
