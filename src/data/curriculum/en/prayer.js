@@ -32,7 +32,8 @@ export default {
           'Until the One we knocked for is knocking back: behold, I stand at the door and knock; if anyone opens, I will come in and eat with him.'),
       ],
     },
-    { id: 'prayer-in-secret', ref: 'Matthew 6:6', passageId: 'Matthew 6:6', label: 'Pray in secret' },
+    { id: 'prayer-in-secret', ref: 'Matthew 6:6', passageId: 'Matthew 6:6', label: 'Pray in secret',
+      momentConnection: 'So Jesus moves prayer out of sight: go into your room, shut the door, and pray to your Father who is in secret — and your Father who sees in secret will reward you.' },
     { id: 'prayer-lords-prayer', ref: 'Matthew 6:9-13', passageId: 'Matthew 6:9-13', label: 'The Lord’s Prayer' },
     {
       id: 'prayer-in-name',
@@ -70,8 +71,10 @@ export default {
           'Until the gathering is forever: behold, the dwelling place of God is with man, and He will dwell with them.'),
       ],
     },
-    { id: 'prayer-abide-ask', ref: 'John 15:7', passageId: 'John 15:7', label: 'Ask whatever you wish' },
-    { id: 'prayer-believe-received', ref: 'Mark 11:24', passageId: 'Mark 11:24', label: 'Believe you have received' },
+    { id: 'prayer-abide-ask', ref: 'John 15:7', passageId: 'John 15:7', label: 'Ask whatever you wish',
+      momentConnection: 'So Jesus ties asking to abiding: if you abide in me and my words abide in you, ask whatever you wish, and it will be done for you.' },
+    { id: 'prayer-believe-received', ref: 'Mark 11:24', passageId: 'Mark 11:24', label: 'Believe you have received',
+      momentConnection: 'So Jesus makes faith the posture of prayer: whatever you ask in prayer, believe that you have received it, and it will be yours.' },
     {
       id: 'prayer-joy',
       ref: 'John 16:24',

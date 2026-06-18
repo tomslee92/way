@@ -14,8 +14,10 @@ export default {
   subtitle: 'The heart of the Law.',
 
   memoryVerses: [
-    { id: 'love-one-another', ref: 'John 13:34', passageId: 'John 13:34', label: 'Love one another' },
-    { id: 'love-great-commandment', ref: 'Matthew 22:37-39', passageId: 'Matthew 22:37-39', label: 'The great commandment' },
+    { id: 'love-one-another', ref: 'John 13:34', passageId: 'John 13:34', label: 'Love one another',
+      momentConnection: 'So on the last night Jesus gives a new commandment: love one another as I have loved you. The old call to love now has a new measure — his own love.' },
+    { id: 'love-great-commandment', ref: 'Matthew 22:37-39', passageId: 'Matthew 22:37-39', label: 'The great commandment',
+      momentConnection: 'Asked for the greatest commandment, Jesus binds the two into one: love the Lord your God with all your heart, and your neighbor as yourself. On these hang all the Law and the Prophets.' },
     {
       id: 'love-greater-love',
       ref: 'John 15:12-13',
@@ -52,7 +54,8 @@ export default {
           'Until every enemy made a friend stands singing: you ransomed people for God from every tribe and tongue and people and nation.'),
       ],
     },
-    { id: 'love-abide', ref: 'John 15:9', passageId: 'John 15:9', label: 'Abide in my love' },
+    { id: 'love-abide', ref: 'John 15:9', passageId: 'John 15:9', label: 'Abide in my love',
+      momentConnection: 'So Jesus invites us to live inside that love: as the Father has loved me, so have I loved you. Abide in my love. Love is first a place to remain before it is a thing to do.' },
     {
       id: 'love-least',
       ref: 'Matthew 25:40',

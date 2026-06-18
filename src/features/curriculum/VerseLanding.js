@@ -14,6 +14,29 @@ const T = {
   ko: { begin: '암송 시작', back: '뒤로', loading: '여는 중…', error: '구절을 불러오지 못했어요. 돌아가서 다시 시도해 주세요.' },
 };
 
+// A spine-riding verse (no thread of its own) borrows the topic spine, but with
+// the `moment` station replaced by the rider verse — so the thread always pivots
+// on the words being memorized, while the build-up (origin → unfolding) and
+// outflow (echo → consummation) carry over unchanged. EN text is fetched live
+// (by ref); KO uses the verse's stored 개역개정 text. The pivot's narration comes
+// from the verse's own `momentConnection`, falling back to the spine's when the
+// rider already IS the spine's moment.
+function personalizeSpine(spine, verse) {
+  if (!spine || !spine.length) return spine;
+  return spine.map((st) =>
+    st.position === 'moment'
+      ? {
+          ...st,
+          id: `${verse.id}-moment`,
+          ref: verse.ref,
+          passageId: verse.passageId,
+          text: verse.text,
+          connection: verse.momentConnection || st.connection,
+        }
+      : st
+  );
+}
+
 export default function VerseLanding({ topicId, verseId, language = 'en', onMemorize, onExit }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
@@ -56,8 +79,11 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
     return h('section', { className: 'curated view-in', lang }, bar, h('p', { className: 'curated__note' }, t.error));
   }
 
-  // The verse's own image-thread, or the topic spine as fallback.
-  const orbit = verse.orbit && verse.orbit.length ? verse.orbit : topic.orbit;
+  // The verse's own image-thread, or the topic spine personalized to this verse —
+  // the spine's `moment` becomes THIS memory verse, so the thread always pivots on
+  // the words being memorized.
+  const orbit =
+    verse.orbit && verse.orbit.length ? verse.orbit : personalizeSpine(topic.orbit, verse);
 
   function begin() {
     if (!text) return;
@@ -86,11 +112,7 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
       t.begin
     ),
     orbit && orbit.length
-      ? h(RevelationWalk, {
-          orbit,
-          language: lang,
-          memoryVerse: { ref: verse.ref, text: text || undefined },
-        })
+      ? h(RevelationWalk, { orbit, language: lang })
       : null
   );
 }

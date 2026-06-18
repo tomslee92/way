@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WAYVE 영어 카페 Banner — Light Premium</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Montserrat:wght@500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1F2937;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 48px 20px;
+    gap: 56px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .section-label {
+    color: #6B7280;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  /* ═══════════════════════════════
+     VERTICAL — 세로형 (60 × 135cm)
+  ═══════════════════════════════ */
+  .banner-v {
+    width: 420px;
+    min-height: 945px;
+    background: #FBFAF7;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 52px 40px 40px;
+    border-radius: 3px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.45);
+  }
+
+  /* Subtle wave accent at the very top */
+  .banner-v .top-band {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, #0F2D4A 0%, #1D9E75 100%);
+  }
+
+  /* Faint oversized wave watermark */
+  .banner-v .watermark {
+    position: absolute;
+    bottom: -40px;
+    right: -70px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 220px;
+    color: rgba(15, 45, 74, 0.03);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -10px;
+  }
+
+  .v-brand-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 40px;
+  }
+  .v-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 26px;
+    color: #0F2D4A;
+    letter-spacing: 9px;
+    padding-left: 9px; /* optical centering for letter-spacing */
+  }
+  .v-brand-sub {
+    font-size: 10px;
+    color: #9CA3AF;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 6px;
+  }
+
+  .v-eyebrow {
+    font-size: 14px;
+    color: #1D9E75;
+    font-weight: 700;
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 18px;
+  }
+
+  .v-headline {
+    font-size: 44px;
+    font-weight: 900;
+    color: #0F2D4A;
+    text-align: center;
+    line-height: 1.22;
+    word-break: keep-all;
+    position: relative;
+    z-index: 2;
+  }
+  .v-headline em {
+    font-style: normal;
+    color: #1D9E75;
+  }
+
+  .v-subline {
+    font-size: 16px;
+    color: #6B7280;
+    text-align: center;
+    line-height: 1.7;
+    margin-top: 18px;
+    word-break: keep-all;
+    font-weight: 400;
+    position: relative;
+    z-index: 2;
+  }
+
+  .v-divider {
+    width: 44px;
+    height: 3px;
+    background: #1D9E75;
+    border-radius: 2px;
+    margin: 32px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .v-features {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 36px;
+  }
+  .v-feat {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .v-feat-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(29,158,117,0.1);
+    color: #1D9E75;
+    font-size: 12px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .v-feat-text {
+    font-size: 16px;
+    color: #374151;
+    line-height: 1.5;
+    word-break: keep-all;
+    font-weight: 400;
+  }
+  .v-feat-text strong {
+    color: #0F2D4A;
+    font-weight: 700;
+  }
+
+  .v-schedule-card {
+    width: 100%;
+    background: #0F2D4A;
+    border-radius: 16px;
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 28px;
+  }
+  .v-sched-day {
+    font-size: 13px;
+    color: #1D9E75;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+  .v-sched-time {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 1px;
+  }
+  .v-sched-loc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    margin-top: 8px;
+    text-align: center;
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+  .v-sched-loc-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    margin-top: 2px;
+  }
+  .v-sched-donation {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .v-for {
+    font-size: 14px;
+    color: #6B7280;
+    text-align: center;
+    line-height: 1.8;
+    word-break: keep-all;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 30px;
+  }
+  .v-for strong {
+    color: #0F2D4A;
+    font-weight: 700;
+  }
+
+  .v-bottom-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    z-index: 2;
+  }
+  .v-qr-wrap {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    padding: 10px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    width: 104px;
+    height: 104px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #qr-v { width: 84px !important; height: 84px !important; }
+  #qr-v img, #qr-v canvas { width: 84px !important; height: 84px !important; }
+
+  .v-cta-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .v-kakao-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #FEE500;
+    color: #0F2D4A;
+    padding: 12px 16px;
+    border-radius: 26px;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .kakao-dot {
+    width: 18px; height: 18px;
+    background: #0F2D4A;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: #FEE500;
+    font-weight: 900;
+    font-family: 'Montserrat', sans-serif;
+    flex-shrink: 0;
+  }
+  .v-keyword {
+    font-size: 12px;
+    color: #9CA3AF;
+    text-align: center;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  .v-keyword strong {
+    color: #1D9E75;
+    font-weight: 700;
+  }
+  .v-website {
+    font-size: 11px;
+    color: #C4C8CE;
+    text-align: center;
+    letter-spacing: 1.5px;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  /* ═══════════════════════════════
+     HORIZONTAL — 가로형 (180 × 60cm)
+  ═══════════════════════════════ */
+  .banner-h {
+    width: 980px;
+    height: 326px;
+    background: #FBFAF7;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    border-radius: 3px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.45);
+  }
+  .banner-h .top-band {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 7px;
+    background: linear-gradient(90deg, #0F2D4A 0%, #1D9E75 100%);
+    z-index: 5;
+  }
+  .banner-h .watermark {
+    position: absolute;
+    bottom: -55px;
+    left: 320px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 200px;
+    color: rgba(15, 45, 74, 0.025);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -8px;
+  }
+
+  .h-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px 48px;
+    position: relative;
+    z-index: 2;
+  }
+  .h-brand-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .h-brand {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 20px;
+    color: #0F2D4A;
+    letter-spacing: 6px;
+  }
+  .h-brand-sub {
+    font-size: 9px;
+    color: #9CA3AF;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .h-headline {
+    font-size: 36px;
+    font-weight: 900;
+    color: #0F2D4A;
+    line-height: 1.25;
+    word-break: keep-all;
+    margin-bottom: 14px;
+  }
+  .h-headline em {
+    font-style: normal;
+    color: #1D9E75;
+  }
+  .h-subline {
+    font-size: 15px;
+    color: #6B7280;
+    line-height: 1.6;
+    word-break: keep-all;
+    margin-bottom: 14px;
+  }
+  .h-feats {
+    display: flex;
+    gap: 22px;
+  }
+  .h-feat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+  }
+  .h-feat-check {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: rgba(29,158,117,0.1);
+    color: #1D9E75;
+    font-size: 10px;
+    font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .h-side {
+    flex: 0 0 300px;
+    background: #0F2D4A;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 30px;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  .h-sched-day {
+    font-size: 12px;
+    color: #1D9E75;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+  .h-sched-time {
+    font-size: 24px;
+    font-weight: 800;
+    color: #FFFFFF;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .h-sched-loc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  .h-sched-loc-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+  }
+  .h-qr-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .h-qr-wrap {
+    background: #fff;
+    padding: 8px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    width: 88px; height: 88px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #qr-h { width: 72px !important; height: 72px !important; }
+  #qr-h img, #qr-h canvas { width: 72px !important; height: 72px !important; }
+  .h-qr-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .h-kakao-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #FEE500;
+    color: #0F2D4A;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+  .h-keyword {
+    font-size: 10px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.5;
+    text-align: center;
+    word-break: keep-all;
+  }
+  .h-keyword strong { color: #1D9E75; font-weight: 700; }
+  .h-donation {
+    font-size: 11px;
+    color: rgba(255,255,255,0.45);
+    margin-top: 2px;
+  }
+
+  .print-note {
+    color: #4B5563;
+    font-size: 11px;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  @media print {
+    body { background: white; padding: 0; gap: 24px; }
+    .section-label, .print-note { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ VERTICAL ═══ -->
+<p class="section-label">Vertical — 세로형 현수막 (60 × 135cm)</p>
+<div class="banner-v">
+  <div class="top-band"></div>
+  <div class="watermark">W</div>
+
+  <div class="v-brand-row">
+    <div class="v-brand">WAYVE</div>
+    <div class="v-brand-sub">English Speaking Community</div>
+  </div>
+
+  <div class="v-eyebrow">매주 토요일, 영어 카페</div>
+
+  <div class="v-headline">영어가<br><em>부담이 아닌</em><br>즐거움이 되는 시간</div>
+
+  <div class="v-subline">정답을 맞히는 영어가 아니라<br>내 생각을 나누고 사람을 만나는 영어</div>
+
+  <div class="v-divider"></div>
+
+  <div class="v-features">
+    <div class="v-feat">
+      <div class="v-feat-check">✓</div>
+      <div class="v-feat-text"><strong>미국 출신 원어민 강사</strong> 직접 진행</div>
+    </div>
+    <div class="v-feat">
+      <div class="v-feat-check">✓</div>
+      <div class="v-feat-text">영어 실력보다 <strong>소통이 우선</strong></div>
+    </div>
+    <div class="v-feat">
+      <div class="v-feat-check">✓</div>
+      <div class="v-feat-text"><strong>스피킹만 안 되는 분</strong> 환영</div>
+    </div>
+    <div class="v-feat">
+      <div class="v-feat-check">✓</div>
+      <div class="v-feat-text">참가비 없음 — <strong>자유 후원</strong></div>
+    </div>
+  </div>
+
+  <div class="v-schedule-card">
+    <div class="v-sched-day">매주 토요일</div>
+    <div class="v-sched-time">오전 10:00 시작</div>
+    <div class="v-sched-loc">📍 레디언트처치 2층</div>
+    <div class="v-sched-loc-sub">부산 해운대구 대천로 225 · 장산역 인근</div>
+    <div class="v-sched-donation">자유 후원 환영 😊</div>
+  </div>
+
+  <div class="v-for">이런 분들에게 추천합니다 —<br><strong>영어는 알지만 말하기가 쉽지 않은 분</strong><br><strong>실생활 스피킹 기회를 찾고 있는 분</strong><br><strong>부담 없이 영어 대화에 참여해 보고 싶은 분</strong></div>
+
+  <div class="v-bottom-row">
+    <div class="v-qr-wrap">
+      <div id="qr-v"></div>
+    </div>
+    <div class="v-cta-col">
+      <div class="v-kakao-btn">
+        <div class="kakao-dot">K</div>
+        카카오톡 채널: WAYVE
+      </div>
+      <div class="v-keyword">QR 스캔 후 <strong>"카페"</strong>라고<br>보내주시면 안내드려요</div>
+      <div class="v-website">WAYVEKR.COM</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HORIZONTAL ═══ -->
+<p class="section-label">Horizontal — 가로형 현수막 (180 × 60cm)</p>
+<div class="banner-h">
+  <div class="top-band"></div>
+  <div class="watermark">WAYVE</div>
+
+  <div class="h-main">
+    <div class="h-brand-row">
+      <div class="h-brand">WAYVE</div>
+      <div class="h-brand-sub">English Speaking Community</div>
+    </div>
+    <div class="h-headline">영어가 <em>부담이 아닌 즐거움</em>이 되는<br>시간이 매주 토요일 열립니다</div>
+    <div class="h-subline">미국 출신 원어민 강사와 함께 — 정답이 아닌 내 생각을 나누는 영어 카페</div>
+    <div class="h-feats">
+      <div class="h-feat"><div class="h-feat-check">✓</div>원어민 강사 직접 진행</div>
+      <div class="h-feat"><div class="h-feat-check">✓</div>실력보다 소통이 우선</div>
+      <div class="h-feat"><div class="h-feat-check">✓</div>스피킹만 안 되는 분 환영</div>
+      <div class="h-feat"><div class="h-feat-check">✓</div>자유 후원 환영</div>
+    </div>
+  </div>
+
+  <div class="h-side">
+    <div class="h-sched-day">매주 토요일</div>
+    <div class="h-sched-time">오전 10:00 시작</div>
+    <div class="h-sched-loc">📍 레디언트처치 2층</div>
+    <div class="h-sched-loc-sub">부산 해운대구 대천로 225 · 장산역 인근</div>
+    <div class="h-qr-row">
+      <div class="h-qr-wrap">
+        <div id="qr-h"></div>
+      </div>
+      <div class="h-qr-col">
+        <div class="h-kakao-btn">
+          <div class="kakao-dot">K</div>
+          카카오톡: WAYVE
+        </div>
+        <div class="h-keyword">QR 스캔 후 <strong>"카페"</strong><br>라고 보내주세요</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="print-note">Print-ready · 출력센터에 HTML 화면 캡처 또는 PDF 전달 · wayvekr.com</p>
+
+<script>
+  const kakaoUrl = 'http://pf.kakao.com/_xaHXsX';
+
+  new QRCode(document.getElementById('qr-v'), {
+    text: kakaoUrl,
+    width: 84, height: 84,
+    colorDark: '#0F2D4A',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  new QRCode(document.getElementById('qr-h'), {
+    text: kakaoUrl,
+    width: 72, height: 72,
+    colorDark: '#0F2D4A',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+</script>
+</body>
+</html>

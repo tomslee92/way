@@ -74,7 +74,8 @@ export default {
           'Until the smallest seed has filled the earth: the kingdom of the world has become the kingdom of our Lord.'),
       ],
     },
-    { id: 'kingdom-leaven', ref: 'Matthew 13:33', passageId: 'Matthew 13:33', label: 'Like leaven' },
+    { id: 'kingdom-leaven', ref: 'Matthew 13:33', passageId: 'Matthew 13:33', label: 'Like leaven',
+      momentConnection: 'So Jesus shows how the kingdom comes — not with armies but like leaven a woman hides in flour, till all of it is leavened. Hidden, small, unstoppable.' },
     {
       id: 'kingdom-treasure',
       ref: 'Matthew 13:44',
@@ -266,9 +267,12 @@ export default {
           'Until the seed is a tree by the river — the tree of life, bearing fruit every month, its leaves for the healing of the nations.'),
       ],
     },
-    { id: 'kingdom-narrow-door', ref: 'Luke 13:24', passageId: 'Luke 13:24', label: 'The narrow door' },
-    { id: 'kingdom-needle', ref: 'Mark 10:25', passageId: 'Mark 10:25', label: 'The eye of a needle' },
-    { id: 'kingdom-inherit', ref: 'Matthew 25:34', passageId: 'Matthew 25:34', label: 'Inherit the kingdom' },
+    { id: 'kingdom-narrow-door', ref: 'Luke 13:24', passageId: 'Luke 13:24', label: 'The narrow door',
+      momentConnection: 'So Jesus presses the urgency of entering: strive to enter through the narrow door, for many will seek to enter and will not be able.' },
+    { id: 'kingdom-needle', ref: 'Mark 10:25', passageId: 'Mark 10:25', label: 'The eye of a needle',
+      momentConnection: 'So Jesus names what makes the kingdom so hard to enter: it is easier for a camel to go through the eye of a needle than for a rich man to enter the kingdom of God — yet what is impossible with man is possible with God.' },
+    { id: 'kingdom-inherit', ref: 'Matthew 25:34', passageId: 'Matthew 25:34', label: 'Inherit the kingdom',
+      momentConnection: 'So the King speaks the welcome at the end: come, you who are blessed by my Father, inherit the kingdom prepared for you from the foundation of the world.' },
   ],
 
   // The topic thread — the Davidic throne to the throne of the Lamb. The native

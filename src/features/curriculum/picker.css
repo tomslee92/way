@@ -525,9 +525,19 @@
   transform: scale(1.3);
 }
 
-/* the memory verse heads the thread — its dot is filled to mark the heart */
+/* the memory verse IS the thread's pivot (the `moment` station) — its dot is
+   filled and enlarged to mark the heart, its verse set a hair larger */
 .station[data-lead='true'] .station__dot {
   background: var(--ink);
+  transform: scale(1.3);
+}
+
+.station[data-lead='true'] .station__verse {
+  font-size: 23px;
+}
+
+[lang='ko'] .station[data-lead='true'] .station__verse {
+  font-size: 22px;
 }
 
 /* "Play the whole thread" — one-flow playback control above the stations */

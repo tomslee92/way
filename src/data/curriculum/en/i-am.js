@@ -144,8 +144,10 @@ export default {
           'And the vine becomes a tree of life by the river, yielding fruit every month, its leaves for the healing of the nations. The fruit never fails again.'),
       ],
     },
-    // The absolute "I am" — no own thread; falls back to the divine-Name spine.
-    { id: 'i-am-before-abraham', ref: 'John 8:58', passageId: 'John 8:58', label: 'Before Abraham was, I am' },
+    // The absolute "I am" — no own thread; rides the divine-Name spine, pivoting on
+    // its own words.
+    { id: 'i-am-before-abraham', ref: 'John 8:58', passageId: 'John 8:58', label: 'Before Abraham was, I am',
+      momentConnection: 'So Jesus says the unsayable about himself: truly, truly, I say to you, before Abraham was, I am. He takes the name from the burning bush as his own — and they pick up stones.' },
   ],
 
   // The spine — the divine Name from the burning bush to the throne (used by the

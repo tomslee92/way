@@ -15,7 +15,8 @@ export default {
 
   memoryVerses: [
     { id: 'obedience-keep', ref: '요한복음 14:15', passageId: 'JHN.14.15', label: '나를 사랑하면 지키리라',
-      text: '너희가 나를 사랑하면 나의 계명을 지키리라' },
+      text: '너희가 나를 사랑하면 나의 계명을 지키리라',
+      momentConnection: '그래서 예수님은 순종을 두려움이 아니라 사랑에 두세요. 너희가 나를 사랑하면 나의 계명을 지키리라. 지킴은 사랑에서 흘러나오는 거예요.' },
     {
       id: 'obedience-has-and-keeps',
       ref: '요한복음 14:21',
@@ -41,7 +42,8 @@ export default {
       ],
     },
     { id: 'obedience-lord-lord', ref: '누가복음 6:46', passageId: 'LUK.6.46', label: '주여 주여',
-      text: '너희는 나를 불러 주여 주여 하면서도 어찌하여 내가 말하는 것을 행하지 아니하느냐' },
+      text: '너희는 나를 불러 주여 주여 하면서도 어찌하여 내가 말하는 것을 행하지 아니하느냐',
+      momentConnection: '그래서 예수님은 말과 삶의 틈을 찌르세요. 너희는 나를 불러 주여 주여 하면서도, 어찌하여 내가 말하는 것을 행하지 아니하느냐. 주라 부르는 것은 그분 말씀을 행하는 거예요.' },
     {
       id: 'obedience-do-will',
       ref: '마태복음 7:21',
@@ -91,7 +93,8 @@ export default {
       ],
     },
     { id: 'obedience-hear-and-do', ref: '마태복음 7:24', passageId: 'MAT.7.24', label: '듣고 행하는 자',
-      text: '그러므로 누구든지 나의 이 말을 듣고 행하는 자는 그 집을 반석 위에 지은 지혜로운 사람 같으리니' },
+      text: '그러므로 누구든지 나의 이 말을 듣고 행하는 자는 그 집을 반석 위에 지은 지혜로운 사람 같으리니',
+      momentConnection: '그래서 예수님은 분명히 선을 그으세요. 나의 이 말을 듣고 행하는 자는 그 집을 반석 위에 지은 지혜로운 사람 같으니. 듣기만으로는 부족하고, 폭풍이 무엇 위에 지었는지를 시험해요.' },
     {
       id: 'obedience-hear-keep',
       ref: '누가복음 11:28',

@@ -14,8 +14,10 @@ export default {
   subtitle: 'The ground of it all.',
 
   memoryVerses: [
-    { id: 'faith-work-of-god', ref: 'John 6:29', passageId: 'John 6:29', label: 'The work of God: believe' },
-    { id: 'faith-in-god', ref: 'Mark 11:22', passageId: 'Mark 11:22', label: 'Have faith in God' },
+    { id: 'faith-work-of-god', ref: 'John 6:29', passageId: 'John 6:29', label: 'The work of God: believe',
+      momentConnection: 'So when they ask what work God requires, Jesus answers with just one: this is the work of God, that you believe in him whom he has sent. Faith is the work.' },
+    { id: 'faith-in-god', ref: 'Mark 11:22', passageId: 'Mark 11:22', label: 'Have faith in God',
+      momentConnection: 'So Jesus says it as plainly as it can be said: have faith in God. The whole arc — reckoned righteous, the righteous living by faith — rests on this.' },
     {
       id: 'faith-mustard-seed',
       ref: 'Matthew 17:20',

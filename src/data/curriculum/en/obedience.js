@@ -14,7 +14,8 @@ export default {
   subtitle: 'Love proven.',
 
   memoryVerses: [
-    { id: 'obedience-keep', ref: 'John 14:15', passageId: 'John 14:15', label: 'If you love me, keep my commandments' },
+    { id: 'obedience-keep', ref: 'John 14:15', passageId: 'John 14:15', label: 'If you love me, keep my commandments',
+      momentConnection: 'So Jesus roots obedience in love, not fear: if you love me, you will keep my commandments. The keeping flows from the loving.' },
     {
       id: 'obedience-has-and-keeps',
       ref: 'John 14:21',
@@ -33,7 +34,8 @@ export default {
           'Until knowing becomes seeing: they shall see His face — the One obedience was always reaching to know.'),
       ],
     },
-    { id: 'obedience-lord-lord', ref: 'Luke 6:46', passageId: 'Luke 6:46', label: 'Lord, Lord' },
+    { id: 'obedience-lord-lord', ref: 'Luke 6:46', passageId: 'Luke 6:46', label: 'Lord, Lord',
+      momentConnection: 'So Jesus presses the gap between word and life: why do you call me Lord, Lord, and not do what I tell you? Calling him Lord means doing what he says.' },
     {
       id: 'obedience-do-will',
       ref: 'Matthew 7:21',
@@ -70,7 +72,8 @@ export default {
           'Until the friend sees the Friend: they shall see His face, and His name shall be on their foreheads.'),
       ],
     },
-    { id: 'obedience-hear-and-do', ref: 'Matthew 7:24', passageId: 'Matthew 7:24', label: 'Hear and do' },
+    { id: 'obedience-hear-and-do', ref: 'Matthew 7:24', passageId: 'Matthew 7:24', label: 'Hear and do',
+      momentConnection: 'So Jesus draws the line plainly: everyone who hears these words of mine and does them is like a man who built his house on the rock. Hearing isn’t enough — the storm tests what you built on.' },
     {
       id: 'obedience-hear-keep',
       ref: 'Luke 11:28',

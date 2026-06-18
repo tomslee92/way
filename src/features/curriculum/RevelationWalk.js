@@ -10,11 +10,12 @@ import './picker.css';
 // literal vertical thread. Collapsed by default ("optional"); a door, never a
 // hallway (library-spec §1).
 //
-// The memory verse heads the thread as its own playable station ("the verse").
-// Tapping any station lets Rhema read it aloud (live TTS) and then speak the
-// connecting remark that ties it to the memory verse — never a memorize action.
-// "Play the whole thread" walks every station in one unbroken flow. Footed by
-// Luke 24:27, the Emmaus shape.
+// The memory verse is the thread's PIVOT — the `moment` station (Jesus's words),
+// with the OT roots building toward it and the NT echoes flowing from it. Tapping
+// any station lets Rhema read it aloud (live TTS) and then speak the connecting
+// remark that ties it to the memory verse — never a memorize action. "Play the
+// whole thread" walks every station in one unbroken flow. Footed by Luke 24:27,
+// the Emmaus shape.
 //
 // English verse text is fetched live (ESV) on expand; Korean uses stored text.
 
@@ -52,7 +53,7 @@ const FOOT = {
   },
 };
 
-export default function RevelationWalk({ orbit, language = 'en', memoryVerse = null }) {
+export default function RevelationWalk({ orbit, language = 'en' }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
   const rhema = useRhema();
@@ -81,11 +82,9 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
     el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
   }, [activeId]);
 
-  // The memory verse leads the thread as its own station, then the orbit.
-  const lead = memoryVerse
-    ? [{ id: '__memory', ref: memoryVerse.ref, text: memoryVerse.text || undefined, position: 'verse', isLead: true }]
-    : [];
-  const stations = [...lead, ...orbit];
+  // The thread is the orbit itself. Its `moment` station is the memory verse —
+  // the pivot the OT roots build toward and the NT echoes flow from.
+  const stations = orbit;
 
   // Fetch any station texts we don't already have; returns the merged map so a
   // caller (play-all) can use fresh text without waiting on a state flush.
@@ -217,7 +216,7 @@ export default function RevelationWalk({ orbit, language = 'en', memoryVerse = n
           if (el) stationEls.current[s.id] = el;
           else delete stationEls.current[s.id];
         },
-        'data-lead': s.isLead ? 'true' : undefined,
+        'data-lead': s.position === 'moment' ? 'true' : undefined,
         'data-active': activeId === s.id ? 'true' : undefined,
         onClick: () => read(s),
       },

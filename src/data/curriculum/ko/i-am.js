@@ -190,7 +190,8 @@ export default {
           '그리고 그 포도나무는 강가의 생명나무가 됩니다. 달마다 열매를 맺고, 그 잎사귀는 만국을 치료하기 위해 있어요. 이제 그 열매는, 다시는 시들지 않아요.'),
       ],
     },
-    // The absolute "I am" — no own thread; falls back to the divine-Name spine.
+    // The absolute "I am" — no own thread; rides the divine-Name spine, pivoting on
+    // its own words.
     {
       id: 'i-am-before-abraham',
       ref: '요한복음 8:58',
@@ -201,7 +202,7 @@ export default {
         '진실로 진실로 너희에게 이르노니',
         '아브라함이 나기 전부터 내가 있느니라 하시니',
       ].join('\n'),
-    },
+      momentConnection: '그래서 예수님은 자신에 대해 말할 수 없는 것을 말씀하세요. 진실로 진실로 너희에게 이르노니, 아브라함이 나기 전부터 내가 있느니라. 불붙은 떨기나무의 그 이름을 자기 것으로 삼으시자, 사람들이 돌을 들어요.' },
   ],
 
   orbit: [
