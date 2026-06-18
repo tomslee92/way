@@ -4,8 +4,11 @@
 library, reviews, and profile/onboarding work in production at
 **https://wayverse.vercel.app**. Live Scripture (ESV) and Rhema's voice work.
 
-Remaining (both optional / non-blocking):
-- **OAuth providers** (Google / Apple / Kakao) — buttons show a graceful error until configured.
+Remaining (optional / non-blocking):
+- **Curated-progress migration** (`0003`) — apply for per-user memorized-progress
+  sync; runs local-only until then (§2).
+- **OAuth providers** (Google / Apple / Kakao) — UI is built; needs dashboard
+  config per provider (§3). Buttons show a graceful error until configured.
 - **Korean curated text** — hand-verify the 개역개정 seed (no API to diff against).
 
 > Secrets are server-only (no `VITE_` prefix) and read by `/api`. Only
@@ -28,12 +31,17 @@ In Vercel Production (and `.env.local`):
 
 ---
 
-## 2. Supabase — database — DONE
+## 2. Supabase — database
 
-Both migrations applied; tables verified live (RLS enforced, anon → `[]`/200):
+Applied; tables verified live (RLS enforced, anon → `[]`/200):
 
 - [x] `supabase/migrations/0001_library_items.sql` — personal library + RLS
 - [x] `supabase/migrations/0002_profiles.sql` — language profile + RLS
+- [ ] `supabase/migrations/0003_curated_progress.sql` — per-user curated
+      memorization progress + RLS (append-only). Apply via SQL Editor (paste the
+      file's **contents**, not its path) or `supabase db push`. Until applied,
+      curated progress runs **local-only** (no errors); after, it syncs per-user
+      and merges anonymous progress on sign-in.
 
 ---
 
@@ -45,14 +53,44 @@ Both migrations applied; tables verified live (RLS enforced, anon → `[]`/200):
 - [x] **Redirect URLs** = `https://wayverse.vercel.app/**`, `http://localhost:5173/**`
 - [x] **Magic link** (email auth) — on by default; verified enabled
 
-**OAuth providers — PENDING (optional).** Each needs an app registered in the
-provider's console, then client id/secret pasted into Supabase → Auth → Providers:
+**OAuth providers — PENDING (optional).** The sign-in UI (buttons, marks,
+bilingual labels, redirect handling) is fully built — this is **dashboard config
+only**. Each provider needs an app registered in its console, then the client
+id/secret pasted into **Supabase → Authentication → Providers**.
 
-- [ ] **Google** — Google Cloud Console → OAuth client → enable in Supabase
-- [ ] **Apple** — Apple Developer → Sign in with Apple → enable in Supabase
-- [ ] **Kakao** — Kakao Developers → app + REST key → enable in Supabase
+> **The one callback URL every provider needs** (register it as the provider's
+> redirect/callback URI):
+> ```
+> https://xbcsnshkuibsbwyyihwv.supabase.co/auth/v1/callback
+> ```
+> The app itself returns to `https://wayverse.vercel.app` (already allowlisted in
+> URL Configuration above — same as magic link), so no extra redirect setup.
 
-Until configured, those buttons show a graceful error; magic link covers sign-in fully.
+- [ ] **Google** — Google Cloud Console → *APIs & Services → Credentials* →
+      *Create OAuth client ID* → **Web application**. Add the callback URL above
+      under *Authorized redirect URIs*. (Configure the OAuth consent screen if
+      prompted.) Copy the **Client ID + Client secret** → Supabase → Providers →
+      Google → enable + paste. *(Easiest — start here.)*
+- [ ] **Kakao** — [Kakao Developers](https://developers.kakao.com) → create an
+      app → **App Keys → REST API key** is the client id; *Security → generate a
+      Client secret*. *Product → Kakao Login*: turn it **on**, add the callback
+      URL above as the Redirect URI, and enable the **email** consent item. Paste
+      REST key + secret → Supabase → Providers → Kakao. *(Important for Korean
+      users.)*
+- [ ] **Apple** — [Apple Developer](https://developer.apple.com) (paid account) →
+      create an **App ID**, then a **Services ID** (this becomes the OAuth client
+      id) with *Sign in with Apple* enabled and the callback URL above as the
+      return URL → create a **Key** for Sign in with Apple. Supabase → Providers →
+      Apple needs the **Services ID, Team ID, Key ID, and the private key**.
+      *(Most involved — do last.)*
+
+**Roll out incrementally.** Set `VITE_OAUTH_PROVIDERS` (Vercel env, client-safe)
+to the comma-separated list of providers you've actually configured, so users
+never see a button that errors — e.g. `google,kakao` while Apple is still pending.
+Unset shows all three; empty shows magic link only. Redeploy after changing it.
+
+Until a provider is configured, its button shows a graceful error; magic link
+covers sign-in fully.
 
 ---
 

@@ -111,6 +111,15 @@ const PROVIDERS = [
   { id: 'kakao', mark: KakaoIcon, key: 'kakao' },
 ];
 
+// Which providers to surface. Defaults to all three; set VITE_OAUTH_PROVIDERS
+// (comma-separated, e.g. "google,kakao") to roll them out incrementally and hide
+// any not yet configured in Supabase. Empty string → magic link only.
+const ENABLED_PROVIDERS = (import.meta.env.VITE_OAUTH_PROVIDERS ?? 'google,apple,kakao')
+  .split(',')
+  .map((s) => s.trim().toLowerCase())
+  .filter(Boolean);
+const VISIBLE_PROVIDERS = PROVIDERS.filter((p) => ENABLED_PROVIDERS.includes(p.id));
+
 export default function SignIn({ language = 'en', onCancel }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
@@ -178,24 +187,28 @@ export default function SignIn({ language = 'en', onCancel }) {
       h('p', { className: 'auth__kicker' }, t.kicker),
       h('h1', { className: 'auth__title' }, t.title),
       h('p', { className: 'auth__invite' }, t.invite),
-      h(
-        'div',
-        { className: 'oauth' },
-        PROVIDERS.map((p) =>
-          h(
-            'button',
-            {
-              key: p.id,
-              className: `oauth__btn oauth__btn--${p.id}`,
-              type: 'button',
-              onClick: () => oauth(p.id),
-            },
-            p.mark(),
-            h('span', null, t[p.key])
+      VISIBLE_PROVIDERS.length
+        ? h(
+            'div',
+            { className: 'oauth' },
+            VISIBLE_PROVIDERS.map((p) =>
+              h(
+                'button',
+                {
+                  key: p.id,
+                  className: `oauth__btn oauth__btn--${p.id}`,
+                  type: 'button',
+                  onClick: () => oauth(p.id),
+                },
+                p.mark(),
+                h('span', null, t[p.key])
+              )
+            )
           )
-        )
-      ),
-      h('div', { className: 'auth__divider' }, h('span', null, t.or)),
+        : null,
+      VISIBLE_PROVIDERS.length
+        ? h('div', { className: 'auth__divider' }, h('span', null, t.or))
+        : null,
       h('input', {
         className: 'auth__input',
         type: 'email',
