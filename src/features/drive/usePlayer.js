@@ -17,7 +17,7 @@ const RATE_MIN = 0.6;
 const RATE_MAX = 1.6;
 const RATE_STEP = 0.15;
 
-export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, onRecall, onComplete }) {
+export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, connect = false, onRecall, onComplete }) {
   const [status, setStatus] = useState('idle'); // idle | playing | paused | done
   const [verseIndex, setVerseIndex] = useState(0);
   const [reference, setReference] = useState('');
@@ -37,6 +37,8 @@ export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, 
   useVadRef.current = useVad;
   const loopRef = useRef(loop);
   loopRef.current = loop;
+  const connectRef = useRef(connect);
+  connectRef.current = connect;
   const onRecallRef = useRef(onRecall);
   onRecallRef.current = onRecall;
   const onCompleteRef = useRef(onComplete);
@@ -59,7 +61,11 @@ export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, 
         const entry = playlist[v];
         compiledRef.current.set(
           v,
-          compileVerse(entry.passage, { startLevel: entry.startLevel, capLevel: entry.capLevel })
+          compileVerse(entry.passage, {
+            startLevel: entry.startLevel,
+            capLevel: entry.capLevel,
+            orbit: connectRef.current ? entry.orbit : null,
+          })
         );
       }
       return compiledRef.current.get(v);
@@ -134,10 +140,11 @@ export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, 
       await runSay(step.text, lang, signal);
       return;
     }
-    // gap — the user's turn.
-    setPhase('waiting');
+    // gap — the user's turn (or a brief reflective "breath" that isn't a recite cue).
+    const isBreath = step.expect === 'breath';
+    if (!isBreath) setPhase('waiting');
     const ms = step.fixedMs != null ? step.fixedMs : gapFor(step.text, lang, rateRef.current);
-    if (useVadRef.current && step.expect !== 'breath' && vadRef.current.ready()) {
+    if (!isBreath && useVadRef.current && vadRef.current.ready()) {
       setListening(true);
       await vadRef.current.waitForSpeechEnd({
         maxMs: ms,

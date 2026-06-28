@@ -17,8 +17,8 @@ const CONFIG = {
 
 // One curated (or any pre-fetched) verse → a single-verse playlist. The passage text
 // is already in hand (VerseLanding fetched ESV live / used stored 개역개정), so this is
-// synchronous and works for everyone, signed in or not. A brand-new verse climbs
-// Absorb → Echo → Fill-the-gap only.
+// synchronous and works for everyone, signed in or not. A brand-new verse is guided
+// all the way through Listen → Echo → Build → Lead-in → Reference-only.
 export function singleVersePlaylist(passage) {
   return [
     {
@@ -28,17 +28,31 @@ export function singleVersePlaylist(passage) {
         reference: passage.reference || passage.refDisplay,
       },
       libraryId: null,
-      startLevel: DriveRung.ABSORB,
-      capLevel: DriveRung.FILL_GAP,
+      startLevel: DriveRung.LISTEN,
+      capLevel: DriveRung.REF_ONLY,
+      orbit: passage.orbit || null, // the connections thread (optional, toggle-gated)
     },
   ];
+}
+
+// The connections thread for a curated verse: its own orbit, or the topic spine with
+// the `moment` station personalized to this verse (mirrors VerseLanding). Returns the
+// narration-only shape [{ position, connection }], or null if there's no thread.
+function orbitFor(topic, verse) {
+  const raw =
+    verse.orbit && verse.orbit.length
+      ? verse.orbit
+      : (topic.orbit || []).map((st) =>
+          st.position === 'moment' ? { ...st, connection: verse.momentConnection || st.connection } : st
+        );
+  return raw.length ? raw.map((st) => ({ position: st.position, connection: st.connection })) : null;
 }
 
 // Every memory verse in a curated topic → a playlist, for a continuous listen-and-
 // recite pass that cycles through the whole topic until stopped (DriveSession loops
 // it). English verse text is fetched live (ESV); Korean is the stored 개역개정 text.
-// Verses whose text can't be loaded are skipped. Each verse climbs Absorb → Echo →
-// Fill-the-gap — enough support for repeated exposure without over-long passes.
+// Verses whose text can't be loaded are skipped. Each verse is guided through
+// Listen → Echo → Build → Lead-in → Reference-only, then the playlist loops.
 export async function buildTopicPlaylist(topicId, language) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const topic = getTopic(topicId, lang);
@@ -59,8 +73,9 @@ export async function buildTopicPlaylist(topicId, language) {
       return {
         passage: { text, language: lang, reference: v.ref },
         libraryId: null,
-        startLevel: DriveRung.ABSORB,
-        capLevel: DriveRung.FILL_GAP,
+        startLevel: DriveRung.LISTEN,
+        capLevel: DriveRung.REF_ONLY,
+        orbit: orbitFor(topic, v),
       };
     })
   );
@@ -107,7 +122,7 @@ export async function buildLibraryPlaylist() {
     due.map((it) => entryForItem(it, { startLevel: DriveRung.LEAD_IN, capLevel: DriveRung.FREE_RECALL }))
   );
   const learnEntries = await Promise.all(
-    learning.map((it) => entryForItem(it, { startLevel: DriveRung.ABSORB, capLevel: DriveRung.LEAD_IN }))
+    learning.map((it) => entryForItem(it, { startLevel: DriveRung.LISTEN, capLevel: DriveRung.LEAD_IN }))
   );
 
   // Review first (the point of the drive), then learning, capped.

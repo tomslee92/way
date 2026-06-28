@@ -21,6 +21,8 @@ const T = {
     beginQuiet: 'Begin without voice',
     follow: 'Follow the words',
     followNote: 'Shows the verse while we’re still learning it, then clears for recall. For when you’re not moving.',
+    connect: 'See how it connects first',
+    connectNote: 'Hear how this verse threads through Scripture — origin to fulfillment — before we memorize.',
     micNote: '“Begin” asks for your microphone so I can tell when you’ve finished — I only listen for that you spoke, never what.',
     done: 'Done',
     completeTitle: 'Beautifully carried.',
@@ -45,6 +47,8 @@ const T = {
     beginQuiet: '음성 없이 시작',
     follow: '본문 따라 보기',
     followNote: '익히는 동안에는 본문을 보여 주고, 외울 때는 사라져요. 움직이지 않을 때를 위한 기능이에요.',
+    connect: '먼저 연결 들어보기',
+    connectNote: '외우기 전에, 이 말씀이 성경 전체에서 어떻게 이어지는지 — 시작부터 완성까지 — 들어볼 수 있어요.',
     micNote: '‘시작’은 마이크 권한을 요청해요. 다 외우셨는지 알기 위해서예요. 무엇을 말했는지가 아니라, 말했다는 사실만 들어요.',
     done: '마치기',
     completeTitle: '아름답게 담아내셨어요.',
@@ -72,6 +76,7 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
   const [useVad, setUseVad] = useState(false);
   const [started, setStarted] = useState(false);
   const [followText, setFollowText] = useState(false); // show the words while encoding (stationary use)
+  const [connect, setConnect] = useState(false); // hear the connections thread before memorizing
 
   const player = usePlayer({
     playlist: playlist || [],
@@ -79,8 +84,13 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
     vad,
     useVad,
     loop,
+    connect,
     onRecall: (id) => markRecalled(id).catch(() => {}),
   });
+
+  // The connections thread is only offered when the queue actually has one (curated
+  // verses carry an orbit; personal-library verses don't).
+  const hasConnections = (playlist || []).some((e) => e.orbit && e.orbit.length);
 
   // Wire hardware media keys (steering-wheel / Bluetooth) to the calm controls so a
   // moving user never touches the screen (drivemode-spec §10).
@@ -160,6 +170,22 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
         vad.supported
           ? h('button', { className: 'btn btn--quiet', type: 'button', onClick: () => begin(false) }, t.beginQuiet)
           : null,
+        // Optional, off by default: hear the connections thread before memorizing.
+        hasConnections
+          ? h(
+              'button',
+              {
+                className: 'drive__toggle',
+                type: 'button',
+                role: 'switch',
+                'aria-checked': connect ? 'true' : 'false',
+                onClick: () => setConnect((v) => !v),
+              },
+              h('span', { className: 'drive__toggle-box', 'aria-hidden': 'true' }, connect ? '✓' : ''),
+              t.connect
+            )
+          : null,
+        hasConnections && connect ? h('p', { className: 'drive__micnote' }, t.connectNote) : null,
         // Optional, off by default: follow the words while encoding (for stationary use).
         h(
           'button',
@@ -213,7 +239,8 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
 
   // "Follow the words": show the verse only while encoding (Absorb / Echo); it clears
   // the moment retrieval begins, so it never hands over the answer (drivemode-spec §2).
-  const showText = followText && player.rungLevel != null && player.rungLevel <= DriveRung.ECHO;
+  const showText =
+    followText && player.rungLevel != null && player.rungLevel >= DriveRung.LISTEN && player.rungLevel <= DriveRung.ECHO;
   const followBody = showText
     ? (playlist[player.verseIndex] && playlist[player.verseIndex].passage.text
         ? playlist[player.verseIndex].passage.text.replace(/\n/g, ' ')

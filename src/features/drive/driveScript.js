@@ -13,21 +13,31 @@ export const driveScript = {
   // top of each rung; the player resolves it through here for the current language.
   coach: {
     en: {
-      listen: ["Let's listen first."],
-      echo: ['Now, say each line back to me.'],
-      fill: ["I'll start each line — you finish it."],
-      leadIn: ["I'll give you the opening. Carry it on."],
-      ref: ['Just the reference now. Say it as your own.'],
+      // The narrated connections thread (optional, before memorizing).
+      connectIntro: ["Before we memorize, let's see how this verse connects across Scripture."],
+      connectOutro: ["That's the thread. Now, let's carry it in memory."],
+      // Each line names the task before the silence, so you always know what to say.
+      listen: ["First, just listen to the whole verse."],
+      echo: ["Now line by line. I'll read a part — say it right back to me."],
+      build: ["Let's build it up. Each time, go back to the very beginning and add the next part."],
+      fromStart: ['From the beginning.'], // micro-cue before each cumulative recital
+      leadIn: ["I'll start you off — you carry it to the end."],
+      finish: ['Keep going, all the way to the end.'],
+      ref: ['Just the reference now. Say the whole verse.'],
       memory: ['From memory now. Take your time.'],
-      // Gentle repeat (low rungs, on a timeout — never a correction).
+      // Gentle nudge (on a timeout — never a correction).
       again: ['Once more.', "Let's hear it again."],
     },
     ko: {
-      listen: ['먼저 들어볼게요.'],
-      echo: ['이제 한 구절씩 따라 말해 보세요.'],
-      fill: ['제가 먼저 시작할게요. 나머지를 채워 보세요.'],
-      leadIn: ['처음만 들려드릴게요. 이어서 외워 보세요.'],
-      ref: ['이제 구절만 말씀드릴게요. 마음에 담긴 그대로 외워 보세요.'],
+      connectIntro: ['외우기 전에, 이 말씀이 성경 전체에서 어떻게 이어지는지 함께 볼게요.'],
+      connectOutro: ['이게 그 흐름이에요. 이제 마음에 새겨 볼게요.'],
+      listen: ['먼저 구절 전체를 들어볼게요.'],
+      echo: ['이제 한 부분씩 갈게요. 제가 읽으면, 바로 따라 말해 보세요.'],
+      build: ['조금씩 쌓아 볼게요. 매번 맨 처음으로 돌아가서, 다음 부분을 더해 보세요.'],
+      fromStart: ['처음부터요.'],
+      leadIn: ['제가 처음을 열어드릴게요. 끝까지 이어서 외워 보세요.'],
+      finish: ['끝까지 가 보세요.'],
+      ref: ['이제 구절만 말씀드릴게요. 전체를 외워 보세요.'],
       memory: ['이제 외워서 말해 보세요. 천천히 하셔도 돼요.'],
       again: ['한 번 더요.', '다시 한 번 들어볼게요.'],
     },

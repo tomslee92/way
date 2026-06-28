@@ -95,10 +95,13 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
     onMemorize({ refDisplay: verse.ref, passageId: verse.passageId, language: lang, text });
   }
 
-  // Same verse, eyes-free: hand the already-fetched text to Drive Mode.
+  // Same verse, eyes-free: hand the already-fetched text to Listen & recite, plus the
+  // connections thread (the narration lines) so it can optionally play before memorizing.
   function drive() {
     if (!text || !onDrive) return;
-    onDrive({ refDisplay: verse.ref, passageId: verse.passageId, language: lang, text });
+    const thread =
+      orbit && orbit.length ? orbit.map((st) => ({ position: st.position, connection: st.connection })) : null;
+    onDrive({ refDisplay: verse.ref, passageId: verse.passageId, language: lang, text, orbit: thread });
   }
 
   return h(
