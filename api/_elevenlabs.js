@@ -9,6 +9,16 @@ export const RHEMA_VOICE_SETTINGS = {
   style: 0.0,
 };
 
+// Way is bilingual, so Rhema uses a per-language voice: a clean neutral-English
+// voice for English, a native Korean voice for Korean. A single bilingual voice
+// always accents one of the two languages. Korean ('ko') → ELEVENLABS_VOICE_ID_KO;
+// everything else (English, or mixed/auto with languageCode null) → _EN. Both fall
+// back to the legacy single ELEVENLABS_VOICE_ID if the per-language var is unset.
+export function voiceForLanguage(languageCode, env = process.env) {
+  if (languageCode === 'ko') return env.ELEVENLABS_VOICE_ID_KO || env.ELEVENLABS_VOICE_ID;
+  return env.ELEVENLABS_VOICE_ID_EN || env.ELEVENLABS_VOICE_ID;
+}
+
 export async function synthesizeSpeech({ text, languageCode, apiKey, voiceId }) {
   if (!apiKey || !voiceId) {
     const err = new Error('ElevenLabs not configured (missing key or voice id)');
@@ -27,9 +37,12 @@ export async function synthesizeSpeech({ text, languageCode, apiKey, voiceId }) 
       },
       body: JSON.stringify({
         text,
-        model_id: 'eleven_multilingual_v2',
+        // turbo_v2_5 (unlike multilingual_v2) honors language_code, so forcing
+        // 'en'/'ko' actually sticks — otherwise the Korean-native voice leaks
+        // Korean pronunciations into English text.
+        model_id: 'eleven_turbo_v2_5',
         voice_settings: RHEMA_VOICE_SETTINGS,
-        // Force the language per segment when known; null = auto-detect.
+        // Force the language when known; null = auto-detect (mixed segments).
         ...(languageCode ? { language_code: languageCode } : {}),
       }),
     }

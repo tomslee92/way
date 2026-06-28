@@ -5,6 +5,7 @@
 export const rhemaScript = {
   en: {
     intro: "Let's begin. I'll read it once — then say it back to me.",
+    reviewIntro: "Let's revisit this one. Say it from memory, as your own.",
     stagePrompt: {
       1: 'Here it is, in full. Read it with me.',
       2: 'Some words are hidden now. Fill them in as you go.',
@@ -38,6 +39,7 @@ export const rhemaScript = {
   },
   ko: {
     intro: '시작해 볼게요. 제가 한 번 읽을 테니, 따라서 말해 주세요.',
+    reviewIntro: '이 구절을 다시 만나볼게요. 마음에 담긴 그대로, 외워서 말해 주세요.',
     stagePrompt: {
       1: '전체 구절이에요. 함께 읽어 볼까요.',
       2: '이제 몇 단어가 사라졌어요. 빈칸을 채우며 외워 보세요.',

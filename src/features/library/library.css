@@ -1,0 +1,575 @@
+/* library.css — Add a verse (and, later, the Library view). Strict tonal B&W,
+   typography-led. Consumes tokens.css + type.css. Quiet everywhere; the verse
+   preview is the only moment with weight. */
+
+.addverse {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-pad);
+  max-width: var(--page);
+  margin: 0 auto;
+}
+
+.addverse__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.addverse__kicker {
+  /* mirrors .t-eyebrow (§2) */
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.addverse__spacer {
+  min-width: 56px;
+}
+
+/* — tabs (Search / Browse) — quiet, current gains ink + a hairline underline — */
+.addverse__tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--s5);
+  margin: var(--s7) 0 var(--s6);
+}
+
+.addverse__tabs .btn--quiet[data-on='true'] {
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.addverse__panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+/* — search bar — */
+.addverse__search {
+  display: flex;
+  gap: var(--s3);
+  align-items: stretch;
+}
+
+.addverse__input {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--raise);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  padding: var(--s3) var(--s4);
+  min-height: 44px;
+}
+
+.addverse__input::placeholder {
+  color: var(--faint);
+}
+
+.addverse__input:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* — result / book / chapter / verse rows (shared list idiom) — */
+.lib-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.lib-row {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--hair-soft);
+  color: var(--ink);
+  padding: var(--s4) var(--s1);
+  min-height: 44px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+  transition: padding-left var(--hover) var(--ease);
+}
+
+.lib-list li:last-child .lib-row {
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+.lib-row:hover {
+  padding-left: var(--s3);
+}
+
+.lib-row__ref {
+  /* mirrors .t-verse (§2) */
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+[lang='ko'] .lib-row__ref {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.lib-row__peek {
+  /* mirrors .t-coach (§2) */
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  /* search previews can be long — keep rows to a single quiet line */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* — English-only notice for Korean users (§9: plain, says where to go) — */
+.addverse__policy {
+  margin: var(--s5) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+/* — states: loading / empty / error — quiet coaching line (§9) — */
+.addverse__note {
+  margin: var(--s5) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+/* — the landed verse (the one moment with weight) — */
+.preview {
+  margin-top: var(--s7);
+  max-width: var(--measure);
+}
+
+.preview__ref {
+  /* mirrors .t-ref (§2) — not uppercased (§9) */
+  margin: 0 0 var(--s4);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.preview__text {
+  /* mirrors .t-verse (§2), left-aligned reading measure */
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+[lang='ko'] .preview__text {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.preview__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s5);
+  margin-top: var(--s7);
+}
+
+/* — Library view (§2) — three states, the dot is the whole indicator (§6) — */
+.library {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-pad);
+  max-width: var(--page);
+  margin: 0 auto;
+}
+
+.library__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.library__kicker {
+  /* mirrors .t-eyebrow (§2) — brand mark, consistent with picker/landing */
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.library__spacer {
+  min-width: 56px;
+}
+
+.library__title {
+  /* mirrors .t-section (§2), centered */
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-align: center;
+  margin: var(--s8) 0 var(--s6);
+}
+
+[lang='ko'] .library__title {
+  font-size: 28px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+/* the single primary action, centered */
+.library__add {
+  display: block;
+  margin: 0 auto var(--s7);
+}
+
+/* — §3 review invitation — a quiet card; the page's one primary stays "Add a
+   verse", so the invitation's actions are quiet (optional, declining is free). */
+.review {
+  max-width: var(--measure);
+  margin: var(--s6) auto;
+  padding: var(--s5);
+  background: var(--raise);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  /* left-aligned content, robust inside the centered landing hero too */
+  text-align: left;
+}
+
+.review__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+
+.review__eyebrow {
+  /* mirrors .t-eyebrow (§2) */
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+[lang='ko'] .review__eyebrow {
+  letter-spacing: 0;
+}
+
+/* the tap-to-hear orb (live TTS) */
+.review__hear {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  min-width: 44px;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.review__line {
+  /* Rhema's voice — serif, warm; slightly under Scripture size (it's UI copy) */
+  margin: var(--s3) 0 var(--s5);
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+[lang='ko'] .review__line {
+  font-size: 18px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.review__actions {
+  display: flex;
+  gap: var(--s5);
+  align-items: center;
+}
+
+/* segment filter — quiet; current gains ink + a hairline underline */
+.lib-filter {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--s4);
+  margin-bottom: var(--s5);
+}
+
+.lib-filter .btn--quiet[data-on='true'] {
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+/* — rows — */
+.lib-items {
+  display: flex;
+  flex-direction: column;
+}
+
+.lib-item {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  border-top: 1px solid var(--hair-soft);
+}
+
+.lib-items .lib-item:last-child {
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+.lib-item__open {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--s4);
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  padding: var(--s4) var(--s1);
+  min-height: 44px;
+  transition: padding-left var(--hover) var(--ease);
+}
+
+.lib-item__open:hover {
+  padding-left: var(--s3);
+}
+
+.lib-item__open:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.lib-item__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s1);
+}
+
+.lib-item__ref {
+  /* mirrors .t-verse (§2) */
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+[lang='ko'] .lib-item__ref {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.lib-item__status {
+  /* mirrors .t-eyebrow (§2) — the tiny label paired with the dot (§6) */
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+[lang='ko'] .lib-item__status {
+  letter-spacing: 0;
+}
+
+.lib-item__actions {
+  display: flex;
+  gap: var(--s3);
+  flex-shrink: 0;
+}
+
+/* — status dots (§6): the entire status indicator (circular by nature) — */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.status-dot[data-status='saved'] {
+  border: 1px solid var(--faint);
+  background: transparent;
+}
+
+.status-dot[data-status='memorizing'] {
+  border: 1px solid var(--ink);
+  background: transparent;
+}
+
+.status-dot[data-status='memorized'] {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+}
+
+/* — the no-demotion line (§2): always present beneath the list — */
+.library__footer {
+  margin: var(--s8) 0 0;
+  padding-top: var(--s5);
+  border-top: 1px solid var(--hair-soft);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+.library__note {
+  margin: var(--s7) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+/* — Read it in context (§4): a quiet reading detour. Context only — never
+   connections. The paragraph is the focus; the questions sit quieter beneath. */
+.context {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--page-pad);
+  max-width: var(--page);
+  margin: 0 auto;
+}
+
+.context__intro {
+  /* mirrors .t-body (§2) */
+  margin: var(--s7) 0 var(--s6);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--secondary);
+  max-width: var(--measure);
+}
+
+.context__ref {
+  /* mirrors .t-ref (§2) — not uppercased (§9) */
+  margin: 0 0 var(--s3);
+  font-family: var(--sans);
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.context__text {
+  /* mirrors .t-verse (§2): the surrounding paragraph, left-aligned reading measure */
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 21px;
+  line-height: 1.55;
+  color: var(--ink);
+  max-width: var(--measure);
+}
+
+[lang='ko'] .context__text {
+  font-size: 20px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+/* method questions — the user does the connecting; quieter than the Scripture */
+.context__method {
+  margin-top: var(--s8);
+  max-width: var(--measure);
+}
+
+.context__ask {
+  /* mirrors .t-eyebrow (§2) */
+  margin: 0 0 var(--s3);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+[lang='ko'] .context__ask {
+  letter-spacing: 0;
+}
+
+.context__questions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.context__question {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--secondary);
+  padding: var(--s3) 0;
+  border-top: 1px solid var(--hair-soft);
+}
+
+.context__questions li:last-child {
+  border-bottom: 1px solid var(--hair-soft);
+}
+
+[lang='ko'] .context__question {
+  font-size: 17px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
+}
+
+.context__note {
+  margin: var(--s7) 0 0;
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: var(--measure);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lib-row,
+  .lib-item__open {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .addverse,
+  .library {
+    padding: 20px;
+  }
+}

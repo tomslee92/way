@@ -8,6 +8,27 @@
       name="description"
       content="Way is a premium voice-coached Scripture memorization app for Korean and English speakers."
     />
+    <!-- Apply the theme before paint (no flash): a saved choice wins, otherwise
+         follow the device's system setting. -->
+    <script>
+      try {
+        var s = localStorage.getItem('way:theme');
+        var dark =
+          s === 'dark' ||
+          (s == null && window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.dataset.theme = 'dark';
+      } catch (e) {}
+    </script>
+    <!-- Scripture: EB Garamond + Noto Serif KR; UI: Inter (DESIGN.md §2).
+         Georgia/system fallbacks live in the --serif/--sans token stacks,
+         so a CDN hiccup degrades gracefully. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@400;500;600&family=Noto+Serif+KR:wght@400;500&display=swap"
+    />
   </head>
   <body>
     <div id="root"></div>

@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import { synthesizeSpeech } from './api/_elevenlabs.js';
+import { synthesizeSpeech, voiceForLanguage } from './api/_elevenlabs.js';
 
 // App.js and friends use React.createElement (no JSX), so .js files need no JSX
 // transform. The React plugin is kept for Fast Refresh / HMR during dev.
@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
                 text,
                 languageCode,
                 apiKey: env.ELEVENLABS_API_KEY,
-                voiceId: env.ELEVENLABS_VOICE_ID,
+                voiceId: voiceForLanguage(languageCode, env),
               });
               res.setHeader('Content-Type', 'audio/mpeg');
               res.end(audio);

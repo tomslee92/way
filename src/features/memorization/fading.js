@@ -17,18 +17,19 @@ export const STAGES = [
   { stage: FadingStage.BLANK, label: { en: 'From memory', ko: '암송' } },
 ];
 
-// Whether the word at `index` of a line of `length` words is hidden at a stage.
-// TODO: Stage 2 selection is naive (every other word). Replace with a smarter
-// pass that prefers content words over particles/articles, tuned separately
-// for Korean and English.
-function isHidden(index, length, stage) {
+// Whether a word is hidden at a given stage. `clauseStart` marks a clause
+// opening — the first word of a line, or the first word after a comma /
+// semicolon / colon. Stage III ("openings only") keeps exactly those (§5.1).
+function isHidden(index, clauseStart, stage) {
   switch (stage) {
     case FadingStage.FULL:
       return false;
     case FadingStage.GAPS:
+      // Key words quiet. TODO (unchanged): replace this naive every-other pass
+      // with content-word selection, tuned separately for Korean and English.
       return index % 2 === 1;
     case FadingStage.FIRST_WORD:
-      return index !== 0;
+      return !clauseStart;
     case FadingStage.BLANK:
       return true;
     default:
@@ -40,15 +41,17 @@ function isHidden(index, length, stage) {
  * Tokenize a passage for display at a given fading stage.
  * @param {string} text - the passage (lines separated by '\n').
  * @param {number} stage - a FadingStage value.
- * @returns {Array<Array<{ text: string, hidden: boolean }>>} lines of tokens.
+ * @returns {Array<Array<{ text: string, hidden: boolean, clauseStart: boolean }>>} lines of tokens.
  */
 export function tokenizeStage(text, stage) {
   return text.split('\n').map((line) => {
     const words = line.split(/\s+/).filter(Boolean);
-    return words.map((word, i) => ({
-      text: word,
-      hidden: isHidden(i, words.length, stage),
-    }));
+    return words.map((word, i) => {
+      // A clause opening: first word of the line, or the first word after a
+      // clause boundary (comma / semicolon / colon) on the previous word.
+      const clauseStart = i === 0 || /[,;:]$/.test(words[i - 1]);
+      return { text: word, clauseStart, hidden: isHidden(i, clauseStart, stage) };
+    });
   });
 }
 
@@ -64,4 +67,132 @@ export function renderStage(text, stage) {
         .join(' ')
     )
     .join('\n');
+}
+
+// — The cue ladder (method-spec §3) — eight rungs, most support → least. The user
+// climbs as recall firms, reciting at each step. The fade is GRADUATED: after two
+// full reads, words drop out a third at a time (FADE_1→2→3) so support thins
+// gently before the first-letter scaffold — no abrupt jump from full text to
+// initials. Each rung maps every word to a render mode; the word always keeps its
+// full width in the DOM (no layout shift, §8).
+
+export const Rung = {
+  ABSORB: 1, // full text, no test (encoding)
+  TRACE: 2, // full text, recite through once (encoding)
+  FADE_1: 3, // ~a third of the words fade to gaps — recite, filling them
+  FADE_2: 4, // ~half the words are gaps
+  FADE_3: 5, // most words gone; only a thin scaffold remains
+  FIRST_LETTERS: 6, // every word collapses to its initial
+  PHRASE_ANCHORS: 7, // only the first word of each phrase remains
+  FREE_RECALL: 8, // blank — from the heart (the telos in miniature)
+};
+
+export const RUNGS = [
+  { rung: Rung.ABSORB, key: 'absorb', label: { en: 'Absorb', ko: '익히기' } },
+  { rung: Rung.TRACE, key: 'trace', label: { en: 'Trace', ko: '따라 읽기' } },
+  { rung: Rung.FADE_1, key: 'fade-1', label: { en: 'A few hidden', ko: '조금 가림' } },
+  { rung: Rung.FADE_2, key: 'fade-2', label: { en: 'Half hidden', ko: '절반 가림' } },
+  { rung: Rung.FADE_3, key: 'fade-3', label: { en: 'Most hidden', ko: '대부분 가림' } },
+  { rung: Rung.FIRST_LETTERS, key: 'first-letters', label: { en: 'First letters', ko: '첫 글자' } },
+  { rung: Rung.PHRASE_ANCHORS, key: 'phrase-anchors', label: { en: 'Phrase anchors', ko: '구절 단서' } },
+  { rung: Rung.FREE_RECALL, key: 'free-recall', label: { en: 'From memory', ko: '암송' } },
+];
+
+// Progressive fade: a deterministic low-discrepancy (golden-ratio) score spreads
+// the gaps evenly across the verse, and a rising threshold hides monotonically
+// more — so a word, once gone, stays gone as you climb. `gi` is the word's index
+// across the whole passage.
+function faded(gi, threshold) {
+  const score = ((gi + 1) * 0.6180339887498949) % 1;
+  return score < threshold;
+}
+
+// The render mode for one word at a given rung. `clauseStart` marks a phrase
+// opening (first word, or first after a comma/semicolon/colon); `gi` is the
+// passage-wide word index (for the graduated fade).
+//   full    — visible word, no rule
+//   initial — first character shown, rest transparent, on a faint ruled baseline
+//   shape   — blank: transparent word over a faint ruled baseline (a gap to fill)
+//   gone    — transparent word, no rule (free recall)
+function wordMode(clauseStart, rung, gi) {
+  switch (rung) {
+    case Rung.ABSORB:
+    case Rung.TRACE:
+      return 'full';
+    case Rung.FADE_1:
+      return faded(gi, 0.3) ? 'shape' : 'full';
+    case Rung.FADE_2:
+      return faded(gi, 0.55) ? 'shape' : 'full';
+    case Rung.FADE_3:
+      return faded(gi, 0.78) ? 'shape' : 'full';
+    case Rung.FIRST_LETTERS:
+      return 'initial';
+    case Rung.PHRASE_ANCHORS:
+      return clauseStart ? 'full' : 'shape';
+    case Rung.FREE_RECALL:
+      return 'gone';
+    default:
+      throw new Error(`Unknown rung: ${rung}`);
+  }
+}
+
+/**
+ * Split a passage into meaningful phrases for the audible method (method-spec §4,
+ * drivemode-spec §2), so the ear chunks the way the eye does on screen. A phrase
+ * opens at: the start of a line (the fade's per-line clauseStart), after a clause
+ * mark on the previous word (comma / semicolon / colon — the same `clauseStart`
+ * rule tokenizeRung uses), or after a sentence end (period / question / exclamation
+ * — a natural breath when read aloud). Trailing punctuation is preserved; it shapes
+ * Rhema's prosody.
+ * @param {string} text - the passage (lines separated by '\n').
+ * @returns {string[]} phrases in order.
+ */
+export function phrasesOf(text) {
+  // Flatten to words, remembering which open a line (a line break is a boundary).
+  const tokens = [];
+  String(text || '')
+    .split('\n')
+    .forEach((line) => {
+      line
+        .split(/\s+/)
+        .filter(Boolean)
+        .forEach((word, i) => tokens.push({ word, startsLine: i === 0 }));
+    });
+
+  const phrases = [];
+  let current = [];
+  tokens.forEach((tok, i) => {
+    const prev = tokens[i - 1];
+    const boundary = i > 0 && (tok.startsLine || /[,;:.!?]$/.test(prev.word));
+    if (boundary && current.length) {
+      phrases.push(current.join(' '));
+      current = [];
+    }
+    current.push(tok.word);
+  });
+  if (current.length) phrases.push(current.join(' '));
+  return phrases;
+}
+
+/**
+ * Tokenize a passage for display at a given cue-ladder rung. Each word carries
+ * its initial + the rest separately so the renderer can show just the initial
+ * while preserving the word's full width. `gi` runs across the whole passage so
+ * the graduated fade spreads evenly over every line.
+ * @returns {Array<Array<{ text, initial, rest, clauseStart, mode }>>}
+ */
+export function tokenizeRung(text, rung) {
+  let gi = 0;
+  return text.split('\n').map((line) => {
+    const words = line.split(/\s+/).filter(Boolean);
+    return words.map((word, i) => {
+      const clauseStart = i === 0 || /[,;:]$/.test(words[i - 1]);
+      const chars = Array.from(word); // unicode-safe (handles Hangul syllables)
+      const initial = chars[0] || '';
+      const rest = chars.slice(1).join('');
+      const mode = wordMode(clauseStart, rung, gi);
+      gi += 1;
+      return { text: word, initial, rest, clauseStart, mode };
+    });
+  });
 }

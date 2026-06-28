@@ -1,0 +1,267 @@
+/* type.css — Way type scale + shared chrome (source of truth: DESIGN.md §2,
+   §6 buttons, §7 motion, §8 quality floor). One class per type role so every
+   screen names its register instead of re-deriving sizes. Consumes tokens.css. */
+
+/* — Type roles (§2 scale; EN defaults, KO stepped below) — */
+
+.t-hero {
+  font-family: var(--serif);
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: 0.005em;
+  color: var(--ink);
+}
+
+.t-anchor {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.005em;
+  color: var(--ink);
+}
+
+.t-session-verse {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.62;
+  letter-spacing: 0.005em;
+  color: var(--ink);
+}
+
+.t-verse {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+.t-section {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+.t-wordmark {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+
+.t-eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.t-ref {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.t-body {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--secondary);
+}
+
+.t-coach {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+
+/* — Korean stepping (§2): display sizes down ~4px, tracking 0, KR serif for
+   Scripture. Set lang="ko" on the app container; UI chrome stays Inter and
+   falls back gracefully. — */
+
+[lang='ko'] .t-hero {
+  font-size: 40px;
+}
+[lang='ko'] .t-anchor {
+  font-size: 36px;
+}
+[lang='ko'] .t-session-verse {
+  font-size: 30px;
+}
+[lang='ko'] .t-verse {
+  font-size: 20px;
+}
+[lang='ko'] .t-section {
+  font-size: 28px;
+}
+[lang='ko'] .t-hero,
+[lang='ko'] .t-anchor,
+[lang='ko'] .t-session-verse,
+[lang='ko'] .t-verse,
+[lang='ko'] .t-section {
+  letter-spacing: 0; /* letter-spacing harms Hangul */
+  font-family: var(--serif-kr);
+}
+
+/* — Buttons (§6): one primary per view; radius 0; lift on hover — */
+
+.btn {
+  font-family: var(--sans);
+  cursor: pointer;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  /* ≥44px effective hit area (§8) */
+  min-height: 44px;
+  transition: transform var(--hover) var(--ease),
+    background var(--hover) var(--ease), color var(--hover) var(--ease),
+    border-color var(--hover) var(--ease);
+}
+
+/* Primary CTA — the one place we soften (Apple-style): a capsule in sentence
+   case with a quiet shadow and a smooth press, not a hard letterpress block. */
+.btn--primary {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  padding: 15px 34px;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-rest);
+}
+.btn--primary:hover {
+  background: var(--ink-hover);
+  border-color: var(--ink-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+.btn--primary:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-press);
+  transition-duration: 90ms;
+}
+
+/* Soft default — a gentle raised capsule (not a grade): used for the encouraging
+   default in equal-choice rows like the self-check. Warm, inviting, B&W. */
+.btn--soft {
+  background: var(--raise);
+  color: var(--ink);
+  border: 1px solid var(--hair);
+  border-radius: var(--radius-pill);
+  padding: 13px 28px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  min-height: 44px;
+  cursor: pointer;
+  box-shadow: var(--shadow-rest);
+  transition: transform var(--hover) var(--ease), box-shadow var(--hover) var(--ease);
+}
+.btn--soft:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+.btn--soft:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-press);
+  transition-duration: 90ms;
+}
+
+.btn--quiet {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+  padding: 12px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.btn--quiet:hover {
+  color: var(--ink);
+}
+
+/* — Language toggle — shared chrome (EN / 한국어). Hairline, radius 0 — */
+.langtoggle {
+  display: inline-flex;
+  border: 1px solid var(--hair);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.langtoggle__opt {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  padding: 10px 14px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: background var(--hover) var(--ease), color var(--hover) var(--ease);
+}
+
+.langtoggle__opt[data-on='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* — Per-view entrance (§7): opacity 0→1, translateY 6px→0 — */
+.view-in {
+  animation: way-view-in var(--view-in) var(--ease) both;
+}
+
+@keyframes way-view-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* — Quality floor (§8): focus-visible on every interactive element — */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* — Reduced motion (§7): kill view-in, hover lift, and word/orb motion — */
+@media (prefers-reduced-motion: reduce) {
+  .view-in {
+    animation: none;
+  }
+  .btn--primary:hover,
+  .btn--primary:active,
+  .btn--soft:hover,
+  .btn--soft:active {
+    transform: none;
+  }
+}

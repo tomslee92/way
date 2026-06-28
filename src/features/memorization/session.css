@@ -1,14 +1,16 @@
-/* Memorization session — strict black & white. No color accents.
-   Typography and whitespace carry the design; the Scripture is the hero. */
+/* session.css — memorization session. Strict tonal B&W, typography-led.
+   Consumes tokens.css + type.css. Step 0 re-tokenizes color/type/spacing and
+   flips to cool-bone paper; the exact §5.1 fade (transparent word + ruled
+   bottom rule, left-aligned measure) is a later dedicated pass. */
 
 .session {
   position: fixed;
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: #000;
-  color: var(--way-ink);
-  padding: clamp(1rem, 4vw, 2.5rem);
+  background: var(--paper);
+  color: var(--ink);
+  padding: var(--page-pad);
 }
 
 /* — top bar — */
@@ -16,70 +18,83 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--s4);
 }
 
 .session__ref {
+  /* mirrors .t-eyebrow (§2) */
   margin: 0;
-  font-family: var(--way-sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.28em;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--way-muted);
+  color: var(--muted);
 }
 
 .session__spacer {
   /* balances the Close button so the reference stays centered */
-  min-width: 3.5rem;
+  min-width: 56px;
 }
 
 .session__count {
-  min-width: 3.5rem;
+  min-width: 56px;
   text-align: right;
-  font-family: var(--way-sans);
-  font-size: 0.72rem;
+  font-family: var(--sans);
+  font-size: 12px;
   letter-spacing: 0.12em;
-  color: var(--way-muted);
+  color: var(--muted);
 }
 
 .session__actions {
   display: flex;
-  gap: 1.5rem;
+  gap: var(--s5);
   align-items: center;
+}
+
+/* self-check — three equal-weight, strictly B&W choices (§9): no red/green */
+.selfcheck {
+  display: flex;
+  gap: var(--s6);
+  align-items: center;
+  justify-content: center;
 }
 
 /* — stage markers — */
 .stages {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
-  margin-top: clamp(1.5rem, 5vh, 3rem);
+  gap: var(--s2);
+  margin-top: var(--s8);
 }
 
 .stages__mark {
-  width: 2rem;
+  width: var(--s5);
   height: 1px;
-  background: var(--way-faint);
-  transition: background 0.5s ease, transform 0.5s ease;
+  background: var(--faint);
+  transition: background var(--fade-word) var(--ease),
+    transform var(--fade-word) var(--ease);
 }
 
 .stages__mark[data-done='true'] {
-  background: var(--way-muted);
+  background: var(--muted);
 }
 
 .stages__mark[data-active='true'] {
-  background: var(--way-ink);
+  background: var(--ink);
   transform: scaleY(2);
 }
 
 .stages__label {
-  margin: 1rem 0 0;
+  /* mirrors .t-eyebrow (§2) */
+  margin: var(--s4) 0 0;
   text-align: center;
-  font-family: var(--way-sans);
-  font-size: 0.78rem;
-  letter-spacing: 0.18em;
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--way-muted);
+  color: var(--muted);
 }
 
 /* — the Scripture — */
@@ -87,8 +102,8 @@
   flex: 1;
   display: grid;
   place-items: center;
-  padding: clamp(1.5rem, 6vh, 4rem) 0;
-  transition: opacity 0.5s ease, filter 0.5s ease;
+  padding: var(--s8) 0;
+  transition: opacity var(--view-in) var(--ease), filter var(--view-in) var(--ease);
 }
 
 .session__stage[data-dim='true'] {
@@ -97,14 +112,22 @@
 }
 
 .scripture {
-  max-width: 32rem;
-  text-align: center;
-  font-family: var(--way-serif);
+  /* mirrors .t-session-verse (§2), capped to the reading measure (§3) */
+  max-width: var(--measure);
+  text-align: left; /* Scripture is left-aligned in sessions (§3) */
+  font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(1.6rem, 4.2vw, 2.6rem);
-  line-height: 1.55;
-  letter-spacing: 0.01em;
-  animation: scripture-rise 0.6s ease both;
+  font-size: 34px;
+  line-height: 1.62;
+  letter-spacing: 0.005em;
+  color: var(--ink);
+  animation: scripture-rise 0.6s var(--ease) both;
+}
+
+[lang='ko'] .scripture {
+  font-size: 30px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
 }
 
 @keyframes scripture-rise {
@@ -121,45 +144,102 @@
 .scripture__line {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start; /* openings line up on a stable left margin (§3, §5.1) */
   align-items: baseline;
   gap: 0 0.4em;
   margin: 0.15em 0;
 }
 
-.scripture__word {
-  transition: opacity 0.5s ease;
+/* The verse address heads the recall block in a quieter, smaller treatment — part
+   of what's carried, but never mistaken for the verse line. It still fades with the
+   ladder (its words are ordinary faded words). */
+.scripture__line--ref {
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.6em;
+}
+.scripture__line--ref .scripture__word {
+  color: var(--muted);
 }
 
-.scripture__blank {
-  display: inline-block;
-  border-bottom: 1px solid var(--way-muted);
-  height: 0.9em;
-  min-width: 1.6ch;
-  transform: translateY(-0.12em);
+/* The fade (§5.1): light receding, not text deleting. A word always renders its
+   real text — so its width never changes — and "hides" by going transparent over
+   a faint 1.5px rule. Visible words carry a transparent rule of the same weight,
+   so nothing shifts between states (§8). */
+.scripture__word {
+  color: var(--ink);
+  border-bottom: 1.5px solid transparent;
+  transition: color var(--fade-word) var(--ease), border-color var(--fade-word) var(--ease);
+}
+
+.scripture__word[data-hidden='true'] {
+  color: transparent;
+  border-bottom-color: var(--faint);
+}
+
+/* — cue-ladder word modes (method-spec §3). The word keeps its full width in
+   the DOM (initial + rest both present); only color/rule change, so nothing
+   shifts (§8). full = defaults (ink, transparent rule). — */
+.scripture__word .w-ini,
+.scripture__word .w-rest {
+  transition: color var(--fade-word) var(--ease);
+}
+
+/* initial — first character shown, the rest transparent, on a faint baseline */
+.scripture__word[data-mode='initial'] {
+  border-bottom-color: var(--faint);
+}
+.scripture__word[data-mode='initial'] .w-rest {
+  color: transparent;
+}
+
+/* shape — blank over a faint ruled baseline */
+.scripture__word[data-mode='shape'] {
+  border-bottom-color: var(--faint);
+}
+.scripture__word[data-mode='shape'] .w-ini,
+.scripture__word[data-mode='shape'] .w-rest {
+  color: transparent;
+}
+
+/* gone — free recall: transparent, no rule */
+.scripture__word[data-mode='gone'] .w-ini,
+.scripture__word[data-mode='gone'] .w-rest {
+  color: transparent;
 }
 
 /* — closing recitation — */
 .session__complete {
-  max-width: 32rem;
-  text-align: center;
-  animation: scripture-rise 0.8s ease both;
+  max-width: var(--measure);
+  text-align: left; /* the full recitation, left-aligned like the stages (§3) */
+  animation: scripture-rise 0.8s var(--ease) both;
 }
 
 .session__complete-ref {
-  font-family: var(--way-sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.28em;
+  /* mirrors .t-eyebrow (§2) */
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--way-muted);
-  margin: 0 0 1.5rem;
+  color: var(--muted);
+  margin: 0 0 var(--s5);
 }
 
 .session__complete-text {
-  font-family: var(--way-serif);
-  font-size: clamp(1.5rem, 4vw, 2.4rem);
-  line-height: 1.55;
+  /* mirrors .t-session-verse (§2) */
+  font-family: var(--serif);
+  font-size: 34px;
+  line-height: 1.62;
+  color: var(--ink);
   margin: 0;
+}
+
+[lang='ko'] .session__complete-text {
+  font-size: 30px;
+  letter-spacing: 0;
+  font-family: var(--serif-kr);
 }
 
 /* — Rhema + controls — */
@@ -167,44 +247,47 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: var(--s5);
   min-height: 12rem;
   justify-content: flex-start;
   /* lift the controls clear of the bottom edge */
-  padding-bottom: clamp(1.5rem, 6vh, 4rem);
+  padding-bottom: var(--s8);
 }
 
 .session__heard {
+  /* italic serif, quiet — the user's own words read back */
   margin: 0;
-  max-width: 30rem;
+  max-width: var(--measure);
   text-align: center;
-  font-family: var(--way-serif);
+  font-family: var(--serif);
   font-style: italic;
-  font-size: 1rem;
-  color: var(--way-muted);
+  font-size: 16px;
+  color: var(--muted);
 }
 
 .session__note {
+  /* mirrors .t-coach (§2) */
   margin: 0;
-  font-family: var(--way-sans);
-  font-size: 0.85rem;
-  color: var(--way-muted);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--muted);
 }
 
 .session__controls {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.85rem;
+  gap: var(--s3);
   min-height: 3rem;
 }
 
-/* — Rhema indicator — */
+/* — Rhema indicator (§6 orb) — */
 .rhema {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.9rem;
+  gap: var(--s3);
 }
 
 .rhema__orb {
@@ -219,7 +302,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--way-ink);
+  background: var(--ink);
   opacity: 0.85;
 }
 
@@ -227,7 +310,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  border: 1px solid var(--way-faint);
+  border: 1px solid var(--faint);
   opacity: 0;
 }
 
@@ -262,7 +345,7 @@
 
 /* listening — outward sonar rings */
 .rhema[data-state='listening'] .rhema__ring {
-  border-color: var(--way-ink);
+  border-color: var(--ink);
   animation: rhema-ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 .rhema[data-state='listening'] .rhema__ring--2 {
@@ -283,8 +366,8 @@
 /* processing — a quiet rotating arc (Rhema reflecting) */
 .rhema[data-state='processing'] .rhema__ring {
   opacity: 1;
-  border-color: var(--way-faint);
-  border-top-color: var(--way-ink);
+  border-color: var(--faint);
+  border-top-color: var(--ink);
   animation: rhema-spin 1.3s linear infinite;
 }
 .rhema[data-state='processing'] .rhema__core {
@@ -297,11 +380,29 @@
   }
 }
 
+@media (max-width: 480px) {
+  .session {
+    padding: 20px;
+  }
+  .scripture,
+  .session__complete-text {
+    font-size: 26px;
+  }
+  [lang='ko'] .scripture,
+  [lang='ko'] .session__complete-text {
+    font-size: 24px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scripture,
+  .scripture__word,
   .session__complete,
+  .stages__mark,
+  .session__stage,
   .rhema__core,
   .rhema__ring {
     animation: none !important;
+    transition: none !important;
   }
 }

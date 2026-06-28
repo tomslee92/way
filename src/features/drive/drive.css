@@ -1,0 +1,226 @@
+/* Drive Mode surface (drivemode-spec §10). Strict tonal B&W, typography-led, the same
+   paper/ink tokens as the session — but stripped to the minimum: one orb, one
+   reference, and a few very large targets. Silence and space dominate; nothing here
+   asks to be read while moving. */
+
+.drive {
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--s5) var(--s5) var(--s8);
+  box-sizing: border-box;
+}
+
+.drive__bar {
+  width: 100%;
+  max-width: 38rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s4);
+}
+.drive__kicker {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.drive__spacer {
+  width: 3.5rem;
+}
+
+/* — Gate + completion (centered, unhurried) — */
+.drive__gate {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--s5);
+  max-width: 32rem;
+}
+.drive__title {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.drive__lede {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 28rem;
+}
+.drive__micnote {
+  margin: var(--s3) 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.55;
+  max-width: 26rem;
+}
+.drive__begin {
+  margin-top: var(--s3);
+  min-width: 12rem;
+}
+.drive__note {
+  margin-top: var(--s8);
+  color: var(--muted);
+}
+
+/* Follow-the-words toggle (gate) — a quiet switch, off by default. */
+.drive__toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-top: var(--s4);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+}
+.drive__toggle-box {
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid var(--faint);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.drive__toggle[aria-checked='true'] {
+  color: var(--ink);
+}
+.drive__toggle[aria-checked='true'] .drive__toggle-box {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* The verse text shown while encoding (follow-the-words on). Calm, secondary to the
+   reference; it disappears once retrieval begins. */
+.drive__follow-text {
+  margin: var(--s4) 0 0;
+  max-width: 32rem;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+/* — Running stage — */
+.drive__stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--s5);
+  padding: var(--s6) 0;
+}
+.drive__ref {
+  margin: var(--s4) 0 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.drive__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+.drive__count {
+  color: var(--faint);
+}
+
+/* — Controls: a few very large, blind-hittable targets — */
+.drive__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s6);
+  width: 100%;
+  max-width: 32rem;
+}
+.drive__pace {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s5);
+  margin-top: var(--s6);
+}
+.drive__rate {
+  min-width: 3.2rem;
+  text-align: center;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.drive__ctrl {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--faint);
+  color: var(--ink);
+  border-radius: 999px;
+  width: 5.5rem;
+  height: 5.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  cursor: pointer;
+  transition: border-color var(--ease, ease) 0.2s, background var(--ease, ease) 0.2s, transform 0.1s;
+}
+.drive__ctrl:active {
+  transform: scale(0.96);
+}
+.drive__ctrl:hover {
+  border-color: var(--muted);
+}
+.drive__ctrl--primary {
+  width: 6.75rem;
+  height: 6.75rem;
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.drive__glyph {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.drive__ctrl--primary .drive__glyph {
+  font-size: 1.7rem;
+}
+.drive__ctrllabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: inherit;
+  opacity: 0.75;
+}
+
+@media (max-width: 30rem) {
+  .drive__ctrl {
+    width: 4.75rem;
+    height: 4.75rem;
+  }
+  .drive__ctrl--primary {
+    width: 5.75rem;
+    height: 5.75rem;
+  }
+  .drive__controls {
+    gap: var(--s5);
+  }
+}
