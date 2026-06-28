@@ -150,6 +150,19 @@
   margin: 0.15em 0;
 }
 
+/* The verse address heads the recall block in a quieter, smaller treatment — part
+   of what's carried, but never mistaken for the verse line. It still fades with the
+   ladder (its words are ordinary faded words). */
+.scripture__line--ref {
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.6em;
+}
+.scripture__line--ref .scripture__word {
+  color: var(--muted);
+}
+
 /* The fade (§5.1): light receding, not text deleting. A word always renders its
    real text — so its width never changes — and "hides" by going transparent over
    a faint 1.5px rule. Visible words carry a transparent rule of the same weight,

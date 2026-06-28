@@ -72,6 +72,51 @@
   color: var(--muted);
 }
 
+/* Follow-the-words toggle (gate) — a quiet switch, off by default. */
+.drive__toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s3);
+  margin-top: var(--s4);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.95rem;
+}
+.drive__toggle-box {
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid var(--faint);
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.drive__toggle[aria-checked='true'] {
+  color: var(--ink);
+}
+.drive__toggle[aria-checked='true'] .drive__toggle-box {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* The verse text shown while encoding (follow-the-words on). Calm, secondary to the
+   reference; it disappears once retrieval begins. */
+.drive__follow-text {
+  margin: var(--s4) 0 0;
+  max-width: 32rem;
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
 /* — Running stage — */
 .drive__stage {
   flex: 1;

@@ -10,7 +10,10 @@ import { tokenizeStage, tokenizeRung } from './fading.js';
 // Pass `rung` (method-spec cue ladder) or `stage` (legacy 4-stage fade).
 // `revealed` (rung path) overrides every word to full — the same elements
 // transition cue→full in place (a gentle reveal, not a remount).
-export default function ScriptureDisplay({ text, stage, rung, revealed }) {
+// `refLines` (rung path) marks the first N lines as the verse address — they
+// fade with the ladder like any other line (so the user learns the address too),
+// but render in a quieter reference treatment.
+export default function ScriptureDisplay({ text, stage, rung, revealed, refLines = 0 }) {
   // — cue ladder: each word renders its initial + the rest separately so the
   //   first-letter rung can show just the initial while keeping full width —
   if (rung != null) {
@@ -21,7 +24,11 @@ export default function ScriptureDisplay({ text, stage, rung, revealed }) {
       lines.map((tokens, lineIndex) =>
         h(
           'p',
-          { className: 'scripture__line', key: lineIndex },
+          {
+            className:
+              lineIndex < refLines ? 'scripture__line scripture__line--ref' : 'scripture__line',
+            key: lineIndex,
+          },
           tokens.map((tok, tokenIndex) => {
             const mode = revealed ? 'full' : tok.mode;
             return h(

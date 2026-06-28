@@ -82,6 +82,7 @@ function openingAndRest(verse) {
 const COMPILE = {
   [DriveRung.ABSORB]: (p) => [
     coach('listen'),
+    say(p.reference, p.language), // tie the address to the verse from the first hearing
     say(p.text, p.language, { slow: true }),
     { type: 'gap', ms: TUNING.absorbBreathMs, expect: 'breath' }, // a reflective beat, not a recite gap
   ],

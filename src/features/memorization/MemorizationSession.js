@@ -69,9 +69,14 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
   const isEncoding = rung <= Rung.TRACE;
   const rungMeta = RUNGS.find((r) => r.rung === rung);
 
+  // The address is part of what's carried (knowing where the verse is from matters):
+  // it heads the recall block as its own line, fading with the ladder so the user
+  // recites it too, and Rhema reads it aloud with the verse.
+  const recallText = `${reference}\n${passage.text}`;
+
   function hearIt() {
     rhema.unlock();
-    rhema.speak(passage.text.replace(/\n/g, ' '), lang);
+    rhema.speak(recallText.replace(/\n/g, ' '), lang);
   }
 
   function nextRung() {
@@ -162,7 +167,9 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
       'header',
       { className: 'session__bar' },
       h('button', { className: 'btn btn--quiet', type: 'button', onClick: endSession }, t.end),
-      h('p', { className: 'session__ref' }, reference),
+      // The address now lives in the recall block (so it's learned, not just shown),
+      // and is deliberately not surfaced here during recall where it would be a giveaway.
+      h('span', { className: 'session__ref', 'aria-hidden': 'true' }),
       h(
         'span',
         { className: 'session__count', 'aria-hidden': 'true' },
@@ -208,7 +215,8 @@ export default function MemorizationSession({ passages, startIndex = 0, onExit, 
             // changes (instant new cue, in step with the indicator); the reveal
             // keeps the same key so it dissolves cue→full in place.
             key: `v${index}-r${rung}`,
-            text: passage.text,
+            text: recallText,
+            refLines: 1, // the address heads the block and fades with the ladder
             rung,
             revealed: phase === 'reveal',
           })

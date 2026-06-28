@@ -2,6 +2,7 @@ import { createElement as h, useEffect, useState } from 'react';
 import { useRhema } from '../memorization/useRhema.js';
 import { useVoiceActivity } from './useVoiceActivity.js';
 import { usePlayer } from './usePlayer.js';
+import { DriveRung } from './driveLadder.js';
 import RhemaIndicator from '../memorization/RhemaIndicator.js';
 import { markRecalled } from '../../lib/library.js';
 import '../memorization/session.css'; // tokens + the Rhema orb
@@ -18,6 +19,8 @@ const T = {
     lede: 'Put the screen away. I’ll read; you recite — out loud, from the heart.',
     begin: 'Begin',
     beginQuiet: 'Begin without voice',
+    follow: 'Follow the words',
+    followNote: 'Shows the verse while we’re still learning it, then clears for recall. For when you’re not moving.',
     micNote: '“Begin” asks for your microphone so I can tell when you’ve finished — I only listen for that you spoke, never what.',
     done: 'Done',
     completeTitle: 'Beautifully carried.',
@@ -40,6 +43,8 @@ const T = {
     lede: '화면은 내려놓으세요. 제가 읽을게요. 소리 내어, 마음에 담긴 그대로 외워 보세요.',
     begin: '시작',
     beginQuiet: '음성 없이 시작',
+    follow: '본문 따라 보기',
+    followNote: '익히는 동안에는 본문을 보여 주고, 외울 때는 사라져요. 움직이지 않을 때를 위한 기능이에요.',
     micNote: '‘시작’은 마이크 권한을 요청해요. 다 외우셨는지 알기 위해서예요. 무엇을 말했는지가 아니라, 말했다는 사실만 들어요.',
     done: '마치기',
     completeTitle: '아름답게 담아내셨어요.',
@@ -66,6 +71,7 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
   const vad = useVoiceActivity();
   const [useVad, setUseVad] = useState(false);
   const [started, setStarted] = useState(false);
+  const [followText, setFollowText] = useState(false); // show the words while encoding (stationary use)
 
   const player = usePlayer({
     playlist: playlist || [],
@@ -154,6 +160,20 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
         vad.supported
           ? h('button', { className: 'btn btn--quiet', type: 'button', onClick: () => begin(false) }, t.beginQuiet)
           : null,
+        // Optional, off by default: follow the words while encoding (for stationary use).
+        h(
+          'button',
+          {
+            className: 'drive__toggle',
+            type: 'button',
+            role: 'switch',
+            'aria-checked': followText ? 'true' : 'false',
+            onClick: () => setFollowText((v) => !v),
+          },
+          h('span', { className: 'drive__toggle-box', 'aria-hidden': 'true' }, followText ? '✓' : ''),
+          t.follow
+        ),
+        h('p', { className: 'drive__micnote' }, followText ? t.followNote : null),
         vad.supported ? h('p', { className: 'drive__micnote' }, t.micNote) : null
       )
     );
@@ -191,6 +211,15 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
     : t.ready;
   const rungName = player.rungLabel ? player.rungLabel[lang] : '';
 
+  // "Follow the words": show the verse only while encoding (Absorb / Echo); it clears
+  // the moment retrieval begins, so it never hands over the answer (drivemode-spec §2).
+  const showText = followText && player.rungLevel != null && player.rungLevel <= DriveRung.ECHO;
+  const followBody = showText
+    ? (playlist[player.verseIndex] && playlist[player.verseIndex].passage.text
+        ? playlist[player.verseIndex].passage.text.replace(/\n/g, ' ')
+        : '')
+    : '';
+
   const ctrl = (key, onClick, glyph, opts = {}) =>
     h(
       'button',
@@ -219,7 +248,8 @@ export default function DriveSession({ playlist, language = 'en', loop = false, 
         { className: 'drive__meta' },
         rungName,
         player.total > 1 ? h('span', { className: 'drive__count' }, ` · ${player.verseIndex + 1} / ${player.total}`) : null
-      )
+      ),
+      showText ? h('p', { className: 'drive__follow-text' }, followBody) : null
     ),
     h(
       'div',

@@ -22,6 +22,7 @@ export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, 
   const [verseIndex, setVerseIndex] = useState(0);
   const [reference, setReference] = useState('');
   const [rungLabel, setRungLabel] = useState(null);
+  const [rungLevel, setRungLevel] = useState(null);
   const [phase, setPhase] = useState('speaking'); // speaking | waiting
   const [listening, setListening] = useState(false);
   const [rate, setRate] = useState(1);
@@ -200,6 +201,7 @@ export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, 
         continue;
       }
       setRungLabel(rung.label);
+      setRungLevel(rung.level);
 
       const step = rung.steps[pos.s];
       if (!step) {
@@ -308,6 +310,7 @@ export function usePlayer({ playlist, rhema, vad, useVad = false, loop = false, 
     verseIndex,
     reference,
     rungLabel,
+    rungLevel,
     phase,
     listening,
     rate,
