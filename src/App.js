@@ -5,6 +5,8 @@ import CuratedTopic from './features/curriculum/CuratedTopic.js';
 import VerseLanding from './features/curriculum/VerseLanding.js';
 import AddVerse from './features/library/AddVerse.js';
 import LibraryView from './features/library/LibraryView.js';
+import DriveSession from './features/drive/DriveSession.js';
+import { singleVersePlaylist, buildLibraryPlaylist, buildTopicPlaylist } from './features/drive/playlist.js';
 import SignIn from './features/auth/SignIn.js';
 import Onboarding from './features/auth/Onboarding.js';
 import { buildPassageFromText } from './data/personalLibrary.js';
@@ -39,6 +41,10 @@ export default function App() {
   const [session, setSession] = useState(undefined); // undefined = still loading
   const [dueInvites, setDueInvites] = useState([]);
   const [dismissedInvites, setDismissedInvites] = useState(() => new Set());
+  const [drivePlaylist, setDrivePlaylist] = useState(null); // verses for a listen-and-recite session
+  const [preparingDrive, setPreparingDrive] = useState(false);
+  const [driveLoop, setDriveLoop] = useState(false); // cycle the playlist until stopped
+  const [pickerIntent, setPickerIntent] = useState('memorize'); // 'memorize' | 'listen'
   const profileLoadedRef = useRef(false);
 
   // Track the auth session. A magic-link return establishes it on load.
@@ -167,6 +173,40 @@ export default function App() {
     setView('session');
   }
 
+  // Listen & recite (drivemode-spec): hands-free, eyes-free practice. A single curated
+  // verse uses the text VerseLanding already fetched; the library session assembles a
+  // playlist (due reviews + in-progress); a topic session cycles every verse in a
+  // topic until the user stops (loop). All navigate to the 'drive' view.
+  function startDriveSingle(passage, from) {
+    setDriveLoop(false);
+    setDrivePlaylist(singleVersePlaylist(passage));
+    setReturnTo(from);
+    setView('drive');
+  }
+  async function startDriveFromLibrary(from) {
+    if (preparingDrive) return;
+    setPreparingDrive(true);
+    try {
+      const pl = await buildLibraryPlaylist();
+      setDriveLoop(false);
+      setDrivePlaylist(pl);
+      setReturnTo(from);
+      setView('drive');
+    } finally {
+      setPreparingDrive(false);
+    }
+  }
+  // Cycle a whole topic, looping until stopped. Navigates immediately (playlist null →
+  // a "Preparing…" screen) so the live text fetch can finish without blocking the tap.
+  async function startTopicListen(id) {
+    setDriveLoop(true);
+    setDrivePlaylist(null);
+    setReturnTo('picker');
+    setView('drive');
+    const pl = await buildTopicPlaylist(id, language);
+    setDrivePlaylist(pl);
+  }
+
   // Open a stored verse: re-fetch its verified text live (never stored), then
   // reuse the session. A review starts at Stage 4 and records markRecalled on
   // completion (time signal only — never status; the app never demotes). It
@@ -189,6 +229,12 @@ export default function App() {
       // Save-across-devices nudge → sign in, then return to the picker.
       onSignIn: () => requireAuth('picker'),
       onSelect: (id) => {
+        // A topic chosen for listen-and-recite cycles the whole topic; otherwise it
+        // opens the topic's verse list to memorize on screen.
+        if (pickerIntent === 'listen') {
+          startTopicListen(id);
+          return;
+        }
         setTopicId(id);
         setView('topic');
       },
@@ -216,6 +262,7 @@ export default function App() {
       // Memorize the verse: its text was fetched live (ESV) on the landing. Pass
       // the curated identity so a from-memory completion marks it memorized.
       onMemorize: (verse) => startSession([buildPassageFromText(verse)], 'verse', 0, null, { topicId, verseId }),
+      onDrive: (verse) => startDriveSingle(verse, 'verse'),
       onExit: () => setView('topic'),
     });
   }
@@ -243,6 +290,7 @@ export default function App() {
       onAdd: () => setView('add'),
       onMemorize: (item) => openLibraryItem(item, false),
       onReview: (item) => openLibraryItem(item, true),
+      onDrive: () => startDriveFromLibrary('library'),
       onSignOut: handleSignOut,
       onExit: () => setView('landing'),
     });
@@ -286,6 +334,30 @@ export default function App() {
     });
   }
 
+  if (view === 'drive') {
+    // Playlist still loading (topic text fetch) → a calm "Preparing…" screen.
+    if (drivePlaylist === null) {
+      return h(
+        'section',
+        { className: 'drive view-in', lang: language },
+        h(
+          'header',
+          { className: 'drive__bar' },
+          h('button', { className: 'btn btn--quiet', type: 'button', onClick: () => setView(returnTo) }, language === 'ko' ? '뒤로' : 'Back'),
+          h('p', { className: 'drive__kicker' }, 'Way'),
+          h('span', { className: 'drive__spacer', 'aria-hidden': 'true' })
+        ),
+        h('div', { className: 'drive__gate' }, h('p', { className: 'drive__lede' }, language === 'ko' ? '준비하고 있어요…' : 'Preparing…'))
+      );
+    }
+    return h(DriveSession, {
+      playlist: drivePlaylist,
+      language,
+      loop: driveLoop,
+      onExit: () => setView(returnTo),
+    });
+  }
+
   // The most-overdue, not-yet-dismissed review (signed-in users only).
   const landingInvite = dueInvites.find((it) => !dismissedInvites.has(it.id));
 
@@ -323,9 +395,26 @@ export default function App() {
         {
           className: 'btn btn--primary',
           type: 'button',
-          onClick: () => setView('picker'),
+          onClick: () => {
+            setPickerIntent('memorize');
+            setView('picker');
+          },
         },
         'Begin memorizing'
+      ),
+      // Hands-free, eyes-free: pick a topic and I'll cycle its verses aloud until you
+      // stop (drivemode-spec). Open to everyone — no sign-in, drawn from the curriculum.
+      h(
+        'button',
+        {
+          className: 'btn btn--quiet way-add',
+          type: 'button',
+          onClick: () => {
+            setPickerIntent('listen');
+            setView('picker');
+          },
+        },
+        'Listen & recite'
       ),
       h(
         'button',

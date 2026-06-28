@@ -19,6 +19,7 @@ const T = {
   en: {
     title: 'Your library',
     add: 'Add a verse',
+    drive: 'Listen & recite',
     signout: 'Sign out',
     declare: 'Memorized',
     moveback: 'Move to memorizing',
@@ -34,6 +35,7 @@ const T = {
   ko: {
     title: '내 서재',
     add: '구절 추가',
+    drive: '듣고 외우기',
     signout: '로그아웃',
     declare: '암송 완료',
     moveback: '암송 중으로 옮기기',
@@ -53,6 +55,7 @@ export default function LibraryView({
   onMemorize,
   onReview,
   onAdd,
+  onDrive,
   onSignOut,
   onExit,
 }) {
@@ -250,6 +253,11 @@ export default function LibraryView({
         })
       : null,
     h('button', { className: 'btn btn--primary library__add', type: 'button', onClick: onAdd }, t.add),
+    // Practice the whole queue hands-free (drivemode-spec §3) — shown once there's
+    // something to carry.
+    onDrive && items.length
+      ? h('button', { className: 'btn btn--quiet library__drive', type: 'button', onClick: onDrive }, t.drive)
+      : null,
     body
   );
 }

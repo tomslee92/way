@@ -11,8 +11,8 @@ import './picker.css';
 // fetched live (ESV); Korean uses the stored 개역개정 text.
 
 const T = {
-  en: { begin: 'Begin memorizing', back: 'Back', loading: 'Opening…', error: 'Couldn’t load this verse. Go back and try again.', memorized: 'Memorized' },
-  ko: { begin: '암송 시작', back: '뒤로', loading: '여는 중…', error: '구절을 불러오지 못했어요. 돌아가서 다시 시도해 주세요.', memorized: '암송함' },
+  en: { begin: 'Begin memorizing', drive: 'Listen & recite', back: 'Back', loading: 'Opening…', error: 'Couldn’t load this verse. Go back and try again.', memorized: 'Memorized' },
+  ko: { begin: '암송 시작', drive: '듣고 외우기', back: '뒤로', loading: '여는 중…', error: '구절을 불러오지 못했어요. 돌아가서 다시 시도해 주세요.', memorized: '암송함' },
 };
 
 // A spine-riding verse (no thread of its own) borrows the topic spine, but with
@@ -38,7 +38,7 @@ function personalizeSpine(spine, verse) {
   );
 }
 
-export default function VerseLanding({ topicId, verseId, language = 'en', onMemorize, onExit }) {
+export default function VerseLanding({ topicId, verseId, language = 'en', onMemorize, onDrive, onExit }) {
   const lang = language === 'ko' ? 'ko' : 'en';
   const t = T[lang];
   const topic = getTopic(topicId, lang);
@@ -95,6 +95,12 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
     onMemorize({ refDisplay: verse.ref, passageId: verse.passageId, language: lang, text });
   }
 
+  // Same verse, eyes-free: hand the already-fetched text to Drive Mode.
+  function drive() {
+    if (!text || !onDrive) return;
+    onDrive({ refDisplay: verse.ref, passageId: verse.passageId, language: lang, text });
+  }
+
   return h(
     'section',
     { className: 'curated view-in', lang },
@@ -124,6 +130,18 @@ export default function VerseLanding({ topicId, verseId, language = 'en', onMemo
       },
       t.begin
     ),
+    onDrive
+      ? h(
+          'button',
+          {
+            className: 'btn btn--quiet curated__drive',
+            type: 'button',
+            disabled: loading || error || !text,
+            onClick: drive,
+          },
+          t.drive
+        )
+      : null,
     orbit && orbit.length
       ? h(RevelationWalk, { orbit, language: lang })
       : null

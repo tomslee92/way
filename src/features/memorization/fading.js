@@ -137,6 +137,44 @@ function wordMode(clauseStart, rung, gi) {
 }
 
 /**
+ * Split a passage into meaningful phrases for the audible method (method-spec §4,
+ * drivemode-spec §2), so the ear chunks the way the eye does on screen. A phrase
+ * opens at: the start of a line (the fade's per-line clauseStart), after a clause
+ * mark on the previous word (comma / semicolon / colon — the same `clauseStart`
+ * rule tokenizeRung uses), or after a sentence end (period / question / exclamation
+ * — a natural breath when read aloud). Trailing punctuation is preserved; it shapes
+ * Rhema's prosody.
+ * @param {string} text - the passage (lines separated by '\n').
+ * @returns {string[]} phrases in order.
+ */
+export function phrasesOf(text) {
+  // Flatten to words, remembering which open a line (a line break is a boundary).
+  const tokens = [];
+  String(text || '')
+    .split('\n')
+    .forEach((line) => {
+      line
+        .split(/\s+/)
+        .filter(Boolean)
+        .forEach((word, i) => tokens.push({ word, startsLine: i === 0 }));
+    });
+
+  const phrases = [];
+  let current = [];
+  tokens.forEach((tok, i) => {
+    const prev = tokens[i - 1];
+    const boundary = i > 0 && (tok.startsLine || /[,;:.!?]$/.test(prev.word));
+    if (boundary && current.length) {
+      phrases.push(current.join(' '));
+      current = [];
+    }
+    current.push(tok.word);
+  });
+  if (current.length) phrases.push(current.join(' '));
+  return phrases;
+}
+
+/**
  * Tokenize a passage for display at a given cue-ladder rung. Each word carries
  * its initial + the rest separately so the renderer can show just the initial
  * while preserving the word's full width. `gi` runs across the whole passage so
